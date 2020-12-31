@@ -49,7 +49,7 @@ General utility classes for item formatting, JSON serialization, or checking the
 * `State`: Enum class for the state of the game. (EXPLORE, TRADE, WON, LOST)
 
 # How to Use
-Write a JSON map or use the included (simple) test map. The format of the map is intuitive if you follow this sample:
+Write a JSON map or use the included (simple) test map. The format of the map is intuitive if you follow this sample (time is in seconds):
 ```JSON
 {
   "mapConfiguration": {
