@@ -163,7 +163,7 @@ Another is the *`GameMaster`* class in its interaction with the player class, se
 ### *G16: Obscured Intent*
 The way around this smell, is to expressively name the methods and variables while avoiding magic numbers. For example, the method: `StringBuilder serializeRooms(Room startRoom)` is a classic use of Breadth First Search (BFS), by choosing the correct name, one need not know how to traverse a graph to understand this code.
 
-See [G30](#G30-Functions-Should-Do-One-Thing) for the code.
+See [G30 (Functions Should Do One Thing)](#G30-Functions-Should-Do-One-Thing) for the code.
 
 ### *G17: Misplaced Responsibility*
 This is apparent in the handling of trade. Initially it was in *`GameMaster`* since this is the interface with the user. However, this is not the responsibility of *`GameMaster`* and can cause confusion. So I separated it into two classes, *`TradeHandler`* which uses an instance of *`TransactionHandler`*. Those two classes deal with the trade, while *`GameMaster`* only acts as an interface (as expected).
@@ -369,7 +369,7 @@ private static void parseGameMap(JSONObject gameJson) {
 Now the order cannot change!
 
 ### *G34: Functions Should Descend Only One Level of Abstraction*
-A great example of this was the `serializeRooms` refactoring metioned in [G30](#G30-Functions-Should-Do-One-Thing). It used to descend multiple levels of abstraction. But the refactoring abstracted the operations and separated them so each only descended one level.
+A great example of this was the `serializeRooms` refactoring metioned in [G30 (Functions Should Do One Thing)](#G30-Functions-Should-Do-One-Thing). It used to descend multiple levels of abstraction. But the refactoring abstracted the operations and separated them so each only descended one level.
 
 Another example within the same class is the `parseJsonFile` method:
 ```Java
@@ -451,7 +451,7 @@ public Room getNextRoom(Room roomFrom) {
 By using names such as *roomFrom*, *room*, *otherRoom*. It is clear that this method takes a room and returns the one on the other side of the door.
 
 
-If you read the code in all of the examples above, I tried my best to choose the best descriptive name possible while also sticking to a convention. See also [G20](#G20-Function-Names-Should-Say-What-They-Do).
+If you read the code in all of the examples above, I tried my best to choose the best descriptive name possible while also sticking to a convention. See also [G20 (Function Names Should Say What They Do)](#G20-Function-Names-Should-Say-What-They-Do).
 
 ### *N3: Use Standard Nomenclature Where Possible*
 The `Serializable` interface has a `String toJson()` method, this follows the standard nomenclature `<T> toT()`.
@@ -676,7 +676,7 @@ for(int i = 0; i < itemsJSON.length(); i++) {
 ### *Item 63: Beware the performance of string concatenation*
 Whenever there’s a need to build a String dynamically a `StringBuilder` should be used, see the `formatItems` method below:
 
-See [G30](#G30-Functions-Should-Do-One-Thing) for an example.
+See [G30 (Functions Should Do One Thing)](#G30-Functions-Should-Do-One-Thing) for an example.
 
 ### *Item 64: Refer to objects by their interfaces*
 This can be seen in field variables, method arguments, and even return types. The highest viable abstraction is always used. Even when referring to a mirror or a painting, a *`Hangable`* is used since it covers both cases without any loss of information.
@@ -715,7 +715,9 @@ if(gold < 0) {
 A lot of the design patterns implemented have been done so unconsciously with some exceptions.
 
 ## Strategy Pattern
-The Strategy pattern in its most essential form is just polymorphism. This was useful in the look method of the *`MapSite`* interface (see [G5](#G5-Duplication)).There’s also the *`JsonSerializable`* interface with its sole `toJson()` method that is also different per object.
+The Strategy pattern in its most essential form is just polymorphism. This was useful in the look method of the *`MapSite`* interface. See [G5 (Duplication)](#G5-Duplication).
+
+There’s also the *`JsonSerializable`* interface with its sole `toJson()` method that is also different per object.
 
 
 ## Builder Pattern
@@ -894,7 +896,7 @@ public String sell(String itemName) {
 
 # SOLID Principles
 ## Single-Responsibility Principle
-See [G30](#G30-Functions-Should-Do-One-Thing) for a good example on a refactorization for better SRP. One of the refactors was in the `visitRoom` method that serializes the *`Room`*. However, this violates the SRP. Instead, visiting the room should only visit the room in the graph sense (mark the room as visited and add to the queue).
+See [G30 (Functions Should Do One Thing)](#G30-Functions-Should-Do-One-Thing) for a good example on a refactorization for better SRP. One of the refactors was in the `visitRoom` method that serializes the *`Room`*. However, this violates the SRP. Instead, visiting the room should only visit the room in the graph sense (mark the room as visited and add to the queue).
 
 
 I have also split the *`GameParser`* class into 3 classes: *`GameParser`*, *`ItemParser`*, and *`MapSiteParser`*. Each only deals with what the name implies.
@@ -905,7 +907,7 @@ There's also the validation of the state and the requested action where it used 
 ## Open-Closed Principle
 You’ll notice in the `mazegame.util` package, there exists an *`ItemFormatter`* utility class. However, that code was initially inside the *`ItemManager`* class. This violates the SRP and even the OCP since now there are at least two reasons to change the *`ItemManager`*.
 
-See [G5](#G5-Duplication) and [G36](#G36-Avoid-Transitive-Navigation) for more about OCP.
+See [G5 (Duplication)](#G5-Duplication) and [G36 (Avoid Transitive Navigation)](#G36-Avoid-Transitive-Navigation) for more about OCP.
 
 
 ## Liskov Substitution Principle
@@ -932,7 +934,7 @@ public static StringBuilder listToJson(List<? extends JsonSerializable> serializ
 ## Interface Segregation Principle
 Never reuse an interface just because it has the right methods, instead it should be a type.
 
-See [G6](#G6-Code-at-Wrong-Level-of-Abstraction) and [Item 41](#Item-41-Use-marker-interfaces-to-define-types).
+See [G6 (Code at Wrong Level of Abstraction)](#G6-Code-at-Wrong-Level-of-Abstraction) and [Item 41 (Use marker interfaces to define types)](#Item-41-Use-marker-interfaces-to-define-types).
 
 
 ## Dependency Inversion Principle
