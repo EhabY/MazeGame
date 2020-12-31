@@ -6,6 +6,8 @@
 5. [Google's Java Styling Guide](#googles-java-styling-guide)
 6. [Data Structures](#data-structures)
 
+<br/>
+
 # Robert C. Martin’s *Clean Code*
 
 There was a fair amount of back and forth between writing code and reading Robert Martin’s *Clean Code*. In this section, I’ll go over some of the most relevant points in Chapter 17, *Smells and Heuristics*.
@@ -449,6 +451,7 @@ The method `tryToVisitNextRoom(MapSite mapSite, Room currentRoom)` describes tha
 
 `Item takeItemFromInventory(String name)` mentioned above, describes the side-effect of removing the Item while also returning it.
 
+<br/>
 
 # Joshua Bloch’s *Effective Java*
 In this section of the report, I will mention the most relevant points regarding Joshua Bloch's *Effective Java*. In the end of this section, I will also provide the list of items that I followed to the letter throughout the code.
@@ -693,6 +696,7 @@ if(gold < 0) {
 }
 ```
 
+<br/>
 
 # Design Patterns
 A lot of the design patterns implemented have been done so unconsciously with some exceptions.
@@ -873,6 +877,7 @@ public String sell(String itemName) {
 }
 ```
 
+<br/>
 
 # SOLID Principles
 ## Single-Responsibility Principle
@@ -926,6 +931,7 @@ This ensures that the specifics can be changed easily without touching this code
 
 See also [Item 64](#Item-64-Refer-to-objects-by-their-interfaces).
 
+<br/>
 
 # Google's Java Styling Guide
 ## Source file basics
@@ -944,6 +950,7 @@ The only thing I had to do here is to rename my JSON helper classes, methods, an
 
 In the end, I ran my code through a styler just to make sure that it satisfies Google’s Java Style Guide.
 
+<br/>
 
 # Data Structures
 The main data structure used in the game is obviously a graph. The rooms represent the nodes, while the doors represent the edges. The map actually represented a real-life graph.
@@ -955,3 +962,5 @@ The Map was mainly used to store the items by mapping the name (a String) to the
 While the Set and Queue were used to mark the visited nodes (rooms) and to queue the order of the visiting, respectively. Sets don’t allow duplication and Hashsets are extremely fast, so it makes sense to use it to mark visited rooms.
 
 Finally, lists were simply used as a way to save a collection of items, since it required no searching; it was the perfect data structure for that.
+
+<br/>
