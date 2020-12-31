@@ -1,3 +1,11 @@
+# Table of Contents
+1. [Robert C. Martin’s *Clean Code*](#robert-c-martins-clean-code)
+2. [Joshua Bloch’s *Effective Java*](#joshua-blochs-effective-java)
+3. [Design Patterns](#design-patterns)
+4. [SOLID Principles](#solid-principles)
+5. [Google's Java Styling Guide](#googles-java-styling-guide)
+6. [Data Structures](#data-structures)
+
 # Robert C. Martin’s *Clean Code*
 
 There was a fair amount of back and forth between writing code and reading Robert Martin’s *Clean Code*. In this section, I’ll go over some of the most relevant points in Chapter 17, *Smells and Heuristics*.
