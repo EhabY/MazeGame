@@ -3,7 +3,7 @@
 * `Command`
 * `ItemCommand`
 
-This package includes the interfaces used for command line parsing. Both classes have a single `execute` method.
+This package includes the interfaces used for command line parsing. Both interfaces have a single `execute` method.
 
 ## exceptions package
 * `InvalidUseOfItem`: thrown when the player tries to use an item in a place where it cannot be used, like using the wrong key or using a key with no *`Lockable`* object in-front of the player.
