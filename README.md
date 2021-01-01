@@ -200,3 +200,41 @@ Commands and names of items are case-insensitive
 * Quit
 * Restart
 
+
+## Example
+*savedMap.json* is the same map but with a further progression. Here's how to optimally play it:
+```
+Please enter map name: savedMap
+> look
+Seller
+> trade
+
+Trade initiated: 
+Items: [
+	1 x Monkee Key
+	1 x Dragon Glass Key
+]
+
+Price list: [
+	Monkee Key for $18
+	Flashlight for $5
+	Dragon Glass Key for $3
+]
+
+> buy Monkee Key
+Monkee Key bought and acquired
+> finish trade
+Exited trade mode
+> right
+Turned right
+> check
+Door is locked, Monkee key is needed to unlock
+> use Monkee key
+used Monkee key
+> forward
+Moved forward
+Congratulations! YOU WON!
+```
+
+`>` indicates a user input.
+
