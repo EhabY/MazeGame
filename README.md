@@ -3,7 +3,7 @@
 * `Command`
 * `ItemCommand`
 
-This package includes the interfaces used for command line parsing. Both classes have a single `execute` method.
+This package includes the interfaces used for command line parsing. Both interfaces have a single `execute` method.
 
 ## exceptions package
 * `InvalidUseOfItem`: thrown when the player tries to use an item in a place where it cannot be used, like using the wrong key or using a key with no *`Lockable`* object in-front of the player.
@@ -49,7 +49,7 @@ General utility classes for item formatting, JSON serialization, or checking the
 * `State`: Enum class for the state of the game. (EXPLORE, TRADE, WON, LOST)
 
 # How to Use
-Write a JSON map or use the included (simple) test map. The format of the map is intuitive if you follow this sample:
+Write a JSON map or use the included (simple) test map. The format of the map is intuitive if you follow this sample (time is in seconds):
 ```JSON
 {
   "mapConfiguration": {
