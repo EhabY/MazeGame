@@ -39,7 +39,7 @@ final class CheckVisitor implements CheckableVisitor {
   @Override
   public String visit(Door door) {
     if (door.isLocked()) {
-      return "Door is locked, " + door.getKeyName() + " is needed to unlock";
+      return "Door is locked, " + door.getKeyName() + " key is needed to unlock";
     } else {
       return "Door is open";
     }
