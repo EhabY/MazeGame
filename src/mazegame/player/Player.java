@@ -117,6 +117,10 @@ public class Player implements JsonSerializable {
     position.switchLight();
   }
 
+  public long getScore() {
+    return inventory.getScore();
+  }
+
   @Override
   public String toString() {
     return "Player status:\n" + "Facing " + position + "\n" + inventory.toString();

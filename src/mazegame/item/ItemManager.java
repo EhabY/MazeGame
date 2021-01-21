@@ -73,6 +73,15 @@ public class ItemManager implements JsonSerializable {
     }
   }
 
+  public List<Item> getItemList() {
+    List<Item> itemList = new ArrayList<>();
+    for(Map.Entry<String, List<Item>> entry : items.entrySet()) {
+      itemList.addAll(entry.getValue());
+    }
+
+    return itemList;
+  }
+
   @Override
   public String toString() {
     return ItemFormatter.formatItems(items);

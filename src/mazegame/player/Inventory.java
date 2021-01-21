@@ -7,8 +7,11 @@ import mazegame.item.Item;
 import mazegame.item.ItemManager;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 class Inventory implements JsonSerializable {
+  private static final long FLASHLIGHT_PRICE = 2;
+  private static final long KEY_PRICE = 10;
   private long gold;
   private final ItemManager itemManager;
 
@@ -72,6 +75,20 @@ class Inventory implements JsonSerializable {
 
   Item takeItem(String name) {
     return itemManager.takeFromItems(name);
+  }
+
+  long getScore() {
+    long score = getGold();
+    List<Item> itemList = itemManager.getItemList();
+    for(Item item : itemList) {
+      if("Flashlight".equalsIgnoreCase(item.getType())) {
+        score += FLASHLIGHT_PRICE;
+      } else if("Key".equalsIgnoreCase(item.getType())) {
+        score += KEY_PRICE;
+      }
+    }
+
+    return score;
   }
 
   @Override
