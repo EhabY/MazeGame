@@ -5,6 +5,7 @@ import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Flashlight;
 import mazegame.mapsite.DarkMapSite;
 import mazegame.mapsite.Door;
+import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
 import java.util.Objects;
@@ -26,18 +27,18 @@ class Position {
     direction = direction.right();
   }
 
-  void moveForward() {
+  Loot moveForward() {
     Door door = (Door) getMapSiteAhead();
-    goToNextRoom(door);
+    return goToNextRoom(door);
   }
 
   MapSite getMapSiteAhead() {
     return currentRoom.getMapSite(direction);
   }
 
-  void moveBackward() {
+  Loot moveBackward() {
     Door door = (Door) getMapSiteBehind();
-    goToNextRoom(door);
+    return goToNextRoom(door);
   }
 
   MapSite getMapSiteBehind() {
@@ -45,11 +46,12 @@ class Position {
     return currentRoom.getMapSite(oppositeDirection);
   }
 
-  private void goToNextRoom(Door door) {
+  private Loot goToNextRoom(Door door) {
     if (door.isLocked()) {
       throw new MapSiteLockedException("Door is locked");
     } else {
       currentRoom = door.getNextRoom(currentRoom);
+      return currentRoom.acquireLoot();
     }
   }
 

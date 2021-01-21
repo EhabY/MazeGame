@@ -5,6 +5,7 @@ import mazegame.JsonSerializable;
 import mazegame.item.Item;
 import mazegame.mapsite.Checkable;
 import mazegame.mapsite.Door;
+import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
 import java.util.Collections;
@@ -50,12 +51,16 @@ public class Player implements JsonSerializable {
     position.turnRight();
   }
 
-  public void moveForward() {
-    position.moveForward();
+  public String moveForward() {
+    Loot loot = position.moveForward();
+    inventory.addLoot(loot);
+    return loot.toString();
   }
 
-  public void moveBackward() {
-    position.moveBackward();
+  public String moveBackward() {
+    Loot loot = position.moveBackward();
+    inventory.addLoot(loot);
+    return loot.toString();
   }
 
   public Room getCurrentRoom() {

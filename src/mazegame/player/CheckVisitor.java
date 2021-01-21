@@ -30,9 +30,7 @@ final class CheckVisitor implements CheckableVisitor {
   @Override
   public String visit(Chest chest) {
     Loot loot = chest.acquireLoot();
-    inventory.addGold(loot.getGold());
-    inventory.addItems(loot.getItems());
-
+    inventory.addLoot(loot);
     return loot.toString();
   }
 

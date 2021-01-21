@@ -5,7 +5,7 @@ import mazegame.item.Item;
 import mazegame.item.Key;
 import java.util.List;
 
-public class Chest extends AbstractLockable implements Checkable {
+public class Chest extends AbstractLockable implements Checkable, Lootable {
   private static final String DESCRIPTION = "Chest";
   private Loot loot;
 
@@ -14,6 +14,7 @@ public class Chest extends AbstractLockable implements Checkable {
     this.loot = new Loot(gold, items);
   }
 
+  @Override
   public Loot acquireLoot() {
     if (isLocked()) {
       throw new MapSiteLockedException(

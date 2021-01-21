@@ -5,6 +5,7 @@ import mazegame.exceptions.NotEnoughGoldException;
 import mazegame.item.Flashlight;
 import mazegame.item.Item;
 import mazegame.item.ItemManager;
+import mazegame.mapsite.Loot;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -75,6 +76,11 @@ class Inventory implements JsonSerializable {
 
   Item takeItem(String name) {
     return itemManager.takeFromItems(name);
+  }
+
+  void addLoot(Loot loot) {
+    addItems(loot.getItems());
+    addGold(loot.getGold());
   }
 
   long getScore() {

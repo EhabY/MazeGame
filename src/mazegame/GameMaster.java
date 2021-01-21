@@ -70,9 +70,9 @@ public class GameMaster implements JsonSerializable {
   public String movePlayerForward() {
     Response response = ActionValidityChecker.canMove(player.getMapSiteAhead(), state);
     if (response.valid) {
-      player.moveForward();
+      String roomMessage = player.moveForward();
       updateWonState();
-      return "Moved forward";
+      return "Moved forward, " + roomMessage;
     } else {
       return response.message;
     }
@@ -89,9 +89,9 @@ public class GameMaster implements JsonSerializable {
   public String movePlayerBackward() {
     Response response = ActionValidityChecker.canMove(player.getMapSiteBehind(), state);
     if (response.valid) {
-      player.moveBackward();
+      String roomMessage = player.moveBackward();
       updateWonState();
-      return "Moved backward";
+      return "Moved forward, " + roomMessage;
     } else {
       return response.message;
     }

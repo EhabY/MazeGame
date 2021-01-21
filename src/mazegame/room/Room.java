@@ -2,22 +2,28 @@ package mazegame.room;
 
 import mazegame.Direction;
 import mazegame.JsonSerializable;
-import mazegame.mapsite.MapSite;
-import mazegame.mapsite.SerializableMapSite;
+import mazegame.mapsite.*;
+
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Room implements JsonSerializable {
+public class Room implements JsonSerializable, Lootable {
   private final int id;
   private final Map<Direction, SerializableMapSite> mapSites;
   private final LightSwitch lightSwitch;
+  private Loot loot;
 
   public Room(int id, Map<Direction, SerializableMapSite> mapSites, LightSwitch lightSwitch) {
+    this(id, mapSites, lightSwitch, new Loot(0));
+  }
+
+  public Room(int id, Map<Direction, SerializableMapSite> mapSites, LightSwitch lightSwitch, Loot loot) {
     this.id = id;
     this.mapSites = Collections.unmodifiableMap(new EnumMap<>(mapSites));
     this.lightSwitch = Objects.requireNonNull(lightSwitch);
+    this.loot = Objects.requireNonNull(loot);
   }
 
   public MapSite getMapSite(Direction direction) {
@@ -34,6 +40,13 @@ public class Room implements JsonSerializable {
 
   public int getId() {
     return id;
+  }
+
+  @Override
+  public Loot acquireLoot() {
+    Loot loot = this.loot;
+    this.loot = Loot.EMPTY_LOOT;
+    return loot;
   }
 
   @Override
