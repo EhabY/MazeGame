@@ -11,24 +11,27 @@ import java.util.Collections;
 import java.util.List;
 
 public class Player implements JsonSerializable {
+  private final String name;
   private final Position position;
   private final Inventory inventory;
   private final UseItemVisitor useItemVisitor;
   private final CheckVisitor checkVisitor;
 
-  public Player(Direction startingDirection, Room startingRoom) {
-    this(startingDirection, startingRoom, 0);
+  public Player(String name, Direction startingDirection, Room startingRoom) {
+    this(name, startingDirection, startingRoom, 0);
   }
 
-  public Player(Direction startingDirection, Room startingRoom, long initialGold) {
-    this(startingDirection, startingRoom, initialGold, Collections.emptyList());
+  public Player(String name, Direction startingDirection, Room startingRoom, long initialGold) {
+    this(name, startingDirection, startingRoom, initialGold, Collections.emptyList());
   }
 
   public Player(
+      String name,
       Direction startingDirection,
       Room startingRoom,
       long initialGold,
       List<? extends Item> initialItems) {
+    this.name = name;
     this.position = new Position(startingRoom, startingDirection);
     this.inventory = new Inventory(initialGold, initialItems);
     this.useItemVisitor = new UseItemVisitor(this);
@@ -119,6 +122,10 @@ public class Player implements JsonSerializable {
 
   public long getScore() {
     return inventory.getScore();
+  }
+
+  public String getName() {
+    return name;
   }
 
   @Override

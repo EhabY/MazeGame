@@ -28,6 +28,7 @@ public class GameMaster implements JsonSerializable {
     this.map = Objects.requireNonNull(map);
     this.player =
         new Player(
+            "PLACEHOLDER",
             map.getStartingOrientation(),
             map.getStartRoom(),
             map.getStartingGold(),
