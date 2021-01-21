@@ -74,12 +74,13 @@ public class Room implements JsonSerializable, Lootable {
       roomJson.append(",\"").append(direction.toString().toLowerCase()).append("\": ");
       roomJson.append(mapSites.get(direction).toJson());
     }
+    roomJson.append(",\"loot\": ").append(loot.toJson());
 
     return roomJson.toString() + "}";
   }
 
   @Override
   public String toString() {
-    return "Room{" + "id=" + id + ", lightSwitch=" + lightSwitch + '}';
+      return "Room{" + "id=" + id + ", lightSwitch=" + lightSwitch + ", loot=" + loot +  '}';
   }
 }

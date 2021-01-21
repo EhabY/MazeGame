@@ -20,6 +20,6 @@ public class NoLightSwitch extends LightSwitch {
 
   @Override
   public String toJson() {
-    return "{" + "\"hasLights\": false," + "\"lightsOn\": false" + "}";
+    return "{" + "\"hasLights\": false" + "}";
   }
 }

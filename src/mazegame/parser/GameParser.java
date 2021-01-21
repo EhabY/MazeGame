@@ -4,6 +4,7 @@ import mazegame.Direction;
 import mazegame.MazeMap;
 import mazegame.item.Item;
 import mazegame.mapsite.Door;
+import mazegame.mapsite.Loot;
 import mazegame.mapsite.SerializableMapSite;
 import mazegame.room.LightSwitch;
 import mazegame.room.NoLightSwitch;
@@ -57,8 +58,18 @@ public class GameParser {
 
   private static Room parseRoom(JSONObject roomJson) {
     int id = roomJson.getInt("id");
-    Map<Direction, SerializableMapSite> serializedMapSites = new EnumMap<>(Direction.class);
+    Map<Direction, SerializableMapSite> serializedMapSites = parseMapSitesInRoom(roomJson);
+    JSONObject lightswitch = roomJson.getJSONObject("lightswitch");
+    if(roomJson.has("loot")) {
+      JSONObject lootJson = roomJson.getJSONObject("loot");
+      return new Room(id, serializedMapSites, parseLightSwitch(lightswitch), ItemParser.parseLoot(lootJson));
+    } else {
+      return new Room(id, serializedMapSites, parseLightSwitch(lightswitch));
+    }
+  }
 
+  private static Map<Direction, SerializableMapSite> parseMapSitesInRoom(JSONObject roomJson) {
+    Map<Direction, SerializableMapSite> serializedMapSites = new EnumMap<>(Direction.class);
     for (Direction direction : Direction.values()) {
       String directionName = direction.toString().toLowerCase();
       JSONObject mapSiteJson = roomJson.getJSONObject(directionName);
@@ -67,8 +78,7 @@ public class GameParser {
       serializedMapSites.put(direction, mapSite);
     }
 
-    JSONObject lightswitch = roomJson.getJSONObject("lightswitch");
-    return new Room(id, serializedMapSites, parseLightSwitch(lightswitch));
+    return serializedMapSites;
   }
 
   private static LightSwitch parseLightSwitch(JSONObject lightswitchJson) {

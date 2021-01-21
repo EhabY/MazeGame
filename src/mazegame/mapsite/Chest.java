@@ -1,17 +1,16 @@
 package mazegame.mapsite;
 
 import mazegame.exceptions.MapSiteLockedException;
-import mazegame.item.Item;
 import mazegame.item.Key;
-import java.util.List;
+import java.util.Objects;
 
 public class Chest extends AbstractLockable implements Checkable, Lootable {
   private static final String DESCRIPTION = "Chest";
   private Loot loot;
 
-  public Chest(long gold, List<Item> items, Key key, boolean locked) {
+  public Chest(Loot loot, Key key, boolean locked) {
     super(key, locked);
-    this.loot = new Loot(gold, items);
+    this.loot = Objects.requireNonNull(loot);
   }
 
   @Override

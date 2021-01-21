@@ -3,6 +3,7 @@ package mazegame.parser;
 import mazegame.item.Flashlight;
 import mazegame.item.Item;
 import mazegame.item.Key;
+import mazegame.mapsite.Loot;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -48,5 +49,13 @@ class ItemParser {
   private static Key parseKey(JSONObject keyJson) {
     String name = keyJson.getString("name");
     return Key.fromString(name);
+  }
+
+  static Loot parseLoot(JSONObject lootJson) {
+    JSONArray itemsArray = lootJson.getJSONArray("items");
+    long gold = lootJson.getLong("gold");
+    List<Item> items = ItemParser.parseItemsArray(itemsArray);
+
+    return new Loot(gold, items);
   }
 }

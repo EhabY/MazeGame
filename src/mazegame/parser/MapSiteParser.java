@@ -50,7 +50,7 @@ class MapSiteParser {
     String keyName = doorJson.getString("key");
     int roomID = doorJson.getInt("roomID");
     int otherRoomID = doorJson.getInt("otherRoomID");
-    boolean locked = doorJson.getBoolean("locked");
+    boolean locked = isLockableLocked(doorJson);
 
     Door.Builder doorBuilder = new Door.Builder(Key.fromString(keyName), locked);
     doors.add(new DoorInfo(roomID, otherRoomID, doorBuilder));
@@ -58,20 +58,21 @@ class MapSiteParser {
     return doorBuilder.getDoor();
   }
 
+  private boolean isLockableLocked(JSONObject lockableJson) {
+    return lockableJson.getString("key").length() > 0 &&
+            (!lockableJson.has("locked") || lockableJson.getBoolean("locked"));
+  }
+
   private Wall parseWall(JSONObject wallJson) {
     return Wall.getInstance();
   }
 
   private Chest parseChest(JSONObject chestJson) {
-    JSONObject lootJson = chestJson.getJSONObject("loot");
-    JSONArray itemsArray = lootJson.getJSONArray("items");
-
-    long gold = lootJson.getLong("gold");
+    Loot loot = ItemParser.parseLoot(chestJson.getJSONObject("loot"));
     String keyName = chestJson.getString("key");
-    List<Item> items = ItemParser.parseItemsArray(itemsArray);
-    boolean locked = chestJson.getBoolean("locked");
+    boolean locked = isLockableLocked(chestJson);
 
-    return new Chest(gold, items, Key.fromString(keyName), locked);
+    return new Chest(loot, Key.fromString(keyName), locked);
   }
 
   private Painting parsePainting(JSONObject paintingJson) {
