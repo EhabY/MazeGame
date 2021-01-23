@@ -4,7 +4,6 @@ import mazegame.Direction;
 import mazegame.MazeMap;
 import mazegame.item.Item;
 import mazegame.mapsite.Door;
-import mazegame.mapsite.Loot;
 import mazegame.mapsite.SerializableMapSite;
 import mazegame.room.LightSwitch;
 import mazegame.room.NoLightSwitch;
@@ -16,10 +15,13 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class GameParser {
   private static Map<Integer, Room> rooms;
@@ -110,12 +112,25 @@ public class GameParser {
     long gold = mazeMapJson.getLong("gold");
     long timeInSeconds = mazeMapJson.getLong("time");
     List<Item> initialItems = ItemParser.parseItemsArray(mazeMapJson.getJSONArray("items"));
+    List<Room> endRooms = parseEndRooms(endRoomsJson);
 
-    return new MazeMap.Builder(rooms.values(), parseEndRooms(endRoomsJson))
+    return new MazeMap.Builder(getValidStartRooms(new HashSet<>(endRooms)), endRooms)
         .startingGold(gold)
         .initialItems(initialItems)
         .time(timeInSeconds)
         .build();
+  }
+
+  private static List<Room> getValidStartRooms(Set<Room> endingRooms) {
+    List<Room> startRooms = new ArrayList<>();
+    for(Room room : rooms.values()) {
+      if(!endingRooms.contains(room)) {
+        startRooms.add(room);
+      }
+    }
+
+    Collections.shuffle(startRooms);
+    return startRooms;
   }
 
   private static List<Room> parseEndRooms(JSONArray endRoomsJson) {

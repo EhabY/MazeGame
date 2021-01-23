@@ -10,21 +10,21 @@ import java.util.List;
 import java.util.Set;
 
 public class MazeMap {
-  private final Set<Room> rooms;
+  private final List<Room> rooms;
   private final Set<Room> endRooms;
   private final long startingGold;
   private final List<Item> initialItems;
   private final long time;
 
   public static class Builder {
-    private final Set<Room> rooms;
+    private final List<Room> rooms;
     private final Set<Room> endRooms;
     private long startingGold = 0;
     private List<Item> initialItems = new ArrayList<>();
     private long time = Long.MAX_VALUE;
 
     public Builder(Collection<Room> rooms, Collection<Room> endRooms) {
-      this.rooms = Collections.unmodifiableSet(new HashSet<>(rooms));
+      this.rooms = Collections.unmodifiableList(new ArrayList<>(rooms));
       this.endRooms = Collections.unmodifiableSet(new HashSet<>(endRooms));
     }
 
@@ -56,7 +56,7 @@ public class MazeMap {
     this.time = builder.time;
   }
 
-  public Set<Room> getRooms() {
+  public List<Room> getRooms() {
     return rooms;
   }
 
