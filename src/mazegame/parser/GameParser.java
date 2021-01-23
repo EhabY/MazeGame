@@ -15,6 +15,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.List;
@@ -105,18 +106,25 @@ public class GameParser {
 
   private static MazeMap parseMazeMap(JSONObject gameJson) {
     JSONObject mazeMapJson = gameJson.getJSONObject("mapConfiguration");
-    String orientation = mazeMapJson.getString("orientation").toUpperCase();
-    int startRoomID = mazeMapJson.getInt("startRoomID");
-    int endRoomID = mazeMapJson.getInt("endRoomID");
+    JSONArray endRoomsJson = gameJson.getJSONArray("endRoomsID");
     long gold = mazeMapJson.getLong("gold");
     long timeInSeconds = mazeMapJson.getLong("time");
     List<Item> initialItems = ItemParser.parseItemsArray(mazeMapJson.getJSONArray("items"));
 
-    return new MazeMap.Builder(
-            Direction.valueOf(orientation), rooms.get(startRoomID), rooms.get(endRoomID))
+    return new MazeMap.Builder(rooms.values(), parseEndRooms(endRoomsJson))
         .startingGold(gold)
         .initialItems(initialItems)
         .time(timeInSeconds)
         .build();
+  }
+
+  private static List<Room> parseEndRooms(JSONArray endRoomsJson) {
+    List<Room> endRooms = new ArrayList<>();
+    for (int i = 0; i < endRoomsJson.length(); i++) {
+      int roomID = endRoomsJson.getInt(i);
+      endRooms.add(rooms.get(roomID));
+    }
+
+    return endRooms;
   }
 }

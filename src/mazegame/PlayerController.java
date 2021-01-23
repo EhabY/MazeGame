@@ -13,6 +13,9 @@ import mazegame.util.ActionValidityChecker;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class PlayerController implements JsonSerializable {
   private final Player player;
@@ -21,17 +24,21 @@ public class PlayerController implements JsonSerializable {
   private TradeHandler tradeHandler;
   private State state;
 
-  public PlayerController(String username, MazeMap map) {
+  public PlayerController(String username, MazeMap map, Room startRoom) {
     this.map = Objects.requireNonNull(map);
     this.player =
         new Player(
                 username,
-            map.getStartingOrientation(),
-            map.getStartRoom(),
+                getRandomDirection(),
+                startRoom,
             map.getStartingGold(),
             map.getInitialItems());
     this.state = State.EXPLORE;
     this.gameStart = Instant.now();
+  }
+
+  private Direction getRandomDirection() {
+    return Direction.values()[new Random().nextInt(Direction.values().length)];
   }
 
   public State getGameState() {
@@ -60,8 +67,8 @@ public class PlayerController implements JsonSerializable {
   }
 
   private void updateWonState() {
-    Room endRoom = map.getEndRoom();
-    if (endRoom.equals(player.getCurrentRoom())) {
+    Set<Room> endRooms = map.getEndRooms();
+    if (endRooms.contains(player.getCurrentRoom())) {
       this.state = State.WON;
     }
   }
@@ -206,14 +213,19 @@ public class PlayerController implements JsonSerializable {
         + "\"startRoomID\": "
         + player.getCurrentRoom().getId()
         + ","
-        + "\"endRoomID\": "
-        + map.getEndRoom().getId()
+        + "\"endRoomsID\": "
+        + endRoomsToJson()
         + ","
         + "\"time\": "
         + (map.getTimeInSeconds() - timeElapsedInSeconds)
         + ","
         + player.toJson()
         + "}";
+  }
+
+  private String endRoomsToJson() {
+    return "[" + map.getEndRooms().stream().map(room -> String.valueOf(room.getId()))
+            .collect(Collectors.joining(",")) + "]";
   }
 
   @Override

@@ -5,28 +5,27 @@ import mazegame.room.Room;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class MazeMap {
-  private final Direction startingOrientation;
-  private final Room startRoom;
-  private final Room endRoom;
+  private final Set<Room> rooms;
+  private final Set<Room> endRooms;
   private final long startingGold;
   private final List<Item> initialItems;
   private final long time;
 
   public static class Builder {
-    private final Direction startingOrientation;
-    private final Room startRoom;
-    private final Room endRoom;
+    private final Set<Room> rooms;
+    private final Set<Room> endRooms;
     private long startingGold = 0;
     private List<Item> initialItems = new ArrayList<>();
     private long time = Long.MAX_VALUE;
 
-    public Builder(Direction startingOrientation, Room startRoom, Room endRoom) {
-      this.startingOrientation = startingOrientation;
-      this.startRoom = startRoom;
-      this.endRoom = endRoom;
+    public Builder(Collection<Room> rooms, Collection<Room> endRooms) {
+      this.rooms = Collections.unmodifiableSet(new HashSet<>(rooms));
+      this.endRooms = Collections.unmodifiableSet(new HashSet<>(endRooms));
     }
 
     public Builder startingGold(long gold) {
@@ -50,24 +49,19 @@ public class MazeMap {
   }
 
   private MazeMap(Builder builder) {
-    this.startingOrientation = builder.startingOrientation;
-    this.startRoom = builder.startRoom;
-    this.endRoom = builder.endRoom;
+    this.rooms = builder.rooms;
+    this.endRooms = builder.endRooms;
     this.startingGold = builder.startingGold;
     this.initialItems = builder.initialItems;
     this.time = builder.time;
   }
 
-  public Direction getStartingOrientation() {
-    return startingOrientation;
+  public Set<Room> getRooms() {
+    return rooms;
   }
 
-  public Room getStartRoom() {
-    return startRoom;
-  }
-
-  public Room getEndRoom() {
-    return endRoom;
+  public Set<Room> getEndRooms() {
+    return endRooms;
   }
 
   public long getStartingGold() {
@@ -85,12 +79,8 @@ public class MazeMap {
   @Override
   public String toString() {
     return "MazeMap{"
-        + "startingOrientation="
-        + startingOrientation
-        + ", startRoom="
-        + startRoom
-        + ", endRoom="
-        + endRoom
+        + "endRooms="
+        + endRooms
         + ", startingGold="
         + startingGold
         + ", initialItems="
