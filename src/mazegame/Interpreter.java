@@ -83,7 +83,7 @@ public class Interpreter {
   }
 
   private static PlayerController loadGameState(String filename) throws IOException {
-    return new PlayerController(GameParser.parseJsonFile(filename + ".json"));
+    return new PlayerController("PLACEHOLDER", GameParser.parseJsonFile(filename + ".json"));
   }
 
   private static void saveGameState(String filename) throws IOException {

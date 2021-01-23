@@ -21,11 +21,11 @@ public class PlayerController implements JsonSerializable {
   private TradeHandler tradeHandler;
   private State state;
 
-  public PlayerController(MazeMap map) {
+  public PlayerController(String username, MazeMap map) {
     this.map = Objects.requireNonNull(map);
     this.player =
         new Player(
-            "PLACEHOLDER",
+                username,
             map.getStartingOrientation(),
             map.getStartRoom(),
             map.getStartingGold(),
