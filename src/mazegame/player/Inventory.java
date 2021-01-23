@@ -78,6 +78,10 @@ class Inventory implements JsonSerializable {
     return itemManager.takeFromItems(name);
   }
 
+  Loot getInventoryAsLoot() {
+    return new Loot(getGold(), itemManager.getItemList());
+  }
+
   void addLoot(Loot loot) {
     addItems(loot.getItems());
     addGold(loot.getGold());

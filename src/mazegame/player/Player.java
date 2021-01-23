@@ -129,6 +129,10 @@ public class Player implements JsonSerializable {
     return inventory.getScore();
   }
 
+  public Loot getLoot() {
+    return inventory.getInventoryAsLoot();
+  }
+
   public String getName() {
     return name;
   }
