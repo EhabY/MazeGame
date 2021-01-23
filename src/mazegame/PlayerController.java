@@ -13,18 +13,15 @@ import mazegame.util.ActionValidityChecker;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
-import java.util.Timer;
-import java.util.TimerTask;
 
-public class GameMaster implements JsonSerializable {
+public class PlayerController implements JsonSerializable {
   private final Player player;
   private final MazeMap map;
-  private final Timer timer;
   private final Instant gameStart;
   private TradeHandler tradeHandler;
   private State state;
 
-  public GameMaster(MazeMap map) {
+  public PlayerController(MazeMap map) {
     this.map = Objects.requireNonNull(map);
     this.player =
         new Player(
@@ -35,22 +32,6 @@ public class GameMaster implements JsonSerializable {
             map.getInitialItems());
     this.state = State.EXPLORE;
     this.gameStart = Instant.now();
-    this.timer = initializeTimer();
-  }
-
-  private Timer initializeTimer() {
-    TimerTask setStateLost =
-        new TimerTask() {
-          public void run() {
-            state = State.LOST;
-            timer.cancel();
-          }
-        };
-    Timer timer = new Timer("Game timer");
-    long timeInMilliseconds = map.getTimeInSeconds() * 1000;
-    timer.schedule(setStateLost, timeInMilliseconds);
-
-    return timer;
   }
 
   public State getGameState() {
@@ -82,7 +63,6 @@ public class GameMaster implements JsonSerializable {
     Room endRoom = map.getEndRoom();
     if (endRoom.equals(player.getCurrentRoom())) {
       this.state = State.WON;
-      timer.cancel();
     }
   }
 
@@ -238,7 +218,7 @@ public class GameMaster implements JsonSerializable {
 
   @Override
   public String toString() {
-    return "GameMaster{"
+    return "PlayerController{"
         + "player="
         + player
         + ", map="
@@ -247,8 +227,6 @@ public class GameMaster implements JsonSerializable {
         + tradeHandler
         + ", state="
         + state
-        + ", timer="
-        + timer
         + ", gameStart="
         + gameStart
         + '}';

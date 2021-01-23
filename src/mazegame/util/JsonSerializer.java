@@ -1,7 +1,7 @@
 package mazegame.util;
 
 import mazegame.Direction;
-import mazegame.GameMaster;
+import mazegame.PlayerController;
 import mazegame.JsonSerializable;
 import mazegame.mapsite.Door;
 import mazegame.mapsite.MapSite;
@@ -19,15 +19,15 @@ public class JsonSerializer {
 
   private JsonSerializer() {}
 
-  public static String serializeGameState(GameMaster gamemaster) {
+  public static String serializeGameState(PlayerController playerController) {
     visitedRooms = new HashSet<>();
     roomsQueue = new ArrayDeque<>();
     roomsJson = new StringBuilder();
 
-    Room currentRoom = gamemaster.getCurrentRoom();
+    Room currentRoom = playerController.getCurrentRoom();
     serializeRooms(currentRoom);
 
-    return "{" + gamemaster.toJson() + ",\"rooms\": [" + removeTrailingChar(roomsJson) + "]" + "}";
+    return "{" + playerController.toJson() + ",\"rooms\": [" + removeTrailingChar(roomsJson) + "]" + "}";
   }
 
   private static void serializeRooms(Room startRoom) {

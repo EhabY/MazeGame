@@ -13,7 +13,7 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class Interpreter {
-  private static GameMaster gameMaster;
+  private static PlayerController playerController;
   private static final Map<String, Command> generalCommands = new CaseInsensitiveMap<>();
   private static final Map<String, ItemCommand> itemCommands = new CaseInsensitiveMap<>();
 
@@ -24,7 +24,7 @@ public class Interpreter {
     try {
       System.out.print("Please enter map name: ");
       String mapName = in.nextLine();
-      gameMaster = loadGameState(mapName);
+      playerController = loadGameState(mapName);
       while(gameHasNotEnded()) {
         System.out.print("> ");
         String command = in.nextLine();
@@ -38,14 +38,14 @@ public class Interpreter {
         } else if(words[0].equalsIgnoreCase("quit")) {
           break;
         } else if(words[0].equalsIgnoreCase("restart")) {
-          gameMaster = loadGameState(mapName);
+          playerController = loadGameState(mapName);
         } else {
           System.out.println("Unknown command: " + command);
         }
 
       }
 
-      if(gameMaster.getGameState() == State.WON) {
+      if(playerController.getGameState() == State.WON) {
         System.out.println("Congratulations! YOU WON!");
       } else {
         System.out.println("Too bad, you lost!");
@@ -57,36 +57,36 @@ public class Interpreter {
   }
 
   private static void initializeCommandMaps() {
-    generalCommands.put("left", () -> System.out.println(gameMaster.turnPlayerLeft()));
-    generalCommands.put("right", () -> System.out.println(gameMaster.turnPlayerRight()));
-    generalCommands.put("forward", () -> System.out.println(gameMaster.movePlayerForward()));
-    generalCommands.put("backward", () -> System.out.println(gameMaster.movePlayerBackward()));
-    generalCommands.put("playerstatus", () -> System.out.println(gameMaster.getPlayerStatus()));
-    generalCommands.put("look", () -> System.out.println(gameMaster.look()));
-    generalCommands.put("check", () -> System.out.println(gameMaster.check()));
-    generalCommands.put("check mirror", () -> System.out.println(gameMaster.check()));
-    generalCommands.put("check painting", () -> System.out.println(gameMaster.check()));
-    generalCommands.put("check chest", () -> System.out.println(gameMaster.check()));
-    generalCommands.put("check door", () -> System.out.println(gameMaster.check()));
-    generalCommands.put("open", () -> System.out.println(gameMaster.openDoor()));
-    generalCommands.put("trade", () -> System.out.println(gameMaster.initiateTrade()));
-    generalCommands.put("list", () -> System.out.println(gameMaster.listSellerItems()));
-    generalCommands.put("finish trade", () -> System.out.println(gameMaster.finishTrade()));
-    generalCommands.put("switchlights", () -> System.out.println(gameMaster.switchLights()));
-    itemCommands.put("buy", (itemName) -> System.out.println(gameMaster.buyItem(itemName)));
-    itemCommands.put("sell", (itemName) -> System.out.println(gameMaster.sellItem(itemName)));
-    itemCommands.put("use", (itemName) -> System.out.println(gameMaster.useItem(itemName)));
+    generalCommands.put("left", () -> System.out.println(playerController.turnPlayerLeft()));
+    generalCommands.put("right", () -> System.out.println(playerController.turnPlayerRight()));
+    generalCommands.put("forward", () -> System.out.println(playerController.movePlayerForward()));
+    generalCommands.put("backward", () -> System.out.println(playerController.movePlayerBackward()));
+    generalCommands.put("playerstatus", () -> System.out.println(playerController.getPlayerStatus()));
+    generalCommands.put("look", () -> System.out.println(playerController.look()));
+    generalCommands.put("check", () -> System.out.println(playerController.check()));
+    generalCommands.put("check mirror", () -> System.out.println(playerController.check()));
+    generalCommands.put("check painting", () -> System.out.println(playerController.check()));
+    generalCommands.put("check chest", () -> System.out.println(playerController.check()));
+    generalCommands.put("check door", () -> System.out.println(playerController.check()));
+    generalCommands.put("open", () -> System.out.println(playerController.openDoor()));
+    generalCommands.put("trade", () -> System.out.println(playerController.initiateTrade()));
+    generalCommands.put("list", () -> System.out.println(playerController.listSellerItems()));
+    generalCommands.put("finish trade", () -> System.out.println(playerController.finishTrade()));
+    generalCommands.put("switchlights", () -> System.out.println(playerController.switchLights()));
+    itemCommands.put("buy", (itemName) -> System.out.println(playerController.buyItem(itemName)));
+    itemCommands.put("sell", (itemName) -> System.out.println(playerController.sellItem(itemName)));
+    itemCommands.put("use", (itemName) -> System.out.println(playerController.useItem(itemName)));
   }
 
   private static boolean gameHasNotEnded() {
-    return gameMaster.getGameState() != State.LOST && gameMaster.getGameState() != State.WON;
+    return playerController.getGameState() != State.LOST && playerController.getGameState() != State.WON;
   }
 
-  private static GameMaster loadGameState(String filename) throws IOException {
-    return new GameMaster(GameParser.parseJsonFile(filename + ".json"));
+  private static PlayerController loadGameState(String filename) throws IOException {
+    return new PlayerController(GameParser.parseJsonFile(filename + ".json"));
   }
 
   private static void saveGameState(String filename) throws IOException {
-    Files.write(Paths.get(filename + ".json"), JsonSerializer.serializeGameState(gameMaster).getBytes(StandardCharsets.UTF_8));
+    Files.write(Paths.get(filename + ".json"), JsonSerializer.serializeGameState(playerController).getBytes(StandardCharsets.UTF_8));
   }
 }
