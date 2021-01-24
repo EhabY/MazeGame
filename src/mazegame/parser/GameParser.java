@@ -108,38 +108,16 @@ public class GameParser {
 
   private static MazeMap parseMazeMap(JSONObject gameJson) {
     JSONObject mazeMapJson = gameJson.getJSONObject("mapConfiguration");
-    JSONArray endRoomsJson = gameJson.getJSONArray("endRoomsID");
     long gold = mazeMapJson.getLong("gold");
     long timeInSeconds = mazeMapJson.getLong("time");
     List<Item> initialItems = ItemParser.parseItemsArray(mazeMapJson.getJSONArray("items"));
-    List<Room> endRooms = parseEndRooms(endRoomsJson);
+    Room endRoom = rooms.get(gameJson.getInt("endRoomID"));
 
-    return new MazeMap.Builder(getValidStartRooms(new HashSet<>(endRooms)), endRooms)
+    return new MazeMap.Builder(rooms.values(), endRoom)
         .startingGold(gold)
         .initialItems(initialItems)
         .time(timeInSeconds)
         .build();
   }
 
-  private static List<Room> getValidStartRooms(Set<Room> endingRooms) {
-    List<Room> startRooms = new ArrayList<>();
-    for(Room room : rooms.values()) {
-      if(!endingRooms.contains(room)) {
-        startRooms.add(room);
-      }
-    }
-
-    Collections.shuffle(startRooms);
-    return startRooms;
-  }
-
-  private static List<Room> parseEndRooms(JSONArray endRoomsJson) {
-    List<Room> endRooms = new ArrayList<>();
-    for (int i = 0; i < endRoomsJson.length(); i++) {
-      int roomID = endRoomsJson.getInt(i);
-      endRooms.add(rooms.get(roomID));
-    }
-
-    return endRooms;
-  }
 }

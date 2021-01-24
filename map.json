@@ -1,7 +1,7 @@
 {
 	"mapConfiguration": {
 		"startRoomID": 1,
-		"endRoomsID": [3],
+		"endRoomID": 3,
 		"time": 1000,
 		"orientation": "north",
 		"gold": 2,

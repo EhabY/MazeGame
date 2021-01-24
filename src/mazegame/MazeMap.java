@@ -11,21 +11,28 @@ import java.util.Set;
 
 public class MazeMap {
   private final List<Room> rooms;
-  private final Set<Room> endRooms;
+  private final Room endRoom;
   private final long startingGold;
   private final List<Item> initialItems;
   private final long time;
 
   public static class Builder {
     private final List<Room> rooms;
-    private final Set<Room> endRooms;
+    private final Room endRoom;
     private long startingGold = 0;
     private List<Item> initialItems = new ArrayList<>();
     private long time = Long.MAX_VALUE;
 
-    public Builder(Collection<Room> rooms, Collection<Room> endRooms) {
-      this.rooms = Collections.unmodifiableList(new ArrayList<>(rooms));
-      this.endRooms = Collections.unmodifiableSet(new HashSet<>(endRooms));
+    public Builder(Collection<Room> rooms, Room endRoom) {
+      this.rooms = getRandomizedStartRooms(rooms, endRoom);
+      this.endRoom = endRoom;
+    }
+
+    private List<Room> getRandomizedStartRooms(Collection<Room> rooms, Room endRoom) {
+      List<Room> startRooms = new ArrayList<>(rooms);
+      startRooms.remove(endRoom);
+      Collections.shuffle(startRooms);
+      return Collections.unmodifiableList(startRooms);
     }
 
     public Builder startingGold(long gold) {
@@ -50,7 +57,7 @@ public class MazeMap {
 
   private MazeMap(Builder builder) {
     this.rooms = builder.rooms;
-    this.endRooms = builder.endRooms;
+    this.endRoom = builder.endRoom;
     this.startingGold = builder.startingGold;
     this.initialItems = builder.initialItems;
     this.time = builder.time;
@@ -60,8 +67,8 @@ public class MazeMap {
     return rooms;
   }
 
-  public Set<Room> getEndRooms() {
-    return endRooms;
+  public Room getEndRoom() {
+    return endRoom;
   }
 
   public long getStartingGold() {
@@ -79,8 +86,8 @@ public class MazeMap {
   @Override
   public String toString() {
     return "MazeMap{"
-        + "endRooms="
-        + endRooms
+        + "endRoom="
+        + endRoom
         + ", startingGold="
         + startingGold
         + ", initialItems="

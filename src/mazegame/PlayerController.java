@@ -67,8 +67,8 @@ public class PlayerController implements JsonSerializable {
   }
 
   private void updateWonState() {
-    Set<Room> endRooms = map.getEndRooms();
-    if (endRooms.contains(player.getCurrentRoom())) {
+    Room endRoom = map.getEndRoom();
+    if (endRoom.equals(player.getCurrentRoom())) {
       this.state = State.WON;
     }
   }
@@ -213,19 +213,14 @@ public class PlayerController implements JsonSerializable {
         + "\"startRoomID\": "
         + player.getCurrentRoom().getId()
         + ","
-        + "\"endRoomsID\": "
-        + endRoomsToJson()
+        + "\"endRoomID\": "
+        + map.getEndRoom().getId()
         + ","
         + "\"time\": "
         + (map.getTimeInSeconds() - timeElapsedInSeconds)
         + ","
         + player.toJson()
         + "}";
-  }
-
-  private String endRoomsToJson() {
-    return "[" + map.getEndRooms().stream().map(room -> String.valueOf(room.getId()))
-            .collect(Collectors.joining(",")) + "]";
   }
 
   @Override
