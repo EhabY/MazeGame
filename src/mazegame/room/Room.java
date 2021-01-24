@@ -43,7 +43,7 @@ public class Room implements JsonSerializable, Lootable {
   }
 
   @Override
-  public Loot acquireLoot() {
+  public synchronized Loot acquireLoot() {
     Loot loot = this.loot;
     this.loot = Loot.EMPTY_LOOT;
     return loot;

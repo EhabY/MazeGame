@@ -65,7 +65,7 @@ public class PlayerController implements JsonSerializable {
       return response.message;
     }
   }
-
+  // TODO: synchronize this operation across players
   private void updateWonState() {
     Room endRoom = map.getEndRoom();
     if (endRoom.equals(player.getCurrentRoom())) {
