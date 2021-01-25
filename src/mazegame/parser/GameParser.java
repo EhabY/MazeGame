@@ -111,7 +111,7 @@ public class GameParser {
     long gold = mazeMapJson.getLong("gold");
     long timeInSeconds = mazeMapJson.getLong("time");
     List<Item> initialItems = ItemParser.parseItemsArray(mazeMapJson.getJSONArray("items"));
-    Room endRoom = rooms.get(gameJson.getInt("endRoomID"));
+    Room endRoom = rooms.get(mazeMapJson.getInt("endRoomID"));
 
     return new MazeMap.Builder(rooms.values(), endRoom)
         .startingGold(gold)

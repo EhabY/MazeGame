@@ -1,5 +1,5 @@
 package mazegame.cli;
 
 public interface Command {
-  void execute();
+  String execute();
 }
