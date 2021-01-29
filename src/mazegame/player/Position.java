@@ -47,12 +47,8 @@ class Position {
   }
 
   private Loot goToNextRoom(Door door) {
-    if (door.isLocked()) {
-      throw new MapSiteLockedException("Door is locked");
-    } else {
-      currentRoom = door.getNextRoom(currentRoom);
-      return currentRoom.acquireLoot();
-    }
+    currentRoom = door.getNextRoom(currentRoom);
+    return currentRoom.acquireLoot();
   }
 
   MapSite lookAheadWithFlashlight(Flashlight flashlight) {

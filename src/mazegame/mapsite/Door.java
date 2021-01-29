@@ -1,5 +1,6 @@
 package mazegame.mapsite;
 
+import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import mazegame.room.Room;
 
@@ -33,6 +34,11 @@ public class Door extends AbstractLockable implements Checkable {
   }
 
   public Room getNextRoom(Room roomFrom) {
+    if(isLocked()) {
+      throw new MapSiteLockedException(
+              "Door locked, " + getKeyName() + " key is needed to unlock");
+    }
+
     if (roomFrom.equals(this.room)) {
       return this.otherRoom;
     } else if (roomFrom.equals(this.otherRoom)) {

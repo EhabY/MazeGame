@@ -3,6 +3,7 @@ package mazegame.util;
 import mazegame.Direction;
 import mazegame.PlayerController;
 import mazegame.JsonSerializable;
+import mazegame.item.Key;
 import mazegame.mapsite.Door;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
@@ -53,13 +54,33 @@ public class JsonSerializer {
   private static void tryToVisitNextRoom(MapSite mapSite, Room currentRoom) {
     if (isDoor(mapSite)) {
       Door door = (Door) mapSite;
-      Room nextRoom = door.getNextRoom(currentRoom);
+      Room nextRoom = getRoomOnOtherSide(door, currentRoom);
       visitRoom(nextRoom);
     }
   }
 
   private static boolean isDoor(MapSite mapSite) {
     return mapSite instanceof Door;
+  }
+
+  private static Room getRoomOnOtherSide(Door door, Room room) {
+    boolean toggled = toggleIfLocked(door);
+    Room otherRoom = door.getNextRoom(room);
+
+    if(toggled) {
+      door.toggleLock(Key.MASTER_KEY);
+    }
+
+    return otherRoom;
+  }
+
+  private static boolean toggleIfLocked(Door door) {
+    if(door.isLocked()) {
+      door.toggleLock(Key.MASTER_KEY);
+      return true;
+    }
+
+    return false;
   }
 
   private static void visitRoom(Room room) {
