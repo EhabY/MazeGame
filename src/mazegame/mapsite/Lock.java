@@ -21,7 +21,9 @@ public class Lock implements Lockable {
   @Override
   public void toggleLock(Key key) {
     if (canToggleLock(key)) {
-      locked = !locked;
+      synchronized (this) {
+        locked = !locked;
+      }
     } else {
       throw new InvalidUseOfItem("Key doesn't match the lock");
     }
@@ -36,7 +38,7 @@ public class Lock implements Lockable {
   }
 
   @Override
-  public boolean isLocked() {
+  public synchronized boolean isLocked() {
     return locked;
   }
 

@@ -14,7 +14,7 @@ public final class Key implements Item {
     this.name = Objects.requireNonNull(name);
   }
 
-  public static Key fromString(String name) {
+  public static synchronized Key fromString(String name) {
     if (isNewKey(name)) {
       pool.put(name, new Key(name));
     }
