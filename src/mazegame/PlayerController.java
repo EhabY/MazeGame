@@ -5,6 +5,7 @@ import mazegame.exceptions.ItemNotFoundException;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.exceptions.NoLightsException;
 import mazegame.exceptions.NotEnoughGoldException;
+import mazegame.mapsite.Loot;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
 import mazegame.room.Room;
@@ -14,8 +15,6 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Objects;
 import java.util.Random;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public class PlayerController implements JsonSerializable {
   private final Player player;
@@ -204,6 +203,19 @@ public class PlayerController implements JsonSerializable {
 
   public Room getCurrentRoom() {
     return player.getCurrentRoom();
+  }
+
+  public long getScore() {
+    return player.getScore();
+  }
+
+  public void addLoot(Loot loot) {
+    player.addLoot(loot);
+  }
+
+  public Loot getLoot() {
+    state = State.LOST;
+    return player.getLoot();
   }
 
   @Override
