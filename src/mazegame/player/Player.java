@@ -54,13 +54,13 @@ public class Player implements JsonSerializable {
   public String moveForward() {
     Loot loot = position.moveForward();
     inventory.addLoot(loot);
-    return loot.toString();
+    return loot.equals(Loot.EMPTY_LOOT) ? "" : loot.toString();
   }
 
   public String moveBackward() {
     Loot loot = position.moveBackward();
     inventory.addLoot(loot);
-    return loot.toString();
+    return loot.equals(Loot.EMPTY_LOOT) ? "" : loot.toString();
   }
 
   public Room getCurrentRoom() {

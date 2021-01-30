@@ -55,31 +55,36 @@ public class PlayerController implements JsonSerializable {
   }
 
   public String movePlayerForward() {
-    Response response = ActionValidityChecker.canMove(player.getMapSiteAhead(), state);
+    Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), state);
     if (response.valid) {
-      String roomMessage = player.moveForward();
-      updateWonState();
-      return "Moved forward, " + roomMessage;
+      return tryToMoveForward();
     } else {
       return response.message;
     }
   }
-  // TODO: synchronize this operation across players
-  private void updateWonState() {
-    Room endRoom = map.getEndRoom();
-    if (endRoom.equals(player.getCurrentRoom())) {
-      this.state = State.WON;
+
+  private String tryToMoveForward() {
+    try {
+      return "Moved forward\n" + player.moveForward();
+    } catch (MapSiteLockedException mapSiteLockedException) {
+      return mapSiteLockedException.getMessage();
     }
   }
 
   public String movePlayerBackward() {
-    Response response = ActionValidityChecker.canMove(player.getMapSiteBehind(), state);
+    Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteBehind(), state);
     if (response.valid) {
-      String roomMessage = player.moveBackward();
-      updateWonState();
-      return "Moved forward, " + roomMessage;
+      return tryToMoveBackward();
     } else {
       return response.message;
+    }
+  }
+
+  private String tryToMoveBackward() {
+    try {
+      return "Moved backward\n" + player.moveBackward();
+    } catch (MapSiteLockedException mapSiteLockedException) {
+      return mapSiteLockedException.getMessage();
     }
   }
 

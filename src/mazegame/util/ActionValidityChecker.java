@@ -10,20 +10,6 @@ import mazegame.mapsite.Seller;
 public class ActionValidityChecker {
   private ActionValidityChecker() {}
 
-  public static Response canMove(MapSite mapSite, State state) {
-    Response response = canOpenDoor(mapSite, state);
-    if (!response.valid) {
-      return response;
-    }
-
-    Door door = (Door) mapSite;
-    if (door.isLocked()) {
-      return new Response(false, "Door is locked");
-    }
-
-    return Response.VALID_RESPONSE;
-  }
-
   public static Response canOpenDoor(MapSite mapSite, State state) {
     if (state != State.EXPLORE) {
       return new Response(
