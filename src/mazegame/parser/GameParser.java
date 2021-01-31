@@ -14,43 +14,39 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 public class GameParser {
-  private static Map<Integer, Room> rooms;
-  private static MapSiteParser mapSiteParser;
+  private final Map<Integer, Room> rooms;
+  private final MapSiteParser mapSiteParser;
 
   public static MazeMap parseJsonFile(String pathToFile) throws IOException {
-    initialize();
-    String jsonString = readWholeFile(pathToFile);
+    GameParser gameParser = new GameParser();
+    String jsonString = gameParser.readWholeFile(pathToFile);
     JSONObject gameJson = new JSONObject(jsonString);
-    parseAllRooms(gameJson);
-    return parseMazeMap(gameJson);
+    gameParser.parseAllRooms(gameJson);
+    return gameParser.parseMazeMap(gameJson);
   }
 
-  private static void initialize() {
+  private GameParser() {
     rooms = new HashMap<>();
     mapSiteParser = new MapSiteParser();
   }
 
-  private static String readWholeFile(String pathToFile) throws IOException {
+  private String readWholeFile(String pathToFile) throws IOException {
     return new String(Files.readAllBytes(Paths.get(pathToFile)), StandardCharsets.UTF_8);
   }
 
-  private static void parseAllRooms(JSONObject gameJson) {
+  private void parseAllRooms(JSONObject gameJson) {
     JSONArray roomsJson = gameJson.getJSONArray("rooms");
     Map<Integer, Room> roomsMap = parseRoomsArray(roomsJson);
     setRoomsInDoors(roomsMap);
   }
 
-  private static Map<Integer, Room> parseRoomsArray(JSONArray roomsJson) {
+  private Map<Integer, Room> parseRoomsArray(JSONArray roomsJson) {
     for (int i = 0; i < roomsJson.length(); i++) {
       Room room = parseRoom(roomsJson.getJSONObject(i));
       rooms.put(room.getId(), room);
@@ -59,7 +55,7 @@ public class GameParser {
     return rooms;
   }
 
-  private static Room parseRoom(JSONObject roomJson) {
+  private Room parseRoom(JSONObject roomJson) {
     int id = roomJson.getInt("id");
     Map<Direction, SerializableMapSite> serializedMapSites = parseMapSitesInRoom(roomJson);
     JSONObject lightswitch = roomJson.getJSONObject("lightswitch");
@@ -71,7 +67,7 @@ public class GameParser {
     }
   }
 
-  private static Map<Direction, SerializableMapSite> parseMapSitesInRoom(JSONObject roomJson) {
+  private Map<Direction, SerializableMapSite> parseMapSitesInRoom(JSONObject roomJson) {
     Map<Direction, SerializableMapSite> serializedMapSites = new EnumMap<>(Direction.class);
     for (Direction direction : Direction.values()) {
       String directionName = direction.toString().toLowerCase();
@@ -84,7 +80,7 @@ public class GameParser {
     return serializedMapSites;
   }
 
-  private static LightSwitch parseLightSwitch(JSONObject lightswitchJson) {
+  private LightSwitch parseLightSwitch(JSONObject lightswitchJson) {
     boolean hasLights = lightswitchJson.getBoolean("hasLights");
     if (hasLights) {
       boolean lightsOn = lightswitchJson.getBoolean("lightsOn");
@@ -94,7 +90,7 @@ public class GameParser {
     }
   }
 
-  private static void setRoomsInDoors(Map<Integer, Room> rooms) {
+  private void setRoomsInDoors(Map<Integer, Room> rooms) {
     List<MapSiteParser.DoorInfo> doors = mapSiteParser.doors;
     for (MapSiteParser.DoorInfo doorInfo : doors) {
       int roomID = doorInfo.roomID;
@@ -106,7 +102,7 @@ public class GameParser {
     }
   }
 
-  private static MazeMap parseMazeMap(JSONObject gameJson) {
+  private MazeMap parseMazeMap(JSONObject gameJson) {
     JSONObject mazeMapJson = gameJson.getJSONObject("mapConfiguration");
     long gold = mazeMapJson.getLong("gold");
     long timeInSeconds = mazeMapJson.getLong("time");
