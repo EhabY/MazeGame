@@ -10,5 +10,9 @@
     <orderEntry type="library" name="org.json:json:20201115" level="project" />
     <orderEntry type="library" name="com.guicedee.services:commons-collections4:1.0.6.2" level="project" />
     <orderEntry type="library" name="org.apache.commons:commons-text:1.8" level="project" />
+    <orderEntry type="library" name="com.sparkjava:spark-core:2.9.3" level="project" />
+    <orderEntry type="library" name="org.thymeleaf:thymeleaf:3.0.12.RELEASE" level="project" />
+    <orderEntry type="library" name="org.thymeleaf.extras:thymeleaf-extras-java8time:3.0.4.RELEASE" level="project" />
+    <orderEntry type="library" name="ch.qos.logback:logback-classic:1.2.3" level="project" />
   </component>
 </module>
