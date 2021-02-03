@@ -4,7 +4,6 @@ import mazegame.Direction;
 import mazegame.JsonSerializable;
 import mazegame.item.Item;
 import mazegame.mapsite.Checkable;
-import mazegame.mapsite.Door;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;

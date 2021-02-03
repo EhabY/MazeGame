@@ -3,18 +3,10 @@ package mazegame;
 import mazegame.events.GameEvent;
 import mazegame.events.MoveListener;
 import mazegame.events.StateListener;
-import mazegame.exceptions.InvalidUseOfItem;
-import mazegame.exceptions.ItemNotFoundException;
-import mazegame.exceptions.MapSiteLockedException;
-import mazegame.exceptions.NoLightsException;
-import mazegame.exceptions.NotEnoughGoldException;
-import mazegame.mapsite.Door;
 import mazegame.mapsite.Loot;
-import mazegame.mapsite.Seller;
 import mazegame.player.Player;
 import mazegame.room.Room;
 import mazegame.trade.TradeHandler;
-import mazegame.util.ActionValidityChecker;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -30,7 +22,7 @@ public class PlayerController implements JsonSerializable {
   private TradeHandler tradeHandler;
   private State state = State.EXPLORE;
   private final Instant gameStart = Instant.now();
-  ExecutorService executor = Executors.newSingleThreadExecutor();
+  private final ExecutorService executor = Executors.newSingleThreadExecutor();
   private final List<MoveListener> moveListeners = new ArrayList<>();
   private final List<StateListener> stateListeners = new ArrayList<>();
 
@@ -49,190 +41,29 @@ public class PlayerController implements JsonSerializable {
     return Direction.values()[new Random().nextInt(Direction.values().length)];
   }
 
+  public Player getPlayer() {
+    return player;
+  }
+
+  public void setGameState(State state) {
+    this.state = state;
+  }
+
   public State getGameState() {
     return state;
   }
 
-  public String turnPlayerLeft() {
-    player.turnLeft();
-    return "Turned left";
+  public void setTradeHandler(TradeHandler tradeHandler) {
+    this.tradeHandler = tradeHandler;
   }
 
-  public String turnPlayerRight() {
-    player.turnRight();
-    return "Turned right";
+  public TradeHandler getTradeHandler() {
+    return tradeHandler;
   }
 
-  public String movePlayerForward() {
-    Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), state);
-    if (response.valid) {
-      return tryToMoveForward();
-    } else {
-      return response.message;
-    }
-  }
-
-  private String tryToMoveForward() {
-    try {
-      Room previousRoom = player.getCurrentRoom();
-      String movedResult = "Moved forward\n" + player.moveForward();
-      onMoveFrom(previousRoom);
-      return movedResult;
-    } catch (MapSiteLockedException mapSiteLockedException) {
-      return mapSiteLockedException.getMessage();
-    }
-  }
-
-  private void onMoveFrom(Room previousRoom) {
+  public void onMoveFrom(Room previousRoom) {
     for(MoveListener listener : moveListeners) {
       executor.execute(() -> listener.moved(previousRoom));
-    }
-  }
-
-  public String movePlayerBackward() {
-    Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteBehind(), state);
-    if (response.valid) {
-      return tryToMoveBackward();
-    } else {
-      return response.message;
-    }
-  }
-
-  private String tryToMoveBackward() {
-    try {
-      Room previousRoom = player.getCurrentRoom();
-      String movedResult = "Moved backward\n" + player.moveBackward();
-      onMoveFrom(previousRoom);
-      return movedResult;
-    } catch (MapSiteLockedException mapSiteLockedException) {
-      return mapSiteLockedException.getMessage();
-    }
-  }
-
-  public String getPlayerStatus() {
-    return player.getStatus();
-  }
-
-  public String look() {
-    return player.look();
-  }
-
-  public String check() {
-    Response response = ActionValidityChecker.canCheck(player.getMapSiteAhead(), state);
-    if (response.valid) {
-      return tryToCheck();
-    } else {
-      return response.message;
-    }
-  }
-
-  private String tryToCheck() {
-    try {
-      return player.checkAhead();
-    } catch (MapSiteLockedException mapSiteLockedException) {
-      return mapSiteLockedException.getMessage();
-    }
-  }
-
-  public String openDoor() {
-    Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), state);
-    if (response.valid) {
-      return tryToOpenDoor();
-    } else {
-      return response.message;
-    }
-  }
-
-  private String tryToOpenDoor() {
-    Door door = (Door) player.getMapSiteAhead();
-    if (door.isLocked()) {
-      return door.getKeyName() + " key required to unlock";
-    } else {
-      return "Nothing happens";
-    }
-  }
-
-  public String initiateTrade() {
-    Response response = ActionValidityChecker.canStartTrade(player.getMapSiteAhead(), state);
-    if (response.valid) {
-      this.state = State.TRADE;
-      Seller seller = (Seller) player.getMapSiteAhead();
-      tradeHandler = new TradeHandler(player, seller);
-      return "\nTrade initiated: \n" + tradeHandler.list();
-    } else {
-      return response.message;
-    }
-  }
-
-  public String buyItem(String itemName) {
-    Response response = ActionValidityChecker.inTradeMode(state);
-    if (response.valid) {
-      return tryToBuy(itemName);
-    } else {
-      return response.message;
-    }
-  }
-
-  private String tryToBuy(String itemName) {
-    try {
-      return tradeHandler.buy(itemName);
-    } catch (ItemNotFoundException | NotEnoughGoldException exception) {
-      return exception.getMessage();
-    }
-  }
-
-  public String sellItem(String itemName) {
-    Response response = ActionValidityChecker.inTradeMode(state);
-    if (response.valid) {
-      return tryToSell(itemName);
-    } else {
-      return response.message;
-    }
-  }
-
-  private String tryToSell(String itemName) {
-    try {
-      return tradeHandler.sell(itemName);
-    } catch (ItemNotFoundException itemNotFoundException) {
-      return itemNotFoundException.getMessage();
-    }
-  }
-
-  public String listSellerItems() {
-    Response response = ActionValidityChecker.inTradeMode(state);
-    if (response.valid) {
-      return tradeHandler.list();
-    } else {
-      return response.message;
-    }
-  }
-
-  public String finishTrade() {
-    Response response = ActionValidityChecker.inTradeMode(state);
-    if (response.valid) {
-      this.state = State.EXPLORE;
-      tradeHandler = null;
-      return "Exited trade mode";
-    } else {
-      return response.message;
-    }
-  }
-
-  public String useItem(String name) {
-    try {
-      player.useItem(name);
-      return "used " + name;
-    } catch (ItemNotFoundException | InvalidUseOfItem exception) {
-      return exception.getMessage();
-    }
-  }
-
-  public String switchLights() {
-    try {
-      player.switchLight();
-      return "Switched the lights";
-    } catch (NoLightsException noLightsException) {
-      return noLightsException.getMessage();
     }
   }
 

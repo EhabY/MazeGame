@@ -1,0 +1,28 @@
+package mazegame.commands;
+
+import mazegame.PlayerController;
+import mazegame.Response;
+import mazegame.cli.Command;
+import mazegame.trade.TradeHandler;
+import mazegame.util.ActionValidityChecker;
+import java.util.Objects;
+
+public class ListItems implements Command {
+    private final PlayerController playerController;
+    private final TradeHandler tradeHandler;
+
+    public ListItems(PlayerController playerController) {
+        this.playerController = Objects.requireNonNull(playerController);
+        this.tradeHandler = this.playerController.getTradeHandler();
+    }
+
+    @Override
+    public String execute() {
+        Response response = ActionValidityChecker.inTradeMode(playerController.getGameState());
+        if (response.valid) {
+            return tradeHandler.list();
+        } else {
+            return response.message;
+        }
+    }
+}
