@@ -1,5 +1,6 @@
 package mazegame;
 
+import mazegame.events.EventHandler;
 import mazegame.events.GameEvent;
 import mazegame.events.MoveListener;
 import mazegame.events.StateListener;
@@ -7,25 +8,21 @@ import mazegame.mapsite.Loot;
 import mazegame.player.Player;
 import mazegame.room.Room;
 import mazegame.trade.TransactionHandler;
-
 import java.time.Duration;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class PlayerController implements JsonSerializable {
   private final Player player;
   private final MazeMap map;
+  private final BlockingDeque<String> fightCommandsQueue = new LinkedBlockingDeque<>();
   private TransactionHandler transactionHandler;
   private State state = State.EXPLORE;
   private final Instant gameStart = Instant.now();
-  private final ExecutorService executor = Executors.newSingleThreadExecutor();
-  private final List<MoveListener> moveListeners = new ArrayList<>();
-  private final List<StateListener> stateListeners = new ArrayList<>();
+  private final EventHandler eventHandler = new EventHandler();
 
   public PlayerController(String username, MazeMap map, Room startRoom) {
     this.map = Objects.requireNonNull(map);
@@ -62,10 +59,16 @@ public class PlayerController implements JsonSerializable {
     return transactionHandler;
   }
 
+  public String getNextCommand() throws InterruptedException {
+    return fightCommandsQueue.take();
+  }
+
+  public void addNextCommand(String command) {
+    fightCommandsQueue.add(command);
+  }
+
   public void onMoveFrom(Room previousRoom) {
-    for(MoveListener listener : moveListeners) {
-      executor.execute(() -> listener.moved(previousRoom));
-    }
+    eventHandler.triggerMoveEvent(previousRoom);
   }
 
   public Room getCurrentRoom() {
@@ -85,58 +88,44 @@ public class PlayerController implements JsonSerializable {
   }
 
   public void addMoveListener(MoveListener listener) {
-    moveListeners.add(listener);
+    eventHandler.addListener(listener);
   }
 
-  public void addStateListener(StateListener listener) {
-    stateListeners.add(listener);
+  public void addListener(StateListener listener) {
+    eventHandler.addListener(listener);
   }
 
   public void startFight(String message) {
     state = State.FIGHT;
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.START_FIGHT, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.START_FIGHT, message);
   }
 
   public void wonFight(String message) {
     state = State.EXPLORE;
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.WON_FIGHT, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.WON_FIGHT, message);
   }
 
   public void lostFight(String message) {
     state = State.LOST;
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.LOST_FIGHT, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.LOST_FIGHT, message);
   }
 
   public void tieFight(String message) {
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.TIE_FIGHT, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.TIE_FIGHT, message);
   }
 
   public void requestingInput(String message) {
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.REQUESTING_INPUT, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.REQUESTING_INPUT, message);
   }
 
   public void lostMatch(String message) {
     state = State.LOST;
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.LOST_MATCH, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.LOST_MATCH, message);
   }
 
   public void wonMatch(String message) {
     state = State.WON;
-    for(StateListener listener : stateListeners) {
-      listener.stateChanged(GameEvent.WON_MATCH, message);
-    }
+    eventHandler.triggerGameEvent(GameEvent.WON_MATCH, message);
   }
 
   @Override
