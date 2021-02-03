@@ -1,10 +1,14 @@
 package mazegame;
 
+import mazegame.events.GameEvent;
+import mazegame.events.MoveListener;
+import mazegame.events.StateListener;
 import mazegame.exceptions.InvalidUseOfItem;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.exceptions.NoLightsException;
 import mazegame.exceptions.NotEnoughGoldException;
+import mazegame.mapsite.Door;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
@@ -13,15 +17,22 @@ import mazegame.trade.TradeHandler;
 import mazegame.util.ActionValidityChecker;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class PlayerController implements JsonSerializable {
   private final Player player;
   private final MazeMap map;
-  private final Instant gameStart;
   private TradeHandler tradeHandler;
-  private State state;
+  private State state = State.EXPLORE;
+  private final Instant gameStart = Instant.now();
+  ExecutorService executor = Executors.newSingleThreadExecutor();
+  private final List<MoveListener> moveListeners = new ArrayList<>();
+  private final List<StateListener> stateListeners = new ArrayList<>();
 
   public PlayerController(String username, MazeMap map, Room startRoom) {
     this.map = Objects.requireNonNull(map);
@@ -32,8 +43,6 @@ public class PlayerController implements JsonSerializable {
                 startRoom,
             map.getStartingGold(),
             map.getInitialItems());
-    this.state = State.EXPLORE;
-    this.gameStart = Instant.now();
   }
 
   private Direction getRandomDirection() {
@@ -65,9 +74,18 @@ public class PlayerController implements JsonSerializable {
 
   private String tryToMoveForward() {
     try {
-      return "Moved forward\n" + player.moveForward();
+      Room previousRoom = player.getCurrentRoom();
+      String movedResult = "Moved forward\n" + player.moveForward();
+      onMoveFrom(previousRoom);
+      return movedResult;
     } catch (MapSiteLockedException mapSiteLockedException) {
       return mapSiteLockedException.getMessage();
+    }
+  }
+
+  private void onMoveFrom(Room previousRoom) {
+    for(MoveListener listener : moveListeners) {
+      executor.execute(() -> listener.moved(previousRoom));
     }
   }
 
@@ -82,7 +100,10 @@ public class PlayerController implements JsonSerializable {
 
   private String tryToMoveBackward() {
     try {
-      return "Moved backward\n" + player.moveBackward();
+      Room previousRoom = player.getCurrentRoom();
+      String movedResult = "Moved backward\n" + player.moveBackward();
+      onMoveFrom(previousRoom);
+      return movedResult;
     } catch (MapSiteLockedException mapSiteLockedException) {
       return mapSiteLockedException.getMessage();
     }
@@ -116,9 +137,18 @@ public class PlayerController implements JsonSerializable {
   public String openDoor() {
     Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), state);
     if (response.valid) {
-      return player.openDoor();
+      return tryToOpenDoor();
     } else {
       return response.message;
+    }
+  }
+
+  private String tryToOpenDoor() {
+    Door door = (Door) player.getMapSiteAhead();
+    if (door.isLocked()) {
+      return door.getKeyName() + " key required to unlock";
+    } else {
+      return "Nothing happens";
     }
   }
 
@@ -219,8 +249,62 @@ public class PlayerController implements JsonSerializable {
   }
 
   public Loot getLoot() {
-    state = State.LOST;
     return player.getLoot();
+  }
+
+  public void addMoveListener(MoveListener listener) {
+    moveListeners.add(listener);
+  }
+
+  public void addStateListener(StateListener listener) {
+    stateListeners.add(listener);
+  }
+
+  public void startFight(String message) {
+    state = State.FIGHT;
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.START_FIGHT, message);
+    }
+  }
+
+  public void wonFight(String message) {
+    state = State.EXPLORE;
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.WON_FIGHT, message);
+    }
+  }
+
+  public void lostFight(String message) {
+    state = State.LOST;
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.LOST_FIGHT, message);
+    }
+  }
+
+  public void tieFight(String message) {
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.TIE_FIGHT, message);
+    }
+  }
+
+  public void requestingInput(String message) {
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.REQUESTING_INPUT, message);
+    }
+  }
+
+  public void lostMatch(String message) {
+    state = State.LOST;
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.LOST_MATCH, message);
+    }
+  }
+
+  public void wonMatch(String message) {
+    state = State.WON;
+    for(StateListener listener : stateListeners) {
+      listener.stateChanged(GameEvent.WON_MATCH, message);
+    }
   }
 
   @Override

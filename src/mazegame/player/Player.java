@@ -107,15 +107,6 @@ public class Player implements JsonSerializable {
     return inventory.takeItem(name);
   }
 
-  public String openDoor() {
-    Door door = (Door) getMapSiteAhead();
-    if (door.isLocked()) {
-      return door.getKeyName() + " key required to unlock";
-    } else {
-      return "Nothing happens";
-    }
-  }
-
   public void useItem(String itemName) {
     Item item = inventory.getItem(itemName);
     item.accept(useItemVisitor);
