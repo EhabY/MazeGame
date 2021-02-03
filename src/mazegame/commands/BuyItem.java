@@ -5,17 +5,17 @@ import mazegame.Response;
 import mazegame.cli.ItemCommand;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.exceptions.NotEnoughGoldException;
-import mazegame.trade.TradeHandler;
+import mazegame.trade.TransactionHandler;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class BuyItem implements ItemCommand {
     private final PlayerController playerController;
-    private final TradeHandler tradeHandler;
+    private final TransactionHandler transactionHandler;
 
     public BuyItem(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.tradeHandler = this.playerController.getTradeHandler();
+        this.transactionHandler = this.playerController.getTransactionHandler();
     }
 
     @Override
@@ -30,7 +30,8 @@ public class BuyItem implements ItemCommand {
 
     private String tryToBuy(String itemName) {
         try {
-            return tradeHandler.buy(itemName);
+            transactionHandler.buy(itemName);
+            return itemName + " bought and acquired";
         } catch (ItemNotFoundException | NotEnoughGoldException exception) {
             return exception.getMessage();
         }

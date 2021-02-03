@@ -5,7 +5,7 @@ import mazegame.player.Player;
 import mazegame.mapsite.Seller;
 import java.util.Objects;
 
-class TransactionHandler {
+public class TransactionHandler {
   private final Player player;
   private final Seller seller;
 
@@ -14,29 +14,33 @@ class TransactionHandler {
     this.seller = Objects.requireNonNull(seller);
   }
 
-  static TransactionHandler startTransaction(Player player, Seller seller) {
+  public static TransactionHandler startTransaction(Player player, Seller seller) {
     return new TransactionHandler(player, seller);
   }
 
-  void buy(String itemName) {
+  public void buy(String itemName) {
     long price = seller.getItemPrice(itemName);
     player.removeGoldFromInventory(price);
     Item itemBought = seller.takeItem(itemName);
     player.addItemToInventory(itemBought);
   }
 
-  void sell(String itemName) {
+  public void sell(String itemName) {
     Item itemSold = player.takeItemFromInventory(itemName);
     seller.addItem(itemSold);
     long price = seller.getItemPrice(itemName);
     player.addGoldToInventory(price);
   }
 
-  String listSellerItems() {
+  public String listAll() {
+    return listSellerItems() + "\n" + listSellerPriceList();
+  }
+
+  public String listSellerItems() {
     return seller.getItemList();
   }
 
-  String listSellerPriceList() {
+  public String listSellerPriceList() {
     return seller.getPriceList();
   }
 

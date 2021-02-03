@@ -4,17 +4,17 @@ import mazegame.PlayerController;
 import mazegame.Response;
 import mazegame.cli.ItemCommand;
 import mazegame.exceptions.ItemNotFoundException;
-import mazegame.trade.TradeHandler;
+import mazegame.trade.TransactionHandler;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class SellItem implements ItemCommand {
     private final PlayerController playerController;
-    private final TradeHandler tradeHandler;
+    private final TransactionHandler transactionHandler;
 
     public SellItem(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.tradeHandler = this.playerController.getTradeHandler();
+        this.transactionHandler = this.playerController.getTransactionHandler();
     }
 
     @Override
@@ -29,7 +29,8 @@ public class SellItem implements ItemCommand {
 
     private String tryToSell(String itemName) {
         try {
-            return tradeHandler.sell(itemName);
+            transactionHandler.sell(itemName);
+            return itemName + " sold";
         } catch (ItemNotFoundException itemNotFoundException) {
             return itemNotFoundException.getMessage();
         }

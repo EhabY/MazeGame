@@ -6,7 +6,8 @@ import mazegame.events.StateListener;
 import mazegame.mapsite.Loot;
 import mazegame.player.Player;
 import mazegame.room.Room;
-import mazegame.trade.TradeHandler;
+import mazegame.trade.TransactionHandler;
+
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.concurrent.Executors;
 public class PlayerController implements JsonSerializable {
   private final Player player;
   private final MazeMap map;
-  private TradeHandler tradeHandler;
+  private TransactionHandler transactionHandler;
   private State state = State.EXPLORE;
   private final Instant gameStart = Instant.now();
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -53,12 +54,12 @@ public class PlayerController implements JsonSerializable {
     return state;
   }
 
-  public void setTradeHandler(TradeHandler tradeHandler) {
-    this.tradeHandler = tradeHandler;
+  public void setTransactionHandler(TransactionHandler transactionHandler) {
+    this.transactionHandler = transactionHandler;
   }
 
-  public TradeHandler getTradeHandler() {
-    return tradeHandler;
+  public TransactionHandler getTransactionHandler() {
+    return transactionHandler;
   }
 
   public void onMoveFrom(Room previousRoom) {
@@ -162,8 +163,8 @@ public class PlayerController implements JsonSerializable {
         + player
         + ", map="
         + map
-        + ", tradeHandler="
-        + tradeHandler
+        + ", transactionHandler="
+        + transactionHandler
         + ", state="
         + state
         + ", gameStart="
