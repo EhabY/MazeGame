@@ -30,6 +30,10 @@ public class Room implements JsonSerializable, Lootable {
     return mapSites.get(direction);
   }
 
+  public boolean hasLights() {
+    return !lightSwitch.equals(NoLightSwitch.getInstance());
+  }
+
   public boolean isLit() {
     return lightSwitch.isOn();
   }
