@@ -21,7 +21,6 @@ import java.util.Map;
 
 class MapSiteParser {
   final Map<ImmutablePair<Integer, Integer>, DoorInfo> doorBetweenRooms = new HashMap<>();
-  int roomID;
 
   static class DoorInfo {
     final int roomID;
@@ -56,43 +55,36 @@ class MapSiteParser {
   }
 
   private Door parseDoor(JSONObject doorJson) {
+    int roomID = doorJson.getInt("roomID");
     int otherRoomID = doorJson.getInt("otherRoomID");
-    String keyName = doorJson.getString("key");
-    boolean locked = isLockableLocked(doorJson);
 
-    return getOrCreateDoor(otherRoomID, keyName, locked);
+    if(doorAlreadyCreated(roomID, otherRoomID)) {
+      return getDoorBetweenRooms(roomID, otherRoomID);
+    } else {
+      String keyName = doorJson.getString("key");
+      boolean locked = isLockableLocked(doorJson);
+      return createDoor(roomID, otherRoomID, keyName, locked);
+    }
+  }
+
+  private boolean doorAlreadyCreated(int roomID, int otherRoomID) {
+    return doorBetweenRooms.containsKey(new ImmutablePair<>(otherRoomID, roomID));
+  }
+
+  private Door getDoorBetweenRooms(int roomID, int otherRoomID) {
+    return doorBetweenRooms.get(new ImmutablePair<>(otherRoomID, roomID)).doorBuilder.getDoor();
+  }
+
+  private Door createDoor(int roomID, int otherRoomID, String keyName, boolean locked) {
+    Door.Builder doorBuilder = new Door.Builder(Key.fromString(keyName), locked);
+    ImmutablePair<Integer, Integer> thisRoomDoor = new ImmutablePair<>(roomID, otherRoomID);
+    doorBetweenRooms.put(thisRoomDoor, new DoorInfo(roomID, otherRoomID, doorBuilder));
+    return doorBuilder.getDoor();
   }
 
   private boolean isLockableLocked(JSONObject lockableJson) {
     return lockableJson.getString("key").length() > 0 &&
             (!lockableJson.has("locked") || lockableJson.getBoolean("locked"));
-  }
-
-  private Door getOrCreateDoor(int otherRoomID, String keyName, boolean locked) {
-    Door.Builder doorBuilder;
-    ImmutablePair<Integer, Integer> otherRoomDoor = getDoorOnOtherSide(otherRoomID);
-    if(doorAlreadyCreated(otherRoomDoor)) {
-      doorBuilder = doorBetweenRooms.get(otherRoomDoor).doorBuilder;
-    } else {
-      doorBuilder = createDoorBuilder(otherRoomID, keyName, locked);
-    }
-
-    return doorBuilder.getDoor();
-  }
-
-  private ImmutablePair<Integer, Integer> getDoorOnOtherSide(int otherRoomID) {
-    return new ImmutablePair<>(otherRoomID, roomID);
-  }
-
-  private boolean doorAlreadyCreated(ImmutablePair<Integer, Integer> otherRoomDoor) {
-    return doorBetweenRooms.containsKey(otherRoomDoor);
-  }
-
-  private Door.Builder createDoorBuilder(int otherRoomID, String keyName, boolean locked) {
-    Door.Builder doorBuilder = new Door.Builder(Key.fromString(keyName), locked);
-    ImmutablePair<Integer, Integer> thisRoomDoor = new ImmutablePair<>(roomID, otherRoomID);
-    doorBetweenRooms.put(thisRoomDoor, new DoorInfo(roomID, otherRoomID, doorBuilder));
-    return doorBuilder;
   }
 
   private Wall parseWall(JSONObject wallJson) {

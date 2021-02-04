@@ -4,6 +4,7 @@ import mazegame.Direction;
 import mazegame.MazeMap;
 import mazegame.item.Item;
 import mazegame.mapsite.Door;
+import mazegame.mapsite.Loot;
 import mazegame.mapsite.SerializableMapSite;
 import mazegame.room.LightSwitch;
 import mazegame.room.NoLightSwitch;
@@ -14,7 +15,11 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.*;
+import java.util.Collection;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GameParser {
   private final Map<Integer, Room> rooms;
@@ -56,21 +61,23 @@ public class GameParser {
     int id = roomJson.getInt("id");
     Map<Direction, SerializableMapSite> serializedMapSites = parseMapSitesInRoom(roomJson);
     JSONObject lightswitch = roomJson.getJSONObject("lightswitch");
+    return new Room(id, serializedMapSites, parseLightSwitch(lightswitch), getLoot(roomJson));
+  }
+
+  private Loot getLoot(JSONObject roomJson) {
     if(roomJson.has("loot")) {
       JSONObject lootJson = roomJson.getJSONObject("loot");
-      return new Room(id, serializedMapSites, parseLightSwitch(lightswitch), ItemParser.parseLoot(lootJson));
+      return ItemParser.parseLoot(lootJson);
     } else {
-      return new Room(id, serializedMapSites, parseLightSwitch(lightswitch));
+      return Loot.EMPTY_LOOT;
     }
   }
 
   private Map<Direction, SerializableMapSite> parseMapSitesInRoom(JSONObject roomJson) {
-    mapSiteParser.roomID = roomJson.getInt("id");
     Map<Direction, SerializableMapSite> serializedMapSites = new EnumMap<>(Direction.class);
     for (Direction direction : Direction.values()) {
       String directionName = direction.toString().toLowerCase();
       JSONObject mapSiteJson = roomJson.getJSONObject(directionName);
-
       SerializableMapSite mapSite = mapSiteParser.parseMapSite(mapSiteJson);
       serializedMapSites.put(direction, mapSite);
     }
@@ -102,15 +109,15 @@ public class GameParser {
 
   private MazeMap parseMazeMap(JSONObject gameJson) {
     JSONObject mazeMapJson = gameJson.getJSONObject("mapConfiguration");
+    int endRoomID = mazeMapJson.getInt("endRoomID");
     long gold = mazeMapJson.getLong("gold");
     long timeInSeconds = mazeMapJson.getLong("time");
-    List<Item> initialItems = ItemParser.parseItemsArray(mazeMapJson.getJSONArray("items"));
-    Room endRoom = rooms.get(mazeMapJson.getInt("endRoomID"));
+    JSONArray itemsJson = mazeMapJson.getJSONArray("items");
 
-    return new MazeMap.Builder(rooms.values(), endRoom)
+    return new MazeMap.Builder(rooms.values(), rooms.get(endRoomID))
         .startingGold(gold)
-        .initialItems(initialItems)
         .time(timeInSeconds)
+        .initialItems(ItemParser.parseItemsArray(itemsJson))
         .build();
   }
 

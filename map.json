@@ -66,8 +66,8 @@
 			},
 			"south": {
 				"siteMap": "Door",
-				"roomID": 1,
-				"otherRoomID": 2,
+				"roomID": 2,
+				"otherRoomID": 1,
 				"key": "Dragon Glass",
 				"locked": true
 			},
@@ -109,8 +109,8 @@
 			},
 			"south": {
 				"siteMap": "Door",
-				"roomID": 2,
-				"otherRoomID": 3,
+				"roomID": 3,
+				"otherRoomID": 2,
 				"key": "Monkee",
 				"locked": true
 			},
