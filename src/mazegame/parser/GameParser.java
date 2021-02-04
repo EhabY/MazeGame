@@ -14,10 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class GameParser {
   private final Map<Integer, Room> rooms;
@@ -68,6 +65,7 @@ public class GameParser {
   }
 
   private Map<Direction, SerializableMapSite> parseMapSitesInRoom(JSONObject roomJson) {
+    mapSiteParser.roomID = roomJson.getInt("id");
     Map<Direction, SerializableMapSite> serializedMapSites = new EnumMap<>(Direction.class);
     for (Direction direction : Direction.values()) {
       String directionName = direction.toString().toLowerCase();
@@ -91,7 +89,7 @@ public class GameParser {
   }
 
   private void setRoomsInDoors(Map<Integer, Room> rooms) {
-    List<MapSiteParser.DoorInfo> doors = mapSiteParser.doors;
+    Collection<MapSiteParser.DoorInfo> doors = mapSiteParser.doorBetweenRooms.values();
     for (MapSiteParser.DoorInfo doorInfo : doors) {
       int roomID = doorInfo.roomID;
       int otherRoomID = doorInfo.otherRoomID;
