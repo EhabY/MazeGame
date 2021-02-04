@@ -3,9 +3,9 @@ package website;
 import mazegame.MazeMap;
 import mazegame.PlayerController;
 import mazegame.room.Room;
+import website.fighting.ConflictResolver;
 import website.fighting.RockPaperScissors;
 import website.fighting.SimpleScoreCalculator;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -50,7 +50,8 @@ public class MatchCreator {
         readyPlayers.add(playerController);
         if(readyPlayers.size() == playersInMatch.size()) {
             gameStarted = true;
-            match = new Match(mazeMap, playersInMatch, new RockPaperScissors(), new SimpleScoreCalculator());
+            ConflictResolver conflictResolver = new ConflictResolver(new SimpleScoreCalculator(), new RockPaperScissors());
+            match = new Match(mazeMap, playersInMatch, conflictResolver);
 
             for(PlayerController player : readyPlayers) {
                 player.addMoveListener(fromRoom -> match.moveFrom(player, fromRoom));
