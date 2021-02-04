@@ -2,7 +2,6 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.cli.ItemCommand;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.exceptions.NotEnoughGoldException;
 import mazegame.trade.TransactionHandler;

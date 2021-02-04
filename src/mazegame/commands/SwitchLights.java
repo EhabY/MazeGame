@@ -1,7 +1,6 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.cli.Command;
 import mazegame.player.Player;
 
 public class SwitchLights implements Command {

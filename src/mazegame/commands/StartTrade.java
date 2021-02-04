@@ -3,7 +3,6 @@ package mazegame.commands;
 import mazegame.PlayerController;
 import mazegame.Response;
 import mazegame.State;
-import mazegame.cli.Command;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
 import mazegame.trade.TransactionHandler;

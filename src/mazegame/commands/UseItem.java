@@ -2,7 +2,6 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.cli.ItemCommand;
 import mazegame.exceptions.InvalidUseOfItem;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.player.Player;

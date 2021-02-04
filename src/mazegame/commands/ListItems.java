@@ -2,7 +2,6 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.cli.Command;
 import mazegame.trade.TransactionHandler;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;

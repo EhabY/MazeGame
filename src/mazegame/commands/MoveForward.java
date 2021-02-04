@@ -2,7 +2,6 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.cli.Command;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.player.Player;
 import mazegame.room.Room;
