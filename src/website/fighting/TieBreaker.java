@@ -1,4 +1,4 @@
-package website.tiebreakers;
+package website.fighting;
 
 import mazegame.PlayerController;
 

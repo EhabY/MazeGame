@@ -75,10 +75,6 @@ public class PlayerController implements JsonSerializable {
     return player.getCurrentRoom();
   }
 
-  public long getScore() {
-    return player.getScore();
-  }
-
   public void addLoot(Loot loot) {
     player.addLoot(loot);
   }

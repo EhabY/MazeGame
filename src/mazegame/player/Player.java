@@ -115,10 +115,6 @@ public class Player implements JsonSerializable {
     position.switchLight();
   }
 
-  public long getScore() {
-    return inventory.getScore();
-  }
-
   public void addLoot(Loot loot) {
     inventory.addLoot(loot);
   }

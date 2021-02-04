@@ -2,8 +2,9 @@ package website;
 
 import mazegame.MazeMap;
 import mazegame.PlayerController;
+import mazegame.player.ScoreCalculator;
 import mazegame.room.Room;
-import website.tiebreakers.TieBreaker;
+import website.fighting.TieBreaker;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -19,8 +20,9 @@ public class Match {
     private final Map<Room, Object> locks = new ConcurrentHashMap<>();
     private final MazeMap mazeMap;
     private final TieBreaker tieBreaker;
+    private final ScoreCalculator scoreCalculator;
 
-    Match(MazeMap mazeMap, Set<PlayerController> players, TieBreaker tieBreaker) {
+    Match(MazeMap mazeMap, Set<PlayerController> players, TieBreaker tieBreaker, ScoreCalculator scoreCalculator) {
         this.mazeMap = Objects.requireNonNull(mazeMap);
         this.players.addAll(players);
         for(Room room : mazeMap.getRooms()) {
@@ -32,6 +34,7 @@ public class Match {
         }
 
         this.tieBreaker = Objects.requireNonNull(tieBreaker);
+        this.scoreCalculator = Objects.requireNonNull(scoreCalculator);
         setMatchTimer(this.mazeMap.getTimeInSeconds() * 1000);
     }
 
@@ -85,9 +88,11 @@ public class Match {
     private PlayerController determineWinner(PlayerController playerController1, PlayerController playerController2) {
         playerController1.startFight(START_FIGHT_MESSAGE);
         playerController2.startFight(START_FIGHT_MESSAGE);
-        if(playerController1.getScore() > playerController2.getScore()) {
+        long score1 = scoreCalculator.calculateScore(playerController1);
+        long score2 = scoreCalculator.calculateScore(playerController2);
+        if(score1 > score2) {
             return playerController1;
-        } else if(playerController1.getScore() < playerController2.getScore()) {
+        } else if(score1 < score2) {
             return playerController2;
         } else {
             return tieBreaker.breakTie(playerController1, playerController2);

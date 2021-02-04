@@ -11,14 +11,8 @@ import java.util.Collections;
 import java.util.List;
 
 class Inventory implements JsonSerializable {
-  private static final long FLASHLIGHT_PRICE = 2;
-  private static final long KEY_PRICE = 10;
   private long gold;
   private final ItemManager itemManager;
-
-  Inventory() {
-    this(0);
-  }
 
   Inventory(long gold) {
     this(gold, Collections.emptyList());
@@ -85,20 +79,6 @@ class Inventory implements JsonSerializable {
   void addLoot(Loot loot) {
     addItems(loot.getItems());
     addGold(loot.getGold());
-  }
-
-  long getScore() {
-    long score = getGold();
-    List<Item> itemList = itemManager.getItemList();
-    for(Item item : itemList) {
-      if("Flashlight".equalsIgnoreCase(item.getType())) {
-        score += FLASHLIGHT_PRICE;
-      } else if("Key".equalsIgnoreCase(item.getType())) {
-        score += KEY_PRICE;
-      }
-    }
-
-    return score;
   }
 
   @Override

@@ -16,7 +16,7 @@ public class Room implements JsonSerializable, Lootable {
   private Loot loot;
 
   public Room(int id, Map<Direction, SerializableMapSite> mapSites, LightSwitch lightSwitch) {
-    this(id, mapSites, lightSwitch, new Loot(0));
+    this(id, mapSites, lightSwitch, Loot.EMPTY_LOOT);
   }
 
   public Room(int id, Map<Direction, SerializableMapSite> mapSites, LightSwitch lightSwitch, Loot loot) {
