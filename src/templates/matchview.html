@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <h1>WebSocket!</h1>
+    <label for="message">Message: </label><input id="message" type="text" />
+    <button id="submit">Login</button>
+</body>
+<script>
+    let ws = null;
+    document.getElementById("submit").addEventListener("click", function() {
+        if(ws === null) {
+            ws = new WebSocket("ws://localhost:4567/websocket/match");
+
+            ws.onopen = function(event) {
+                console.log(event);
+                //const message = { "username": document.getElementById("username").value }
+                //ws.send(JSON.stringify(message));
+                ws.send(document.getElementById("message").value);
+            }
+
+            ws.onclose = function(event) {
+                console.log(event);
+            }
+
+            ws.onmessage = function(event) {
+                console.log(event);
+            }
+        } else {
+            ws.send(document.getElementById("message").value);
+        }
+
+    });
+
+</script>
+</html>
