@@ -1,4 +1,4 @@
-package mazegame.parser;
+package parser;
 
 import mazegame.item.Item;
 import mazegame.item.Key;
@@ -35,23 +35,23 @@ class MapSiteParser {
   }
 
   SerializableMapSite parseMapSite(JSONObject mapSiteJson) {
-    String siteMapType = mapSiteJson.getString("siteMap");
-    switch (siteMapType) {
-      case "Door":
+    String mapSiteType = mapSiteJson.getString("mapSite").toLowerCase();
+    switch (mapSiteType) {
+      case "door":
         return parseDoor(mapSiteJson);
-      case "Wall":
+      case "wall":
         return parseWall(mapSiteJson);
-      case "Chest":
+      case "chest":
         return parseChest(mapSiteJson);
-      case "Painting":
+      case "painting":
         return parsePainting(mapSiteJson);
-      case "Mirror":
+      case "mirror":
         return parseMirror(mapSiteJson);
-      case "Seller":
+      case "seller":
         return parseSeller(mapSiteJson);
     }
 
-    throw new JSONException("Cannot parse object " + siteMapType);
+    throw new JSONException("Cannot parse object " + mapSiteType);
   }
 
   private Door parseDoor(JSONObject doorJson) {

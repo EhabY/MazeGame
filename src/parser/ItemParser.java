@@ -1,4 +1,4 @@
-package mazegame.parser;
+package parser;
 
 import mazegame.item.Flashlight;
 import mazegame.item.Item;
@@ -16,24 +16,20 @@ class ItemParser {
 
   static List<Item> parseItemsArray(JSONArray itemsJson) {
     List<Item> items = new ArrayList<>();
-
     for (int i = 0; i < itemsJson.length(); i++) {
       JSONObject itemJson = itemsJson.getJSONObject(i);
       items.add(parseItem(itemJson));
     }
-
     return items;
   }
 
   static Item parseItem(JSONObject itemJson) {
     String type = itemJson.getString("type");
-
     if (type.equalsIgnoreCase("Flashlight")) {
       return parseFlashlight(itemJson);
     } else if (type.equalsIgnoreCase("Key")) {
       return parseKey(itemJson);
     }
-
     throw new JSONException("Unknown item type");
   }
 
@@ -55,7 +51,6 @@ class ItemParser {
     JSONArray itemsArray = lootJson.getJSONArray("items");
     long gold = lootJson.getLong("gold");
     List<Item> items = ItemParser.parseItemsArray(itemsArray);
-
     return new Loot(gold, items);
   }
 }

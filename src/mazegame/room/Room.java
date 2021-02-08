@@ -2,8 +2,9 @@ package mazegame.room;
 
 import mazegame.Direction;
 import mazegame.JsonSerializable;
-import mazegame.mapsite.*;
-
+import mazegame.mapsite.Loot;
+import mazegame.mapsite.Lootable;
+import mazegame.mapsite.SerializableMapSite;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -26,7 +27,7 @@ public class Room implements JsonSerializable, Lootable {
     this.loot = Objects.requireNonNull(loot);
   }
 
-  public MapSite getMapSite(Direction direction) {
+  public SerializableMapSite getMapSite(Direction direction) {
     return mapSites.get(direction);
   }
 

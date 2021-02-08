@@ -1,7 +1,7 @@
 package website;
 
 import mazegame.MazeMap;
-import mazegame.parser.GameParser;
+import parser.GameParser;
 import spark.ModelAndView;
 import spark.Spark;
 import website.engine.ThymeleafTemplateEngine;

@@ -1,8 +1,7 @@
-package mazegame.parser;
+package parser;
 
 import mazegame.Direction;
 import mazegame.MazeMap;
-import mazegame.item.Item;
 import mazegame.mapsite.Door;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.SerializableMapSite;
@@ -15,6 +14,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -53,7 +53,6 @@ public class GameParser {
       Room room = parseRoom(roomsJson.getJSONObject(i));
       rooms.put(room.getId(), room);
     }
-
     return rooms;
   }
 
@@ -108,17 +107,27 @@ public class GameParser {
   }
 
   private MazeMap parseMazeMap(JSONObject gameJson) {
-    JSONObject mazeMapJson = gameJson.getJSONObject("mapConfiguration");
-    int endRoomID = mazeMapJson.getInt("endRoomID");
-    long gold = mazeMapJson.getLong("gold");
-    long timeInSeconds = mazeMapJson.getLong("time");
-    JSONArray itemsJson = mazeMapJson.getJSONArray("items");
+    JSONObject mapConfigJson = gameJson.getJSONObject("mapConfiguration");
+    List<Room> startingRooms = parseStartingRooms(mapConfigJson.getJSONArray("startingRooms"));
+    int endRoomID = mapConfigJson.getInt("endRoomID");
+    long gold = mapConfigJson.getLong("gold");
+    long timeInSeconds = mapConfigJson.getLong("time");
+    JSONArray itemsJson = mapConfigJson.getJSONArray("items");
 
-    return new MazeMap.Builder(rooms.values(), rooms.get(endRoomID))
+    return new MazeMap.Builder(startingRooms, rooms.get(endRoomID))
         .startingGold(gold)
         .time(timeInSeconds)
         .initialItems(ItemParser.parseItemsArray(itemsJson))
         .build();
+  }
+
+  private List<Room> parseStartingRooms(JSONArray startingRoomsJson) {
+    List<Room> startingRooms = new ArrayList<>();
+    for (int i = 0; i < startingRoomsJson.length(); i++) {
+      int roomID = startingRoomsJson.getInt(i);
+      startingRooms.add(rooms.get(roomID));
+    }
+    return startingRooms;
   }
 
 }

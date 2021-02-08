@@ -15,14 +15,14 @@
 				"lightsOn": true
 			},
 			"north": {
-				"siteMap": "Door",
+				"mapSite": "Door",
 				"roomID": 1,
 				"otherRoomID": 2,
 				"key": "Dragon Glass",
 				"locked": true
 			},
 			"east": {
-				"siteMap": "Chest",
+				"mapSite": "Chest",
 				"loot": {
 					"gold": 15,
 					"items": [
@@ -40,11 +40,11 @@
 				"locked": false
 			},
 			"south": {
-				"siteMap": "Mirror",
+				"mapSite": "Mirror",
 				"hiddenKey": ""
 			},
 			"west": {
-				"siteMap": "Wall"
+				"mapSite": "Wall"
 			}
         },
         {
@@ -54,25 +54,25 @@
 				"lightsOn": false
 			},
 			"north": {
-				"siteMap": "Door",
+				"mapSite": "Door",
 				"roomID": 2,
 				"otherRoomID": 3,
 				"key": "Monkee",
 				"locked": true
 			},
 			"east": {
-				"siteMap": "Painting",
+				"mapSite": "Painting",
 				"hiddenKey": ""
 			},
 			"south": {
-				"siteMap": "Door",
+				"mapSite": "Door",
 				"roomID": 2,
 				"otherRoomID": 1,
 				"key": "Dragon Glass",
 				"locked": true
 			},
 			"west": {
-				"siteMap": "Seller",
+				"mapSite": "Seller",
 				"items": [
 						{
 							"name": "Monkee",
@@ -102,20 +102,20 @@
 				"lightsOn": false
 			},
 			"north": {
-				"siteMap": "Wall"
+				"mapSite": "Wall"
 			},
 			"east": {
-				"siteMap": "Wall"
+				"mapSite": "Wall"
 			},
 			"south": {
-				"siteMap": "Door",
+				"mapSite": "Door",
 				"roomID": 3,
 				"otherRoomID": 2,
 				"key": "Monkee",
 				"locked": true
 			},
 			"west": {
-				"siteMap": "Wall"
+				"mapSite": "Wall"
 			}
 		}
 	]
