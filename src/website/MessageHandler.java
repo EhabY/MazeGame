@@ -15,7 +15,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageHandler {
     private final Map<Session, String> usernames = new ConcurrentHashMap<>();
     private final Map<Session, PlayerConfiguration> players = new ConcurrentHashMap<>();
-    MatchCreator currentMatchCreator = MatchCreatorInitializer.getMatchCreator(players);
+    MatchCreatorInitializer matchCreatorInitializer = new MatchCreatorInitializer(players);
 
     public Message getResponseFromMessage(Session user, String messageAsJson) {
         JSONObject messageJson = new JSONObject(messageAsJson);
@@ -40,7 +40,8 @@ public class MessageHandler {
 
     private String initializePlayer(Session user, String username) {
         if(isNewPlayer(user)) {
-            currentMatchCreator.addPlayer(username, user);
+            MatchCreator matchCreator = matchCreatorInitializer.getMatchCreator();
+            matchCreator.addPlayer(username, user);
             usernames.put(user, username);
             return "Added " + username + " to the match!";
         } else {
@@ -53,7 +54,8 @@ public class MessageHandler {
             return "Player has not registered yet!";
         }
         String username = usernames.get(user);
-        currentMatchCreator.makeReady(username);
+        MatchCreator matchCreator = matchCreatorInitializer.getMatchCreator();
+        matchCreator.makeReady(username);
         return username + " is ready!";
     }
 

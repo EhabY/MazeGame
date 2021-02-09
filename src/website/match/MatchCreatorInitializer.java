@@ -15,14 +15,13 @@ public class MatchCreatorInitializer {
     private final Map<Session, PlayerConfiguration> playersMap;
     private MatchCreator matchCreator;
 
-    private MatchCreatorInitializer(Map<Session, PlayerConfiguration> playersMap) {
+    public MatchCreatorInitializer(Map<Session, PlayerConfiguration> playersMap) {
         this.playersMap = Objects.requireNonNull(playersMap);
         this.matchCreator = initializeMatchCreator();
     }
 
-    public static MatchCreator getMatchCreator(Map<Session, PlayerConfiguration> playersMap) {
-        MatchCreatorInitializer matchCreatorInitializer = new MatchCreatorInitializer(playersMap);
-        return matchCreatorInitializer.matchCreator;
+    public MatchCreator getMatchCreator() {
+        return matchCreator;
     }
 
     private MatchCreator initializeMatchCreator() {
