@@ -11,15 +11,14 @@
 </body>
 <script>
     let ws = null;
+    let ready = false;
     document.getElementById("submit").addEventListener("click", function() {
         if(ws === null) {
             ws = new WebSocket("ws://localhost:4567/websocket/match");
 
             ws.onopen = function(event) {
                 console.log(event);
-                //const message = { "username": document.getElementById("username").value }
-                //ws.send(JSON.stringify(message));
-                ws.send(document.getElementById("message").value);
+                sendMessage("username", document.getElementById("message").value);
             }
 
             ws.onclose = function(event) {
@@ -30,10 +29,23 @@
                 console.log(event);
             }
         } else {
-            ws.send(document.getElementById("message").value);
+            if(ready) {
+                sendMessage("command", document.getElementById("message").value);
+            } else {
+                ready = true;
+                sendMessage("ready", "");
+            }
         }
 
     });
+
+    function sendMessage(type, message) {
+        const messageJson = {
+            "type": type,
+            "message": message
+        }
+        ws.send(JSON.stringify(messageJson));
+    }
 
 </script>
 </html>

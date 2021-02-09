@@ -1,4 +1,4 @@
-package website;
+package website.match;
 
 import mazegame.PlayerController;
 import mazegame.State;
@@ -55,7 +55,7 @@ public class Interpreter {
         itemCommands.put("use", new UseItem(playerController));
     }
 
-    String execute(String command) {
+    public String execute(String command) {
         if(executingOp.getAndSet(true)) {
             return "Please wait for the previous operation to finish executing!";
         }
