@@ -10,11 +10,9 @@ import java.util.Objects;
 
 public class UseItem implements ItemCommand {
     private final PlayerController playerController;
-    private final Player player;
 
     public UseItem(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.player = playerController.getPlayer();
     }
 
     @Override
@@ -29,6 +27,7 @@ public class UseItem implements ItemCommand {
 
     private String tryToUseItem(String itemName) {
         try {
+            Player player = playerController.getPlayer();
             player.useItem(itemName);
             return "Used " + itemName;
         } catch (ItemNotFoundException | InvalidUseOfItem exception) {

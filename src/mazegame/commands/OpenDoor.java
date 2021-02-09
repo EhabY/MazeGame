@@ -8,15 +8,14 @@ import java.util.Objects;
 
 public class OpenDoor implements Command {
     private final PlayerController playerController;
-    private final Player player;
 
     public OpenDoor(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.player = this.playerController.getPlayer();
     }
 
     @Override
     public String execute() {
+        Player player = playerController.getPlayer();
         Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), playerController.getGameState());
         return response.message.equals("") ? "Nothing happens" : response.message;
     }

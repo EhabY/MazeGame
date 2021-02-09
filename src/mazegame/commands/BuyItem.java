@@ -10,11 +10,9 @@ import java.util.Objects;
 
 public class BuyItem implements ItemCommand {
     private final PlayerController playerController;
-    private final TransactionHandler transactionHandler;
 
     public BuyItem(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.transactionHandler = this.playerController.getTransactionHandler();
     }
 
     @Override
@@ -29,6 +27,7 @@ public class BuyItem implements ItemCommand {
 
     private String tryToBuy(String itemName) {
         try {
+            TransactionHandler transactionHandler = playerController.getTransactionHandler();
             transactionHandler.buy(itemName);
             return itemName + " bought and acquired";
         } catch (ItemNotFoundException | NotEnoughGoldException exception) {

@@ -11,15 +11,14 @@ import java.util.Objects;
 
 public class StartTrade implements Command {
     private final PlayerController playerController;
-    private final Player player;
 
     public StartTrade(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.player = this.playerController.getPlayer();
     }
 
     @Override
     public String execute() {
+        Player player = playerController.getPlayer();
         Response response = ActionValidityChecker.canStartTrade(player.getMapSiteAhead(), playerController.getGameState());
         if (response.valid) {
             Seller seller = (Seller) player.getMapSiteAhead();

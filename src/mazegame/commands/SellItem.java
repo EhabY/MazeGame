@@ -9,11 +9,9 @@ import java.util.Objects;
 
 public class SellItem implements ItemCommand {
     private final PlayerController playerController;
-    private final TransactionHandler transactionHandler;
 
     public SellItem(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
-        this.transactionHandler = this.playerController.getTransactionHandler();
     }
 
     @Override
@@ -28,6 +26,7 @@ public class SellItem implements ItemCommand {
 
     private String tryToSell(String itemName) {
         try {
+            TransactionHandler transactionHandler = playerController.getTransactionHandler();
             transactionHandler.sell(itemName);
             return itemName + " sold";
         } catch (ItemNotFoundException itemNotFoundException) {
