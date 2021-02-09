@@ -2,6 +2,7 @@ package website.match;
 
 import mazegame.MazeMap;
 import mazegame.PlayerController;
+import mazegame.mapsite.Loot;
 import mazegame.room.Room;
 import website.fighting.ConflictResolver;
 import java.util.Collection;
@@ -80,10 +81,21 @@ public class Match {
         PlayerController winner = conflictResolver.resolveConflict(playerController1, playerController2);
         if(winner.equals(playerController1)) {
             notifyPlayerLost(playerController2);
+            firstBeatSecond(playerController1, playerController2);
         } else {
             notifyPlayerLost(playerController1);
+            firstBeatSecond(playerController2, playerController1);
         }
         return winner;
+    }
+
+    private void firstBeatSecond(PlayerController playerController1, PlayerController playerController2) {
+        Loot loot = playerController2.getLoot();
+        playerController1.addLoot(new Loot(loot.getGold() % players.size(), loot.getItems()));
+        long goldPerPlayer = loot.getGold() / players.size();
+        for(PlayerController playerController : players) {
+            playerController.addGold(goldPerPlayer);
+        }
     }
 
     private void notifyIfWon(PlayerController playerController) {

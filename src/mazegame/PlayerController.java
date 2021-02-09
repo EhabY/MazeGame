@@ -79,6 +79,10 @@ public class PlayerController implements JsonSerializable {
     return player.getName();
   }
 
+  public void addGold(long gold) {
+    player.addGoldToInventory(gold);
+  }
+
   public void addLoot(Loot loot) {
     player.addLoot(loot);
   }

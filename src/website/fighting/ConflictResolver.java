@@ -43,7 +43,6 @@ public class ConflictResolver {
     }
 
     private void firstBeatSecond(PlayerController playerController1, PlayerController playerController2) {
-        playerController1.addLoot(playerController2.getLoot());
         playerController1.wonFight(WON_FIGHT_MESSAGE);
         playerController2.lostFight(LOST_FIGHT_MESSAGE);
     }
