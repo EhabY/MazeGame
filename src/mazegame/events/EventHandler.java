@@ -27,7 +27,7 @@ public class EventHandler {
 
     public void triggerGameEvent(GameEvent gameEvent, String message) {
         for(StateListener listener : stateListeners) {
-            executor.execute(() -> listener.stateChanged(gameEvent, message));
+            listener.stateChanged(gameEvent, message);
         }
     }
 }

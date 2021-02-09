@@ -1,57 +1,98 @@
 package website;
 
-import mazegame.events.GameEvent;
 import mazegame.PlayerController;
+import mazegame.events.GameEvent;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-
+import website.match.MatchCreator;
 import java.io.IOException;
 import java.util.Map;
-import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @WebSocket
 public class MatchWebSocketHandler {
+    private final Map<Session, String> usernames = new ConcurrentHashMap<>();
     private final Map<Session, Interpreter> players = new ConcurrentHashMap<>();
-    private final MatchCreator matchCreator = new MatchCreator(Main.map);
+    private MatchCreator matchCreator = initializeMatchCreator();
 
     @OnWebSocketConnect
-    public void onConnect(Session user) {
+    public void onConnect(Session user) {}
 
+    private MatchCreator initializeMatchCreator() {
+        return new MatchCreator(playersMap -> {
+            for(Map.Entry<Session, PlayerController> playerEntry : playersMap.entrySet()) {
+                Session user = playerEntry.getKey();
+                PlayerController playerController = playerEntry.getValue();
+                initializePlayer(user, playerController);
+            }
+            matchCreator = initializeMatchCreator();
+        });
+    }
+
+    private void initializePlayer(Session user, PlayerController playerController) {
+        players.put(user, new Interpreter(playerController));
+        addEventListener(user, playerController);
+        sendMessageToUser("The game has started!", user);
+    }
+
+    private void addEventListener(Session user, PlayerController playerController) {
+        playerController.addListener((event, message) -> {
+            Future<Void> sent = sendMessageToUser(event.name() + ": " + message, user);
+            if(event == GameEvent.LOST_MATCH || event == GameEvent.WON_MATCH) {
+                waitForFuture(sent);
+                user.close();
+            }
+        });
+    }
+
+    private void waitForFuture(Future<Void> future) {
+        try {
+            future.get();
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
     }
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
         players.remove(user);
+        usernames.remove(user);
     }
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) throws IOException {
-        if(!players.containsKey(user)) {
-            initializePlayer(user, message);
-            user.getRemote().sendStringByFuture("Added user " + message + " to the match!");
-        } else if(!matchCreator.hasGameStarted()) {
-            matchCreator.makeReady(players.get(user).getPlayerController());
-            user.getRemote().sendStringByFuture("User is ready!");
-        } else if(players.get(user).isGameOnGoing()) {
-            String response = players.get(user).execute(message);
-            user.getRemote().sendStringByFuture(response);
+        String response;
+        if(isNewPlayer(user)) {
+            initializePlayer(message, user);
+            response = "Added user " + message + " to the match!";
+        } else if(isUserInGame(user)) {
+            response = players.get(user).execute(message);
+        } else {
+            matchCreator.makeReady(usernames.get(user));
+            response = "User is ready!";
         }
+        sendMessageToUser(response, user);
     }
 
-    private void initializePlayer(Session user, String username) {
-        PlayerController playerController = matchCreator.addPlayer(username);
-        playerController.addListener((event, message) -> {
-            user.getRemote().sendStringByFuture(event.name() + ": " + message);
-            if(event == GameEvent.LOST_MATCH || event == GameEvent.WON_MATCH) {
-                user.close();
-            }
-        });
-        Interpreter interpreter = new Interpreter(playerController);
-        players.put(user, interpreter);
+    private boolean isNewPlayer(Session user) {
+        return !usernames.containsKey(user);
+    }
+
+    private void initializePlayer(String username, Session session) {
+        matchCreator.addPlayer(username, session);
+        usernames.put(session, username);
+    }
+
+    private boolean isUserInGame(Session user) {
+        return players.containsKey(user);
+    }
+
+    private Future<Void> sendMessageToUser(String message, Session user) {
+        return user.getRemote().sendStringByFuture(message);
     }
 }

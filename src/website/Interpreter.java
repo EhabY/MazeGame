@@ -55,14 +55,6 @@ public class Interpreter {
         itemCommands.put("use", new UseItem(playerController));
     }
 
-    boolean isGameOnGoing() {
-        return playerController.getGameState() != State.LOST && playerController.getGameState() != State.WON;
-    }
-
-    PlayerController getPlayerController() {
-        return playerController;
-    }
-
     String execute(String command) {
         if(executingOp.getAndSet(true)) {
             return "Please wait for the previous operation to finish executing!";

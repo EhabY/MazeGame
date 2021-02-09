@@ -1,9 +1,10 @@
-package website;
+package website.match;
 
 import mazegame.MazeMap;
 import mazegame.PlayerController;
 import mazegame.room.Room;
 import website.fighting.ConflictResolver;
+import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -16,12 +17,12 @@ public class Match {
     private static final String WON_MATCH_MESSAGE = "Congratulations, YOU WON!";
     private static final String LOST_MATCH_MESSAGE = "Sadly, you lost the match :(!";
     private final Set<PlayerController> players = new HashSet<>();
-    private final Map<Room, PlayerController> playerInRoom = new ConcurrentHashMap<>();
+    private final Map<Room, PlayerController> roomToPlayerMap = new ConcurrentHashMap<>();
     private final Map<Room, Object> locks = new ConcurrentHashMap<>();
     private final MazeMap mazeMap;
     private final ConflictResolver conflictResolver;
 
-    Match(MazeMap mazeMap, Set<PlayerController> players, ConflictResolver conflictResolver) {
+    Match(MazeMap mazeMap, Collection<PlayerController> players, ConflictResolver conflictResolver) {
         this.mazeMap = Objects.requireNonNull(mazeMap);
         this.players.addAll(players);
         for(Room room : mazeMap.getRooms()) {
@@ -60,17 +61,17 @@ public class Match {
 
     private void removePlayerFromRoom(Room previousRoom) {
         synchronized (locks.get(previousRoom)) {
-            playerInRoom.remove(previousRoom);
+            roomToPlayerMap.remove(previousRoom);
         }
     }
 
     private void addPlayerToRoom(PlayerController playerController) {
         Room room = playerController.getCurrentRoom();
         synchronized (locks.get(room)) {
-            if(playerInRoom.containsKey(room)) {
-                playerController = getWinner(playerController, playerInRoom.get(room));
+            if(roomToPlayerMap.containsKey(room)) {
+                playerController = getWinner(playerController, roomToPlayerMap.get(room));
             }
-            playerInRoom.put(room, playerController);
+            roomToPlayerMap.put(room, playerController);
             notifyIfWon(playerController);
         }
     }

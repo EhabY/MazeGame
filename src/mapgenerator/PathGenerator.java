@@ -1,7 +1,7 @@
 package mapgenerator;
 
 import mapgenerator.mapsitegenerator.DoorGenerator;
-import mapgenerator.mapsitegenerator.KeyHolderMapSiteGenerator;
+import mapgenerator.mapsitegenerator.KeyHolderGenerator;
 import mazegame.Direction;
 import org.json.JSONObject;
 import java.util.ArrayDeque;
@@ -175,7 +175,7 @@ public class PathGenerator {
         int randomIndex = random.nextInt(potentialPlaces.size());
         MapGenerator.MapSiteLocation mapSiteLocation = potentialPlaces.get(randomIndex);
         JSONObject roomWithKey = roomGenerator.getRoom(mapSiteLocation.roomID);
-        roomWithKey.put(mapSiteLocation.direction.toString().toLowerCase(), KeyHolderMapSiteGenerator.getKeyHolderMapSite(keyName));
+        roomWithKey.put(mapSiteLocation.direction.toString().toLowerCase(), KeyHolderGenerator.getKeyHolder(keyName));
     }
 
 }

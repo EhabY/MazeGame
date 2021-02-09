@@ -26,8 +26,12 @@ public class GameParser {
   private final MapSiteParser mapSiteParser;
 
   public static MazeMap parseJsonFile(String pathToFile) throws IOException {
+    String jsonString = readWholeFile(pathToFile);
+    return parseJson(jsonString);
+  }
+
+  public static MazeMap parseJson(String jsonString) {
     GameParser gameParser = new GameParser();
-    String jsonString = gameParser.readWholeFile(pathToFile);
     JSONObject gameJson = new JSONObject(jsonString);
     gameParser.parseAllRooms(gameJson);
     return gameParser.parseMazeMap(gameJson);
@@ -38,7 +42,7 @@ public class GameParser {
     mapSiteParser = new MapSiteParser();
   }
 
-  private String readWholeFile(String pathToFile) throws IOException {
+  private static String readWholeFile(String pathToFile) throws IOException {
     return new String(Files.readAllBytes(Paths.get(pathToFile)), StandardCharsets.UTF_8);
   }
 
@@ -114,7 +118,7 @@ public class GameParser {
     long timeInSeconds = mapConfigJson.getLong("time");
     JSONArray itemsJson = mapConfigJson.getJSONArray("items");
 
-    return new MazeMap.Builder(startingRooms, rooms.get(endRoomID))
+    return new MazeMap.Builder(rooms.values(), startingRooms, rooms.get(endRoomID))
         .startingGold(gold)
         .time(timeInSeconds)
         .initialItems(ItemParser.parseItemsArray(itemsJson))

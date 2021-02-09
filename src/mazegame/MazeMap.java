@@ -5,12 +5,11 @@ import mazegame.room.Room;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 public class MazeMap {
   private final List<Room> rooms;
+  private final List<Room> startingRooms;
   private final Room endRoom;
   private final long startingGold;
   private final List<Item> initialItems;
@@ -18,21 +17,16 @@ public class MazeMap {
 
   public static class Builder {
     private final List<Room> rooms;
+    private final List<Room> startingRooms;
     private final Room endRoom;
     private long startingGold = 0;
     private List<Item> initialItems = new ArrayList<>();
     private long time = Long.MAX_VALUE;
 
-    public Builder(Collection<Room> rooms, Room endRoom) {
-      this.rooms = getRandomizedStartRooms(rooms, endRoom);
+    public Builder(Collection<Room> rooms, Collection<Room> startingRooms, Room endRoom) {
+      this.rooms = Collections.unmodifiableList(new ArrayList<>(rooms));
+      this.startingRooms = Collections.unmodifiableList(new ArrayList<>(startingRooms));
       this.endRoom = endRoom;
-    }
-
-    private List<Room> getRandomizedStartRooms(Collection<Room> rooms, Room endRoom) {
-      List<Room> startRooms = new ArrayList<>(rooms);
-      startRooms.remove(endRoom);
-      Collections.shuffle(startRooms);
-      return Collections.unmodifiableList(startRooms);
     }
 
     public Builder startingGold(long gold) {
@@ -57,6 +51,7 @@ public class MazeMap {
 
   private MazeMap(Builder builder) {
     this.rooms = builder.rooms;
+    this.startingRooms = builder.startingRooms;
     this.endRoom = builder.endRoom;
     this.startingGold = builder.startingGold;
     this.initialItems = builder.initialItems;
@@ -65,6 +60,10 @@ public class MazeMap {
 
   public List<Room> getRooms() {
     return rooms;
+  }
+
+  public List<Room> getStartingRooms() {
+    return startingRooms;
   }
 
   public Room getEndRoom() {

@@ -75,6 +75,10 @@ public class PlayerController implements JsonSerializable {
     return player.getCurrentRoom();
   }
 
+  public String getUsername() {
+    return player.getName();
+  }
+
   public void addLoot(Loot loot) {
     player.addLoot(loot);
   }
