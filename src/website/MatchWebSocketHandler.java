@@ -5,27 +5,27 @@ import org.eclipse.jetty.websocket.api.annotations.OnWebSocketClose;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketConnect;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
-import java.io.IOException;
+import website.message.Message;
 
 @WebSocket
 public class MatchWebSocketHandler {
-    MessageBroker messageBroker = new MessageBroker();
+    MessageHandler messageHandler = new MessageHandler();
 
     @OnWebSocketConnect
     public void onConnect(Session user) {}
 
     @OnWebSocketClose
     public void onClose(Session user, int statusCode, String reason) {
-        messageBroker.removeUser(user);
+        messageHandler.removeUser(user);
     }
 
     @OnWebSocketMessage
     public void onMessage(Session user, String message) {
-        String response = messageBroker.handleJsonMessage(user, message);
-        sendMessageToUser(response, user);
+        Message response = messageHandler.getResponseFromMessage(user, message);
+        sendMessageToUser(response.getPayload(), user);
     }
 
-    private void sendMessageToUser(String message, Session user) {
-        user.getRemote().sendStringByFuture(message);
+    private void sendMessageToUser(String response, Session user) {
+        user.getRemote().sendStringByFuture(response);
     }
 }

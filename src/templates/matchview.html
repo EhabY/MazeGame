@@ -6,8 +6,9 @@
 </head>
 <body>
     <h1>WebSocket!</h1>
-    <label for="message">Message: </label><input id="message" type="text" />
+    <label for="content">Message: </label><input id="content" type="text" />
     <button id="submit">Login</button>
+    <button id="download">Download Map</button>
 </body>
 <script>
     let ws = null;
@@ -18,7 +19,7 @@
 
             ws.onopen = function(event) {
                 console.log(event);
-                sendMessage("username", document.getElementById("message").value);
+                sendMessage("username", getInputContent());
             }
 
             ws.onclose = function(event) {
@@ -30,21 +31,38 @@
             }
         } else {
             if(ready) {
-                sendMessage("command", document.getElementById("message").value);
+                sendMessage("command", getInputContent());
             } else {
                 ready = true;
                 sendMessage("ready", "");
             }
         }
-
     });
 
-    function sendMessage(type, message) {
+    document.getElementById("download").addEventListener("click", function() {
+        sendMessage("map", getInputContent());
+    });
+
+    function getInputContent() {
+        return document.getElementById("content").value;
+    }
+
+    function sendMessage(type, content) {
         const messageJson = {
             "type": type,
-            "message": message
+            "content": content
         }
         ws.send(JSON.stringify(messageJson));
+    }
+
+    function downloadObjectAsJson(exportObj, exportName){
+        let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+        let downloadAnchorNode = document.createElement('a');
+        downloadAnchorNode.setAttribute("href",     dataStr);
+        downloadAnchorNode.setAttribute("download", exportName + ".json");
+        document.body.appendChild(downloadAnchorNode); // required for firefox
+        downloadAnchorNode.click();
+        downloadAnchorNode.remove();
     }
 
 </script>

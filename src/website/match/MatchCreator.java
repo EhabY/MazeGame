@@ -19,12 +19,13 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MatchCreator {
-    private static final int LEVELS_IN_MAP = 1;
+    private static final int LEVELS_IN_MAP = 2;
     private final MatchStartedListener listener;
     private final Map<String, Session> playersInMatch = new ConcurrentHashMap<>();
     private final Set<String> readyPlayers = new HashSet<>();
     private boolean gameStarted = false;
     private Match match;
+    private String mazeMapJson;
 
     public MatchCreator(MatchStartedListener listener) {
         this.listener = Objects.requireNonNull(listener);
@@ -53,17 +54,16 @@ public class MatchCreator {
 
     private void startMatch() {
         ConflictResolver conflictResolver = new ConflictResolver(new SimpleScoreCalculator(), new RockPaperScissors());
-        MazeMap map = generateRandomMap();
-        Map<Session, PlayerController> playerControllerMap = createPlayerControllers(map);
+        MazeMap mazeMap = generateRandomMap();
+        Map<Session, PlayerController> playerControllerMap = createPlayerControllers(mazeMap);
         this.listener.matchStarted(playerControllerMap);
-        this.match = new Match(map, playerControllerMap.values(), conflictResolver);
+        this.match = new Match(mazeMap, playerControllerMap.values(), conflictResolver);
         this.gameStarted = true;
     }
 
     private MazeMap generateRandomMap() {
-        String mapJson = MapGenerator.generateMap(playersInMatch.size(), LEVELS_IN_MAP);
-        System.out.println(mapJson);
-        return GameParser.parseJson(mapJson);
+        this.mazeMapJson = MapGenerator.generateMap(playersInMatch.size(), LEVELS_IN_MAP);
+        return GameParser.parseJson(this.mazeMapJson);
     }
 
     private Map<Session, PlayerController> createPlayerControllers(MazeMap map) {
@@ -83,5 +83,9 @@ public class MatchCreator {
         for(PlayerController player : players) {
             player.addMoveListener(fromRoom -> match.moveFrom(player, fromRoom));
         }
+    }
+
+    public String getMazeMapJson() {
+        return mazeMapJson;
     }
 }
