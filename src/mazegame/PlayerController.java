@@ -10,6 +10,7 @@ import mazegame.room.Room;
 import mazegame.trade.TransactionHandler;
 import java.time.Duration;
 import java.time.Instant;
+import java.util.Collection;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.BlockingDeque;
@@ -120,6 +121,10 @@ public class PlayerController implements JsonSerializable {
 
   public void requestingInput(String message) {
     eventHandler.triggerGameEvent(GameEvent.REQUESTING_INPUT, message);
+  }
+
+  public void sendingPlayerList(Collection<String> usernames) {
+    eventHandler.triggerGameEvent(GameEvent.SENDING_PLAYER_LIST, usernames.toString());
   }
 
   public void lostMatch(String message) {

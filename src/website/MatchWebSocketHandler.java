@@ -53,8 +53,10 @@ public class MatchWebSocketHandler {
     private void waitForFuture(Future<Void> future) {
         try {
             future.get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+        } catch(ExecutionException executionException) {
+            executionException.printStackTrace();
+        } catch(InterruptedException interruptedException) {
+            // interrupted, proceed normally
         }
     }
 

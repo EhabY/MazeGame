@@ -5,9 +5,11 @@ import mazegame.PlayerController;
 import mazegame.mapsite.Loot;
 import mazegame.room.Room;
 import website.fighting.ConflictResolver;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -80,22 +82,42 @@ public class Match {
     private PlayerController getWinner(PlayerController playerController1, PlayerController playerController2) {
         PlayerController winner = conflictResolver.resolveConflict(playerController1, playerController2);
         if(winner.equals(playerController1)) {
-            notifyPlayerLost(playerController2);
             firstBeatSecond(playerController1, playerController2);
         } else {
-            notifyPlayerLost(playerController1);
             firstBeatSecond(playerController2, playerController1);
         }
         return winner;
     }
 
     private void firstBeatSecond(PlayerController playerController1, PlayerController playerController2) {
+        notifyPlayerLost(playerController2);
         Loot loot = playerController2.getLoot();
         playerController1.addLoot(new Loot(loot.getGold() % players.size(), loot.getItems()));
         long goldPerPlayer = loot.getGold() / players.size();
         for(PlayerController playerController : players) {
             playerController.addGold(goldPerPlayer);
         }
+        broadcastPlayerList();
+    }
+
+    private void notifyPlayerLost(PlayerController playerController) {
+        playerController.lostMatch(LOST_MATCH_MESSAGE);
+        players.remove(playerController);
+    }
+
+    private void broadcastPlayerList() {
+        Collection<String> usernames = getUsernameList();
+        for(PlayerController playerController : players) {
+            playerController.sendingPlayerList(usernames);
+        }
+    }
+
+    private Collection<String> getUsernameList() {
+        List<String> usernames = new ArrayList<>();
+        for(PlayerController playerController : players) {
+            usernames.add(playerController.getUsername());
+        }
+        return usernames;
     }
 
     private void notifyIfWon(PlayerController playerController) {
@@ -108,11 +130,6 @@ public class Match {
         playerController.wonMatch(WON_MATCH_MESSAGE);
         players.remove(playerController);
         notifyAllLost(LOST_MATCH_MESSAGE);
-    }
-
-    private void notifyPlayerLost(PlayerController playerController) {
-        playerController.lostMatch(LOST_MATCH_MESSAGE);
-        players.remove(playerController);
     }
 
     private boolean hasWon(PlayerController playerController) {
