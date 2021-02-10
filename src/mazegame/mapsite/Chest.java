@@ -3,7 +3,7 @@ package mazegame.mapsite;
 import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 import java.util.Objects;
 
@@ -39,7 +39,7 @@ public class Chest extends AbstractLockable implements Checkable, Lootable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

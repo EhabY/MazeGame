@@ -4,7 +4,7 @@ import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import mazegame.room.Room;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 public class Door extends AbstractLockable implements Checkable {
   private static final String DESCRIPTION = "Door";
@@ -61,7 +61,7 @@ public class Door extends AbstractLockable implements Checkable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

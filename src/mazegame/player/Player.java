@@ -8,7 +8,7 @@ import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
 import serialization.JsonEncodable;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 import java.util.Collections;
 import java.util.List;
 
@@ -135,7 +135,7 @@ public class Player implements JsonEncodable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 }

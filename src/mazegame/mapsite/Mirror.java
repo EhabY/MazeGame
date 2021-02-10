@@ -1,7 +1,7 @@
 package mazegame.mapsite;
 
 import mazegame.item.Key;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 public class Mirror extends AbstractHangable {
   private static final String DESCRIPTION = "You See a silhouette of you";
@@ -11,7 +11,7 @@ public class Mirror extends AbstractHangable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 }

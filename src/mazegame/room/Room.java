@@ -5,7 +5,7 @@ import mazegame.mapsite.Loot;
 import mazegame.mapsite.Lootable;
 import mazegame.mapsite.SerializableMapSite;
 import serialization.JsonEncodable;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
@@ -73,7 +73,7 @@ public class Room implements JsonEncodable, Lootable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

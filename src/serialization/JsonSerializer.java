@@ -14,7 +14,7 @@ import java.util.Queue;
 import java.util.Set;
 
 public class JsonSerializer {
-  private final JsonEncoder jsonEncoder = new JsonEncoderImpl();
+  private final Encoder encoder = new JsonEncoder();
   private final Set<Integer> visitedRooms;
   private final Queue<Room> roomsQueue;
   private final JSONArray roomsJson;
@@ -31,7 +31,7 @@ public class JsonSerializer {
   }
 
   private String getSerializedGameState(PlayerController playerController) {
-    JSONObject map = new JSONObject(playerController.applyEncoder(jsonEncoder));
+    JSONObject map = new JSONObject(playerController.encodeUsing(encoder));
     map.put("rooms", serializeRooms(playerController.getCurrentRoom()));
     return map.toString();
   }
@@ -47,7 +47,7 @@ public class JsonSerializer {
   }
 
   private void serializeRoom(Room room) {
-    JSONObject roomJson = new JSONObject(room.applyEncoder(jsonEncoder));
+    JSONObject roomJson = new JSONObject(room.encodeUsing(encoder));
     roomsJson.put(roomJson);
   }
 

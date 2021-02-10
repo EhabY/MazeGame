@@ -1,7 +1,7 @@
 package mazegame.mapsite;
 
 import mazegame.item.Key;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 public class Painting extends AbstractHangable {
   private static final String DESCRIPTION = "Painting";
@@ -11,7 +11,7 @@ public class Painting extends AbstractHangable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 }

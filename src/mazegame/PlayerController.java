@@ -9,7 +9,7 @@ import mazegame.player.Player;
 import mazegame.room.Room;
 import mazegame.trade.TransactionHandler;
 import serialization.JsonEncodable;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
@@ -139,7 +139,7 @@ public class PlayerController implements JsonEncodable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

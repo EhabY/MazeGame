@@ -3,7 +3,7 @@ package mazegame.mapsite;
 import mazegame.item.Item;
 import mazegame.util.ItemFormatter;
 import serialization.JsonEncodable;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -33,7 +33,7 @@ public final class Loot implements JsonEncodable {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

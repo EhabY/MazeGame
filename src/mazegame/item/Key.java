@@ -1,7 +1,7 @@
 package mazegame.item;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 import java.util.Map;
 import java.util.Objects;
 
@@ -60,7 +60,7 @@ public final class Key implements Item {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

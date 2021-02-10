@@ -2,8 +2,8 @@ package website.message;
 
 import mazegame.Response;
 import org.json.JSONObject;
+import serialization.Encoder;
 import serialization.JsonEncoder;
-import serialization.JsonEncoderImpl;
 
 import java.util.Objects;
 
@@ -26,11 +26,11 @@ public class ResponseMessage implements Message {
     }
 
     private JSONObject getContentJson() {
-        JsonEncoder encoder = new JsonEncoderImpl();
+        Encoder encoder = new JsonEncoder();
         JSONObject contentJson = new JSONObject();
         contentJson.put("message", response.message);
         if(response.encodable != null) {
-            contentJson.put("data", response.encodable.applyEncoder(encoder));
+            contentJson.put("data", response.encodable.encodeUsing(encoder));
         }
         return contentJson;
     }

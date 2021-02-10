@@ -1,6 +1,6 @@
 package mazegame.mapsite;
 
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 public class Wall implements SerializableMapSite {
   private static final String DESCRIPTION = "Wall";
@@ -18,7 +18,7 @@ public class Wall implements SerializableMapSite {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 }

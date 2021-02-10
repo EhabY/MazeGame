@@ -1,6 +1,6 @@
 package mazegame.item;
 
-import serialization.JsonEncoder;
+import serialization.Encoder;
 import java.util.Objects;
 
 public final class Flashlight implements Item {
@@ -58,7 +58,7 @@ public final class Flashlight implements Item {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 

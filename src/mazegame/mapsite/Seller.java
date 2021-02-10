@@ -5,7 +5,7 @@ import mazegame.item.Item;
 import mazegame.item.ItemManager;
 import mazegame.util.ItemFormatter;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import serialization.JsonEncoder;
+import serialization.Encoder;
 
 import java.util.Collection;
 import java.util.Map;
@@ -50,7 +50,7 @@ public class Seller implements SerializableMapSite {
   }
 
   @Override
-  public String applyEncoder(JsonEncoder encoder) {
+  public String encodeUsing(Encoder encoder) {
     return encoder.visit(this);
   }
 
