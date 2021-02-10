@@ -1,5 +1,6 @@
 package mazegame.item;
 
+import serialization.JsonEncoder;
 import java.util.Objects;
 
 public final class Flashlight implements Item {
@@ -13,7 +14,7 @@ public final class Flashlight implements Item {
 
   public Flashlight(boolean turnedOn) {
     this.turnedOn = turnedOn;
-    name = Flashlight.FLASHLIGHT_NAME;
+    name = "";
   }
 
   public void toggle() {
@@ -47,30 +48,22 @@ public final class Flashlight implements Item {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    Flashlight that = (Flashlight) o;
-    return name.equals(that.name);
+    Flashlight flashlight = (Flashlight) o;
+    return name.equals(flashlight.name);
   }
 
   @Override
   public final int hashCode() {
-    return Objects.hash(getName());
+    return Objects.hash(name + " " + getType());
+  }
+
+  @Override
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override
   public String toString() {
     return "Flashlight{" + "turnedOn=" + turnedOn + ", name='" + name + '\'' + '}';
-  }
-
-  @Override
-  public String toJson() {
-    return "{"
-        + "\"name\": \""
-        + name
-        + "\","
-        + "\"type\": \"Flashlight\""
-        + ","
-        + "\"turnedOn\": "
-        + turnedOn
-        + "}";
   }
 }

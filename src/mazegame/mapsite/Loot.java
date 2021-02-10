@@ -1,16 +1,13 @@
 package mazegame.mapsite;
 
-import mazegame.JsonSerializable;
 import mazegame.item.Item;
 import mazegame.util.ItemFormatter;
-import mazegame.util.JsonSerializer;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class Loot implements JsonSerializable {
+public final class Loot {
   public static final Loot EMPTY_LOOT = new Loot(0);
   private final long gold;
   private final List<Item> itemsList;
@@ -35,17 +32,5 @@ public final class Loot implements JsonSerializable {
   @Override
   public String toString() {
     return "Gold = " + getGold() + "\n" + ItemFormatter.formatItems(itemsList);
-  }
-
-  @Override
-  public String toJson() {
-    return "{"
-        + "\"gold\": "
-        + gold
-        + ","
-        + "\"items\": ["
-        + JsonSerializer.removeTrailingChar(JsonSerializer.listToJson(itemsList))
-        + "]"
-        + "}";
   }
 }

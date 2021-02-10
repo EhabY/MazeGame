@@ -4,23 +4,24 @@ import mazegame.exceptions.ItemNotFoundException;
 import mazegame.item.Item;
 import mazegame.item.ItemManager;
 import mazegame.util.ItemFormatter;
-import mazegame.util.JsonSerializer;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import serialization.JsonEncoder;
+
 import java.util.Collection;
 import java.util.Map;
 
 public class Seller implements SerializableMapSite {
   private static final String DESCRIPTION = "Seller";
-  private final ItemManager items;
+  private final ItemManager itemManager;
   private final Map<String, Long> priceList;
 
   public Seller(Collection<? extends Item> items, Map<String, Long> priceList) {
-    this.items = new ItemManager(items);
+    this.itemManager = new ItemManager(items);
     this.priceList = new CaseInsensitiveMap<>(priceList);
   }
 
   public void addItem(Item item) {
-    items.add(item);
+    itemManager.add(item);
   }
 
   public long getItemPrice(String name) {
@@ -32,14 +33,14 @@ public class Seller implements SerializableMapSite {
   }
 
   public Item takeItem(String name) {
-    return items.takeFromItems(name);
+    return itemManager.takeFromItems(name);
   }
 
   public String getItemList() {
-    return items.toString();
+    return itemManager.toString();
   }
 
-  public String getPriceList() {
+  public String getFormattedPriceList() {
     return ItemFormatter.formatPriceList(priceList);
   }
 
@@ -49,32 +50,12 @@ public class Seller implements SerializableMapSite {
   }
 
   @Override
-  public String toString() {
-    return "Seller{" + "items=" + getItemList() + ", priceList=" + getPriceList() + '}';
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override
-  public String toJson() {
-    return "{"
-        + "\"siteMap\": \"Seller\","
-        + "\"items\": "
-        + items.toJson()
-        + ","
-        + "\"priceList\": ["
-        + priceListToJson()
-        + "]"
-        + "}";
-  }
-
-  private String priceListToJson() {
-    StringBuilder pricesJson = new StringBuilder();
-    for (Map.Entry<String, Long> listing : priceList.entrySet()) {
-      String itemName = listing.getKey();
-      long itemPrice = listing.getValue();
-      pricesJson.append("{\"name\": \"").append(itemName);
-      pricesJson.append("\",\"price\": ").append(itemPrice).append("},");
-    }
-
-    return JsonSerializer.removeTrailingChar(pricesJson).toString();
+  public String toString() {
+    return "Seller{" + "items=" + getItemList() + ", priceList=" + getFormattedPriceList() + '}';
   }
 }

@@ -41,7 +41,7 @@ public class TransactionHandler {
   }
 
   public String listSellerPriceList() {
-    return seller.getPriceList();
+    return seller.getFormattedPriceList();
   }
 
   @Override

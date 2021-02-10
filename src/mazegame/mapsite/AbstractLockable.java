@@ -1,9 +1,8 @@
 package mazegame.mapsite;
 
-import mazegame.JsonSerializable;
 import mazegame.item.Key;
 
-public abstract class AbstractLockable implements Lockable, JsonSerializable {
+public abstract class AbstractLockable implements Lockable {
   private final Lock lock;
 
   protected AbstractLockable(Key key) {
@@ -34,10 +33,5 @@ public abstract class AbstractLockable implements Lockable, JsonSerializable {
   @Override
   public boolean isLocked() {
     return lock.isLocked();
-  }
-
-  @Override
-  public String toJson() {
-    return "\"key\": \"" + lock.getKeyName() + "\"," + "\"locked\": " + isLocked();
   }
 }

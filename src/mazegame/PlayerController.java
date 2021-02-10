@@ -8,7 +8,8 @@ import mazegame.mapsite.Loot;
 import mazegame.player.Player;
 import mazegame.room.Room;
 import mazegame.trade.TransactionHandler;
-import java.time.Duration;
+import serialization.JsonEncodable;
+import serialization.JsonEncoder;
 import java.time.Instant;
 import java.util.Collection;
 import java.util.Objects;
@@ -16,7 +17,7 @@ import java.util.Random;
 import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class PlayerController implements JsonSerializable {
+public class PlayerController implements JsonEncodable {
   private final Player player;
   private final MazeMap map;
   private final BlockingDeque<String> fightCommandsQueue = new LinkedBlockingDeque<>();
@@ -138,20 +139,8 @@ public class PlayerController implements JsonSerializable {
   }
 
   @Override
-  public String toJson() {
-    long timeElapsedInSeconds = Duration.between(gameStart, Instant.now()).toMillis() / 1000;
-    return "\"mapConfiguration\": {"
-        + "\"startRoomID\": "
-        + player.getCurrentRoom().getId()
-        + ","
-        + "\"endRoomID\": "
-        + map.getEndRoom().getId()
-        + ","
-        + "\"time\": "
-        + (map.getTimeInSeconds() - timeElapsedInSeconds)
-        + ","
-        + player.toJson()
-        + "}";
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override

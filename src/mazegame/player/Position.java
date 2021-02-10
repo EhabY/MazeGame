@@ -1,7 +1,6 @@
 package mazegame.player;
 
 import mazegame.Direction;
-import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Flashlight;
 import mazegame.mapsite.DarkMapSite;
 import mazegame.mapsite.Door;

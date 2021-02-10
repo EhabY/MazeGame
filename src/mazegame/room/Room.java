@@ -1,16 +1,17 @@
 package mazegame.room;
 
 import mazegame.Direction;
-import mazegame.JsonSerializable;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.Lootable;
 import mazegame.mapsite.SerializableMapSite;
+import serialization.JsonEncodable;
+import serialization.JsonEncoder;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
 
-public class Room implements JsonSerializable, Lootable {
+public class Room implements JsonEncodable, Lootable {
   private final int id;
   private final Map<Direction, SerializableMapSite> mapSites;
   private final LightSwitch lightSwitch;
@@ -72,16 +73,8 @@ public class Room implements JsonSerializable, Lootable {
   }
 
   @Override
-  public String toJson() {
-    StringBuilder roomJson = new StringBuilder("{\"id\": " + id);
-    roomJson.append(",\"lightswitch\": ").append(lightSwitch.toJson());
-    for (Direction direction : Direction.values()) {
-      roomJson.append(",\"").append(direction.toString().toLowerCase()).append("\": ");
-      roomJson.append(mapSites.get(direction).toJson());
-    }
-    roomJson.append(",\"loot\": ").append(loot.toJson());
-
-    return roomJson.toString() + "}";
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override

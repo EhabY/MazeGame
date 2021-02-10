@@ -1,6 +1,7 @@
 package mazegame.mapsite;
 
 import mazegame.item.Key;
+import serialization.JsonEncoder;
 
 public class Painting extends AbstractHangable {
   private static final String DESCRIPTION = "Painting";
@@ -10,7 +11,7 @@ public class Painting extends AbstractHangable {
   }
 
   @Override
-  public String toJson() {
-    return "{" + "\"siteMap\": \"Painting\"," + "\"hiddenKey\": \"" + getKeyName() + "\"" + "}";
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 }

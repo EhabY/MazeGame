@@ -1,8 +1,8 @@
 package mazegame.item;
 
-import mazegame.JsonSerializable;
+import serialization.JsonEncodable;
 
-public interface Item extends JsonSerializable {
+public interface Item extends JsonEncodable {
   void accept(ItemVisitor visitor);
 
   String getName();

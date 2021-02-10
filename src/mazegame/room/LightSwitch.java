@@ -1,8 +1,6 @@
 package mazegame.room;
 
-import mazegame.JsonSerializable;
-
-public class LightSwitch implements JsonSerializable {
+public class LightSwitch {
   private boolean lightsOn;
 
   public LightSwitch(boolean lightsOn) {
@@ -15,11 +13,6 @@ public class LightSwitch implements JsonSerializable {
 
   public boolean isOn() {
     return lightsOn;
-  }
-
-  @Override
-  public String toJson() {
-    return "{" + "\"hasLights\": true," + "\"lightsOn\": " + lightsOn + "}";
   }
 
   @Override

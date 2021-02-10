@@ -1,7 +1,6 @@
 package mazegame.player;
 
 import mazegame.Direction;
-import mazegame.JsonSerializable;
 import mazegame.item.Item;
 import mazegame.mapsite.Checkable;
 import mazegame.mapsite.Loot;
@@ -10,7 +9,7 @@ import mazegame.room.Room;
 import java.util.Collections;
 import java.util.List;
 
-public class Player implements JsonSerializable {
+public class Player {
   private final String name;
   private final Position position;
   private final Inventory inventory;
@@ -127,16 +126,12 @@ public class Player implements JsonSerializable {
     return name;
   }
 
-  @Override
-  public String toString() {
-    return "Player status:\n" + "Facing " + position + "\n" + inventory.toString();
+  public Direction getDirection() {
+    return position.getDirection();
   }
 
   @Override
-  public String toJson() {
-    return "\"orientation\": \""
-        + position.getDirection().toString().toLowerCase()
-        + "\","
-        + inventory.toJson();
+  public String toString() {
+    return "Player status:\n" + "Facing " + position + "\n" + inventory.toString();
   }
 }

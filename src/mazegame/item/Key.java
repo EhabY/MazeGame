@@ -1,6 +1,7 @@
 package mazegame.item;
 
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import serialization.JsonEncoder;
 import java.util.Map;
 import java.util.Objects;
 
@@ -37,7 +38,7 @@ public final class Key implements Item {
 
   @Override
   public String getName() {
-    return name + " " + getType();
+    return name;
   }
 
   @Override
@@ -59,16 +60,16 @@ public final class Key implements Item {
 
   @Override
   public final int hashCode() {
-    return Objects.hash(getName());
+    return Objects.hash(name + " " + getType());
+  }
+
+  @Override
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override
   public String toString() {
     return "Key{" + "name='" + name + '\'' + '}';
-  }
-
-  @Override
-  public String toJson() {
-    return "{" + "\"name\": \"" + name + "\"," + "\"type\": \"Key\"" + "}";
   }
 }

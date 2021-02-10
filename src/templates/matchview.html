@@ -28,6 +28,11 @@
 
             ws.onmessage = function(event) {
                 console.log(event);
+                let response = JSON.parse(event.data);
+                console.log(response);
+                if(response.type === "map") {
+                    downloadObjectAsJson(JSON.parse(response.content));
+                }
             }
         } else {
             if(ready) {

@@ -23,7 +23,7 @@ final class CheckVisitor implements CheckableVisitor {
       return "";
     } else {
       inventory.addItem(foundKey);
-      return "The " + foundKey.getName() + " was acquired";
+      return "The " + foundKey.getName() + " key was acquired";
     }
   }
 

@@ -1,6 +1,5 @@
 package mazegame.player;
 
-import mazegame.JsonSerializable;
 import mazegame.exceptions.NotEnoughGoldException;
 import mazegame.item.Flashlight;
 import mazegame.item.Item;
@@ -8,9 +7,8 @@ import mazegame.item.ItemManager;
 import mazegame.mapsite.Loot;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
-class Inventory implements JsonSerializable {
+class Inventory {
   private long gold;
   private final ItemManager itemManager;
 
@@ -84,10 +82,5 @@ class Inventory implements JsonSerializable {
   @Override
   public String toString() {
     return "Gold = " + getGold() + "\n" + itemManager.toString();
-  }
-
-  @Override
-  public String toJson() {
-    return "\"gold\": " + gold + "," + "\"items\": " + itemManager.toJson();
   }
 }

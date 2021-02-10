@@ -36,8 +36,24 @@ public class Match {
             addPlayerToRoom(player);
         }
 
+        broadcastPlayerList();
         this.conflictResolver = Objects.requireNonNull(conflictResolver);
         setMatchTimer(this.mazeMap.getTimeInSeconds() * 1000);
+    }
+
+    private void broadcastPlayerList() {
+        Collection<String> usernames = getUsernameList();
+        for(PlayerController playerController : players) {
+            playerController.sendingPlayerList(usernames);
+        }
+    }
+
+    private Collection<String> getUsernameList() {
+        List<String> usernames = new ArrayList<>();
+        for(PlayerController playerController : players) {
+            usernames.add(playerController.getUsername());
+        }
+        return usernames;
     }
 
     private void setMatchTimer(long timeInMilliseconds) {
@@ -103,21 +119,6 @@ public class Match {
     private void notifyPlayerLost(PlayerController playerController) {
         playerController.lostMatch(LOST_MATCH_MESSAGE);
         players.remove(playerController);
-    }
-
-    private void broadcastPlayerList() {
-        Collection<String> usernames = getUsernameList();
-        for(PlayerController playerController : players) {
-            playerController.sendingPlayerList(usernames);
-        }
-    }
-
-    private Collection<String> getUsernameList() {
-        List<String> usernames = new ArrayList<>();
-        for(PlayerController playerController : players) {
-            usernames.add(playerController.getUsername());
-        }
-        return usernames;
     }
 
     private void notifyIfWon(PlayerController playerController) {

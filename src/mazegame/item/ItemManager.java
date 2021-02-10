@@ -1,16 +1,14 @@
 package mazegame.item;
 
-import mazegame.JsonSerializable;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.util.ItemFormatter;
-import mazegame.util.JsonSerializer;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class ItemManager implements JsonSerializable {
+public class ItemManager {
   private final Map<String, List<Item>> items = new CaseInsensitiveMap<>();
 
   public ItemManager() {}
@@ -26,14 +24,20 @@ public class ItemManager implements JsonSerializable {
   }
 
   public void add(Item item) {
-    String name = item.getName();
+    String name = getNameType(item);
     if (hasItem(name)) {
       items.get(name).add(item);
     } else {
       ArrayList<Item> itemList = new ArrayList<>();
       itemList.add(item);
-      items.put(item.getName(), itemList);
+      items.put(name, itemList);
     }
+  }
+
+  private String getNameType(Item item) {
+    String name = item.getName();
+    String type = item.getType();
+    return name.equals("") ? type : name + " " + type;
   }
 
   public boolean hasItem(String name) {
@@ -85,17 +89,5 @@ public class ItemManager implements JsonSerializable {
   @Override
   public String toString() {
     return ItemFormatter.formatItems(items);
-  }
-
-  @Override
-  public String toJson() {
-    StringBuilder itemsJson = new StringBuilder("[");
-
-    for (Map.Entry<String, List<Item>> itemListEntry : items.entrySet()) {
-      StringBuilder serializedList = JsonSerializer.listToJson(itemListEntry.getValue());
-      itemsJson.append(serializedList);
-    }
-
-    return JsonSerializer.removeTrailingChar(itemsJson).append("]").toString();
   }
 }

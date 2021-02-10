@@ -19,7 +19,7 @@ import mazegame.commands.SwitchLights;
 import mazegame.commands.TurnLeft;
 import mazegame.commands.TurnRight;
 import mazegame.commands.UseItem;
-import mazegame.util.JsonSerializer;
+import serialization.JsonSerializer;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import java.util.Map;
 import java.util.Objects;

@@ -2,6 +2,8 @@ package mazegame.mapsite;
 
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
+import serialization.JsonEncoder;
+
 import java.util.Objects;
 
 public class Chest extends AbstractLockable implements Checkable, Lootable {
@@ -36,18 +38,12 @@ public class Chest extends AbstractLockable implements Checkable, Lootable {
   }
 
   @Override
-  public String toString() {
-    return "Chest{" + "loot=" + loot + '}';
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override
-  public String toJson() {
-    return "{"
-        + "\"siteMap\": \"Chest\","
-        + "\"loot\": "
-        + loot.toJson()
-        + ","
-        + super.toJson()
-        + "}";
+  public String toString() {
+    return "Chest{" + "loot=" + loot + '}';
   }
 }

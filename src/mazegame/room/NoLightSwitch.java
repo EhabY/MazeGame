@@ -17,9 +17,4 @@ public class NoLightSwitch extends LightSwitch {
   public void toggleLights() {
     throw new NoLightsException("No lights to switch");
   }
-
-  @Override
-  public String toJson() {
-    return "{" + "\"hasLights\": false" + "}";
-  }
 }

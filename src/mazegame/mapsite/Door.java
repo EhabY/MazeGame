@@ -3,6 +3,7 @@ package mazegame.mapsite;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import mazegame.room.Room;
+import serialization.JsonEncoder;
 
 public class Door extends AbstractLockable implements Checkable {
   private static final String DESCRIPTION = "Door";
@@ -59,21 +60,12 @@ public class Door extends AbstractLockable implements Checkable {
   }
 
   @Override
-  public String toString() {
-    return "Door{" + "roomID=" + room.getId() + ", otherRoomID=" + otherRoom.getId() + '}';
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override
-  public String toJson() {
-    return "{"
-        + "\"siteMap\": \"Door\","
-        + "\"roomID\": "
-        + room.getId()
-        + ","
-        + "\"otherRoomID\": "
-        + otherRoom.getId()
-        + ","
-        + super.toJson()
-        + "}";
+  public String toString() {
+    return "Door{" + "roomID=" + room.getId() + ", otherRoomID=" + otherRoom.getId() + '}';
   }
 }

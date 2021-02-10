@@ -25,15 +25,21 @@ public class ItemFormatter {
   }
 
   private static void addItemToMap(Item item, Map<String, List<Item>> itemsMap) {
-    String name = item.getName();
+    String name = getNameType(item);
     boolean hasItem = itemsMap.containsKey(name);
     if (hasItem) {
       itemsMap.get(name).add(item);
     } else {
       ArrayList<Item> itemList = new ArrayList<>();
       itemList.add(item);
-      itemsMap.put(item.getName(), itemList);
+      itemsMap.put(name, itemList);
     }
+  }
+
+  private static String getNameType(Item item) {
+    String name = item.getName();
+    String type = item.getType();
+    return name.equals("") ? type : name + " " + type;
   }
 
   public static String formatItems(Map<String, ? extends List<? extends Item>> items) {
