@@ -2,19 +2,14 @@ package mapgenerator;
 
 import java.util.Queue;
 
-import mapgenerator.mapsitegenerator.*;
+import mapgenerator.mapsitegenerator.DoorGenerator;
+import mapgenerator.mapsitegenerator.MapSiteGenerator;
 import mazegame.Direction;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class MapGenerator {
-    public static final int STEPS_PER_LEVEL = 3;
-    public static final int SECONDS_PER_ROOM = 90;
-    public static final int MINIMUM_DIFFICULTY = 1;
-    public static final int MEDIUM_DIFFICULTY = 5;
-    public static final long STARTING_GOLD = 10;
-    private final int difficulty;
-    private final int size;
+    private final MapConfiguration mapConfiguration;
     private final RoomGenerator roomGenerator;
     private final MovementManager movementManager;
     private final PathGenerator pathGenerator;
@@ -30,75 +25,29 @@ public class MapGenerator {
         }
     }
 
-    private MapGenerator(int numberOfPlayers, int levels, int difficulty) {
-        if(numberOfPlayers < 1) {
-            throw new IllegalArgumentException("numberOfPlayers must be greater than or equal to 1");
-        }
-
-        if(levels < 1) {
-            throw new IllegalArgumentException("levels must be greater than or equal to 1");
-        }
-
-        if(difficulty < 1 || difficulty > 10) {
-            throw new IllegalArgumentException("difficulty must be greater than or equal to 1 and less than 10");
-        }
-
-        int side = STEPS_PER_LEVEL * levels * intSqrt(numberOfPlayers);
-        RandomNameGenerator randomNameGenerator = new RandomNameGenerator(side);
-        this.difficulty = difficulty;
-        this.size = side * side;
-        this.roomGenerator = new RoomGenerator(this.size, this.difficulty);
-        this.movementManager = new MovementManager(side);
-        this.pathGenerator = new PathGenerator(numberOfPlayers, levels, roomGenerator, movementManager, randomNameGenerator);
-        this.mapSiteRandomizer = getMapSiteRandomizer(randomNameGenerator);
-    }
-
-    private int intSqrt(int number) {
-        return (int)(Math.sqrt(number));
-    }
-
-    private WeightedRandomizer<MapSiteGenerator> getMapSiteRandomizer(RandomNameGenerator randomNameGenerator) {
-        WeightedRandomizer<MapSiteGenerator> mapSiteRandomizer = new WeightedRandomizer<>();
-        mapSiteRandomizer.addEvent(new DoorGenerator(randomNameGenerator), 5);
-        mapSiteRandomizer.addEvent(new HangableGenerator(randomNameGenerator), 2);
-        mapSiteRandomizer.addEvent(new ChestGenerator(randomNameGenerator), 1);
-        mapSiteRandomizer.addEvent(new SellerGenerator(randomNameGenerator), 1);
-        mapSiteRandomizer.addEvent(new WallGenerator(),1);
-        return mapSiteRandomizer;
-    }
-
-    public static String generateMap(int numberOfPlayers, int levels) {
-        return generateMap(numberOfPlayers, levels, MINIMUM_DIFFICULTY);
-    }
-
-    public static String generateMap(int numberOfPlayers, int levels, int difficulty) {
-        MapGenerator mapGenerator = new MapGenerator(numberOfPlayers, levels, difficulty);
+    public static String generateMap(MapConfiguration mapConfiguration) {
+        MapGenerator mapGenerator = new MapGenerator(mapConfiguration);
         return mapGenerator.generateMap();
+    }
+
+    private MapGenerator(MapConfiguration mapConfiguration) {
+        int side = mapConfiguration.getSide();
+        int size = side * side;
+        RandomNameGenerator randomNameGenerator = new RandomNameGenerator(side);
+        this.mapConfiguration = mapConfiguration;
+        this.roomGenerator = new RoomGenerator(size, mapConfiguration.getDifficulty());
+        this.movementManager = new MovementManager(side);
+        this.pathGenerator = new PathGenerator(mapConfiguration.getNumberOfPlayers(), mapConfiguration.getLevels(), mapConfiguration.getStepsPerLevel(), roomGenerator, movementManager, randomNameGenerator);
+        this.mapSiteRandomizer = mapConfiguration.getMapSiteRandomizer(randomNameGenerator);
     }
 
     private String generateMap() {
         JSONObject map = new JSONObject();
         map.put("rooms", generateRooms());
-        map.put("mapConfiguration", getConfiguration());
+        JSONObject mapConfigJson = mapConfiguration.getConfiguration();
+        mapConfigJson.put("startRoomsID", roomGenerator.getStartingRooms());
+        map.put("mapConfiguration", mapConfigJson);
         return map.toString();
-    }
-
-    private JSONObject getConfiguration() {
-        JSONObject mapConfig = new JSONObject();
-        mapConfig.put("endRoomID", this.size);
-        mapConfig.put("time", 2 * intSqrt(this.size) * SECONDS_PER_ROOM / this.difficulty);
-        mapConfig.put("startingRooms", roomGenerator.getStartingRooms());
-        mapConfig.put("gold", STARTING_GOLD / this.difficulty);
-        mapConfig.put("items", getStartingItemList());
-        return mapConfig;
-    }
-
-    private JSONArray getStartingItemList() {
-        JSONArray itemsJson = new JSONArray();
-        if(difficulty <= MEDIUM_DIFFICULTY) {
-            itemsJson.put(ItemGenerator.getFlashlightJson());
-        }
-        return itemsJson;
     }
 
     private JSONArray generateRooms() {

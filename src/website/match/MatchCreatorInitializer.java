@@ -1,8 +1,10 @@
 package website.match;
 
+import mapgenerator.MapConfiguration;
 import mazegame.PlayerController;
 import mazegame.events.GameEvent;
 import org.eclipse.jetty.websocket.api.Session;
+import website.fighting.ConflictResolver;
 import website.message.EventMessage;
 import website.message.Message;
 import java.util.Map;
@@ -13,10 +15,14 @@ import java.util.concurrent.Future;
 public class MatchCreatorInitializer {
     private static final String GAME_STARTED_MESSAGE = "The game has started!";
     private final Map<Session, PlayerConfiguration> playersMap;
+    private final MapConfiguration mapConfiguration;
+    private final ConflictResolver conflictResolver;
     private MatchCreator matchCreator;
 
-    public MatchCreatorInitializer(Map<Session, PlayerConfiguration> playersMap) {
+    public MatchCreatorInitializer(Map<Session, PlayerConfiguration> playersMap, MapConfiguration mapConfiguration, ConflictResolver conflictResolver) {
         this.playersMap = Objects.requireNonNull(playersMap);
+        this.mapConfiguration = Objects.requireNonNull(mapConfiguration);
+        this.conflictResolver = Objects.requireNonNull(conflictResolver);
         this.matchCreator = initializeMatchCreator();
     }
 
@@ -25,14 +31,15 @@ public class MatchCreatorInitializer {
     }
 
     private MatchCreator initializeMatchCreator() {
-        return new MatchCreator(playersMap -> {
+        MatchStartedListener listener = playersMap -> {
             for(Map.Entry<Session, PlayerController> playerEntry : playersMap.entrySet()) {
                 Session user = playerEntry.getKey();
                 PlayerController playerController = playerEntry.getValue();
                 initializePlayer(user, playerController);
             }
             matchCreator = initializeMatchCreator();
-        });
+        };
+        return new MatchCreator(mapConfiguration, conflictResolver, listener);
     }
 
     private void initializePlayer(Session user, PlayerController playerController) {

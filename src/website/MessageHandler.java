@@ -1,7 +1,10 @@
 package website;
 
+import mapgenerator.DefaultMapConfiguration;
+import mapgenerator.MapConfiguration;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONObject;
+import website.fighting.ConflictResolver;
 import website.match.MatchCreator;
 import website.match.MatchCreatorInitializer;
 import website.match.PlayerConfiguration;
@@ -15,7 +18,11 @@ import java.util.concurrent.ConcurrentHashMap;
 public class MessageHandler {
     private final Map<Session, String> usernames = new ConcurrentHashMap<>();
     private final Map<Session, PlayerConfiguration> players = new ConcurrentHashMap<>();
-    MatchCreatorInitializer matchCreatorInitializer = new MatchCreatorInitializer(players);
+    private final MatchCreatorInitializer matchCreatorInitializer;
+
+    public MessageHandler(MapConfiguration mapConfiguration, ConflictResolver conflictResolver) {
+        this.matchCreatorInitializer = new MatchCreatorInitializer(players, mapConfiguration, conflictResolver);
+    }
 
     public Message getResponseFromMessage(Session user, String messageAsJson) {
         JSONObject messageJson = new JSONObject(messageAsJson);

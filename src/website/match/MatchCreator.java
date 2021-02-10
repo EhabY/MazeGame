@@ -1,5 +1,6 @@
 package website.match;
 
+import mapgenerator.MapConfiguration;
 import mapgenerator.MapGenerator;
 import mazegame.MazeMap;
 import mazegame.PlayerController;
@@ -7,8 +8,6 @@ import mazegame.room.Room;
 import org.eclipse.jetty.websocket.api.Session;
 import parser.GameParser;
 import website.fighting.ConflictResolver;
-import website.fighting.RockPaperScissors;
-import website.fighting.SimpleScoreCalculator;
 import java.util.ArrayDeque;
 import java.util.Collection;
 import java.util.HashSet;
@@ -19,7 +18,8 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class MatchCreator {
-    private static final int LEVELS_IN_MAP = 2;
+    private final MapConfiguration mapConfiguration;
+    private final ConflictResolver conflictResolver;
     private final MatchStartedListener listener;
     private final Map<String, Session> playersInMatch = new ConcurrentHashMap<>();
     private final Set<String> readyPlayers = new HashSet<>();
@@ -27,7 +27,9 @@ public class MatchCreator {
     private Match match;
     private String mazeMapJson;
 
-    public MatchCreator(MatchStartedListener listener) {
+    public MatchCreator(MapConfiguration mapConfiguration, ConflictResolver conflictResolver, MatchStartedListener listener) {
+        this.mapConfiguration = Objects.requireNonNull(mapConfiguration);
+        this.conflictResolver = Objects.requireNonNull(conflictResolver);
         this.listener = Objects.requireNonNull(listener);
     }
 
@@ -53,16 +55,16 @@ public class MatchCreator {
     }
 
     private void startMatch() {
-        ConflictResolver conflictResolver = new ConflictResolver(new SimpleScoreCalculator(), new RockPaperScissors());
         MazeMap mazeMap = generateRandomMap();
         Map<Session, PlayerController> playerControllerMap = createPlayerControllers(mazeMap);
         this.listener.matchStarted(playerControllerMap);
-        this.match = new Match(mazeMap, playerControllerMap.values(), conflictResolver);
+        this.match = new Match(mazeMap, playerControllerMap.values(), this.conflictResolver);
         this.gameStarted = true;
     }
 
     private MazeMap generateRandomMap() {
-        this.mazeMapJson = MapGenerator.generateMap(playersInMatch.size(), LEVELS_IN_MAP);
+        this.mapConfiguration.setNumberOfPlayers(playersInMatch.size());
+        this.mazeMapJson = MapGenerator.generateMap(this.mapConfiguration);
         return GameParser.parseJson(this.mazeMapJson);
     }
 

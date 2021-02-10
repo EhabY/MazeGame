@@ -12,17 +12,19 @@ import java.util.Queue;
 import java.util.SplittableRandom;
 
 public class PathGenerator {
-    private static final int STEPS_PER_LEVEL = 3;
     private final int numberOfPlayers;
     private final int levels;
+    private final int stepsPerLevel;
     private final RoomGenerator roomGenerator;
     private final MovementManager movementManager;
     private final RandomNameGenerator randomNameGenerator;
     private final SplittableRandom random = new SplittableRandom();
 
-    public PathGenerator(int numberOfPlayers, int levels, RoomGenerator roomGenerator, MovementManager movementManager, RandomNameGenerator randomNameGenerator) {
+    public PathGenerator(int numberOfPlayers, int levels, int stepsPerLevel,
+                         RoomGenerator roomGenerator, MovementManager movementManager, RandomNameGenerator randomNameGenerator) {
         this.numberOfPlayers = numberOfPlayers;
         this.levels = levels;
+        this.stepsPerLevel = stepsPerLevel;
         this.roomGenerator = Objects.requireNonNull(roomGenerator);
         this.movementManager = Objects.requireNonNull(movementManager);
         this.randomNameGenerator = Objects.requireNonNull(randomNameGenerator);
@@ -49,7 +51,7 @@ public class PathGenerator {
     }
 
     private List<Direction> generateRandomPathFrom(int position) {
-        int iterations = levels * STEPS_PER_LEVEL;
+        int iterations = levels * stepsPerLevel;
         List<Direction> path = new ArrayList<>(iterations);
         Direction previousDirection = null;
         while(path.size() < iterations) {
@@ -148,7 +150,7 @@ public class PathGenerator {
     }
 
     private boolean reachedEndOfLevel(int i) {
-        return (i + 1) % STEPS_PER_LEVEL == 0;
+        return (i + 1) % stepsPerLevel == 0;
     }
 
     private void setDoorLock(int currentPosition, Direction direction, boolean locked) {
