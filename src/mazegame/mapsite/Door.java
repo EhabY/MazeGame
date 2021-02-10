@@ -1,5 +1,6 @@
 package mazegame.mapsite;
 
+import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import mazegame.room.Room;
@@ -55,7 +56,7 @@ public class Door extends AbstractLockable implements Checkable {
   }
 
   @Override
-  public String accept(CheckableVisitor visitor) {
+  public Response accept(CheckableVisitor visitor) {
     return visitor.visit(this);
   }
 

@@ -1,7 +1,7 @@
 package website;
 
-import mapgenerator.DefaultMapConfiguration;
 import mapgenerator.MapConfiguration;
+import mazegame.Response;
 import org.eclipse.jetty.websocket.api.Session;
 import org.json.JSONObject;
 import website.fighting.ConflictResolver;
@@ -45,36 +45,38 @@ public class MessageHandler {
         return response;
     }
 
-    private String initializePlayer(Session user, String username) {
+    private Response initializePlayer(Session user, String username) {
+        String message;
         if(isNewPlayer(user)) {
             MatchCreator matchCreator = matchCreatorInitializer.getMatchCreator();
             matchCreator.addPlayer(username, user);
             usernames.put(user, username);
-            return "Added " + username + " to the match!";
+            message = "Added " + username + " to the match!";
         } else {
-            return "Player is already initialized!";
+            message = "Player is already initialized!";
         }
+        return new Response(message);
     }
 
-    private String makePlayerReady(Session user) {
+    private Response makePlayerReady(Session user) {
         if(isNewPlayer(user)) {
-            return "Player has not registered yet!";
+            return new Response("Player has not registered yet!");
         }
         String username = usernames.get(user);
         MatchCreator matchCreator = matchCreatorInitializer.getMatchCreator();
         matchCreator.makeReady(username);
-        return username + " is ready!";
+        return new Response(username + " is ready!");
     }
 
     private boolean isNewPlayer(Session user) {
         return !usernames.containsKey(user);
     }
 
-    private String executeCommand(Session user, String command) {
+    private Response executeCommand(Session user, String command) {
         if(isUserPlaying(user)) {
             return players.get(user).executeCommand(command);
         } else {
-            return getPlayerWaitingStatus(user);
+            return new Response(getPlayerWaitingStatus(user));
         }
     }
 

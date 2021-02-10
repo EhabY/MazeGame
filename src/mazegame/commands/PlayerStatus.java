@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.player.Player;
 
 public class PlayerStatus implements Command {
@@ -11,7 +12,7 @@ public class PlayerStatus implements Command {
     }
 
     @Override
-    public String execute() {
-        return player.getStatus();
+    public Response execute() {
+        return new Response("", player);
     }
 }

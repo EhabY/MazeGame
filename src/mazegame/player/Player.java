@@ -1,15 +1,18 @@
 package mazegame.player;
 
 import mazegame.Direction;
+import mazegame.Response;
 import mazegame.item.Item;
 import mazegame.mapsite.Checkable;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
+import serialization.JsonEncodable;
+import serialization.JsonEncoder;
 import java.util.Collections;
 import java.util.List;
 
-public class Player {
+public class Player implements JsonEncodable {
   private final String name;
   private final Position position;
   private final Inventory inventory;
@@ -35,10 +38,6 @@ public class Player {
     this.inventory = new Inventory(initialGold, initialItems);
     this.useItemVisitor = new UseItemVisitor(this);
     this.checkVisitor = new CheckVisitor(inventory);
-  }
-
-  public String getStatus() {
-    return toString();
   }
 
   public void turnLeft() {
@@ -84,7 +83,7 @@ public class Player {
     return mapSite.look();
   }
 
-  public String checkAhead() {
+  public Response checkAhead() {
     Checkable checkable = (Checkable) getMapSiteAhead();
     return checkable.accept(checkVisitor);
   }
@@ -133,5 +132,10 @@ public class Player {
   @Override
   public String toString() {
     return "Player status:\n" + "Facing " + position + "\n" + inventory.toString();
+  }
+
+  @Override
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 }

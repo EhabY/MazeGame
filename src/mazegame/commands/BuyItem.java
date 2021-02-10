@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.exceptions.NotEnoughGoldException;
 import mazegame.trade.TransactionHandler;
@@ -14,13 +15,15 @@ public class BuyItem implements ItemCommand {
     }
 
     @Override
-    public String execute(String itemName) {
+    public Response execute(String itemName) {
         ValidityResponse response = ActionValidityChecker.inTradeMode(playerController.getGameState());
+        String message;
         if (response.valid) {
-            return tryToBuy(itemName);
+            message = tryToBuy(itemName);
         } else {
-            return response.message;
+            message = response.message;
         }
+        return new Response(message);
     }
 
     private String tryToBuy(String itemName) {

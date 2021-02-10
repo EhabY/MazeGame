@@ -1,5 +1,6 @@
 package mazegame.mapsite;
 
+import mazegame.Response;
 import mazegame.item.Key;
 import java.util.Objects;
 
@@ -31,7 +32,7 @@ public abstract class AbstractHangable implements Hangable {
   }
 
   @Override
-  public String accept(CheckableVisitor visitor) {
+  public Response accept(CheckableVisitor visitor) {
     return visitor.visit(this);
   }
 

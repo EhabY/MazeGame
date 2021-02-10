@@ -1,5 +1,6 @@
 package mazegame.mapsite;
 
+import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import serialization.JsonEncoder;
@@ -33,7 +34,7 @@ public class Chest extends AbstractLockable implements Checkable, Lootable {
   }
 
   @Override
-  public String accept(CheckableVisitor visitor) {
+  public Response accept(CheckableVisitor visitor) {
     return visitor.visit(this);
   }
 

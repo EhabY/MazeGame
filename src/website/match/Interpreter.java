@@ -1,6 +1,7 @@
 package website.match;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.State;
 import mazegame.commands.BuyItem;
 import mazegame.commands.Check;
@@ -37,7 +38,7 @@ public class Interpreter {
     }
 
     private void initializeCommandMaps(PlayerController playerController) {
-        generalCommands.put("save", () -> JsonSerializer.serializeGameState(playerController));
+        generalCommands.put("save", () -> new Response(JsonSerializer.serializeGameState(playerController)));
         generalCommands.put("left", new TurnLeft(playerController));
         generalCommands.put("right", new TurnRight(playerController));
         generalCommands.put("forward", new MoveForward(playerController));
@@ -55,27 +56,27 @@ public class Interpreter {
         itemCommands.put("use", new UseItem(playerController));
     }
 
-    public String execute(String command) {
+    public Response execute(String command) {
         if(executingOp.getAndSet(true)) {
-            return "Please wait for the previous operation to finish executing!";
+            return new Response("Please wait for the previous operation to finish executing!");
         }
-        String response = executeCommand(command);
+        Response response = executeCommand(command);
         executingOp.set(false);
         return response;
     }
 
-    private String executeCommand(String command) {
+    private Response executeCommand(String command) {
         String[] words = command.split("\\s+", 2);
-        String message;
+        Response message;
         if(inFightMode()) {
             playerController.addNextCommand(command);
-            message = "Used " + command + " in the tie-breaker!";
+            message = new Response("Used " + command + " in the tie-breaker!");
         } else if(generalCommands.containsKey(command)) {
             message = generalCommands.get(command).execute();
         } else if(itemCommands.containsKey(words[0])) {
             message = itemCommands.get(words[0]).execute(words[1]);
         } else {
-            message = "Unknown command: " + command;
+            message = new Response("Unknown command: " + command);
         }
 
         return message;

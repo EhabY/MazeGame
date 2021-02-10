@@ -1,5 +1,7 @@
 package mazegame.mapsite;
 
+import mazegame.Response;
+
 public interface Checkable extends SerializableMapSite {
-  String accept(CheckableVisitor visitor);
+  Response accept(CheckableVisitor visitor);
 }

@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.player.Player;
 
 public class SwitchLights implements Command {
@@ -11,12 +12,14 @@ public class SwitchLights implements Command {
     }
 
     @Override
-    public String execute() {
+    public Response execute() {
+        String message;
         if(player.getCurrentRoom().hasLights()) {
             player.switchLight();
-            return "Switched the lights";
+            message = "Switched the lights";
         } else {
-            return "No lights to switch";
+            message = "No lights to switch";
         }
+        return new Response(message);
     }
 }

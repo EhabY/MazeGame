@@ -10,6 +10,7 @@ import mazegame.mapsite.Mirror;
 import mazegame.mapsite.Painting;
 import mazegame.mapsite.Seller;
 import mazegame.mapsite.Wall;
+import mazegame.player.Player;
 import mazegame.room.Room;
 
 public interface JsonEncoder {
@@ -22,6 +23,7 @@ public interface JsonEncoder {
     String visit(Painting painting);
     String visit(Seller seller);
     String visit(Wall wall);
+    String visit(Player player);
     String visit(PlayerController playerController);
     String visit(Room room);
 }

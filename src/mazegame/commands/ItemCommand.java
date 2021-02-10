@@ -1,5 +1,7 @@
 package mazegame.commands;
 
+import mazegame.Response;
+
 public interface ItemCommand {
-    String execute(String itemName);
+    Response execute(String itemName);
 }

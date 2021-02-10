@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.trade.TransactionHandler;
 import java.util.Objects;
 
@@ -12,13 +13,13 @@ public class ListItems implements Command {
     }
 
     @Override
-    public String execute() {
+    public Response execute() {
         ValidityResponse response = ActionValidityChecker.inTradeMode(playerController.getGameState());
         if (response.valid) {
             TransactionHandler transactionHandler = playerController.getTransactionHandler();
-            return transactionHandler.listAll();
+            return new Response("", transactionHandler.getSeller());
         } else {
-            return response.message;
+            return new Response(response.message);
         }
     }
 }

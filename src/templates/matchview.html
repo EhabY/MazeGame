@@ -29,8 +29,10 @@
             ws.onmessage = function(event) {
                 console.log(event);
                 let data = JSON.parse(event.data);
-                if(data.type === "map" || (data.type === "response" && data.command === "save")) {
+                if(data.type === "map") {
                     downloadObjectAsJson(JSON.parse(data.content));
+                } else if(data.type === "response" && data.command === "save") {
+                    downloadObjectAsJson(JSON.parse(data.content.message));
                 }
             }
         } else {

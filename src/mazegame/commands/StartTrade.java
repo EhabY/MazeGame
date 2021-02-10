@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.State;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
@@ -15,15 +16,15 @@ public class StartTrade implements Command {
     }
 
     @Override
-    public String execute() {
+    public Response execute() {
         Player player = playerController.getPlayer();
         ValidityResponse response = ActionValidityChecker.canStartTrade(player.getMapSiteAhead(), playerController.getGameState());
         if (response.valid) {
             Seller seller = (Seller) player.getMapSiteAhead();
             TransactionHandler transactionHandler = initiateTrade(player, seller);
-            return "\nTrade initiated: \n" + transactionHandler.listAll();
+            return new Response("Trade initiated", transactionHandler.getSeller());
         } else {
-            return response.message;
+            return new Response(response.message);
         }
     }
 

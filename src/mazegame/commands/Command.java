@@ -1,5 +1,7 @@
 package mazegame.commands;
 
+import mazegame.Response;
+
 public interface Command {
-  String execute();
+  Response execute();
 }

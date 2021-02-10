@@ -1,5 +1,6 @@
 package website.match;
 
+import mazegame.Response;
 import java.util.Objects;
 
 public class PlayerConfiguration {
@@ -11,7 +12,7 @@ public class PlayerConfiguration {
         this.matchCreator = Objects.requireNonNull(matchCreator);
     }
 
-    public String executeCommand(String command) {
+    public Response executeCommand(String command) {
         return interpreter.execute(command);
     }
 

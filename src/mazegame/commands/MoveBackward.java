@@ -1,7 +1,9 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
+import mazegame.mapsite.Loot;
 import mazegame.player.Player;
 import mazegame.room.Room;
 import java.util.Objects;
@@ -16,23 +18,23 @@ public class MoveBackward implements Command {
     }
 
     @Override
-    public String execute() {
+    public Response execute() {
         ValidityResponse response = ActionValidityChecker.canOpenDoor(player.getMapSiteBehind(), playerController.getGameState());
         if (response.valid) {
             return tryToMoveBackward();
         } else {
-            return response.message;
+            return new Response(response.message);
         }
     }
 
-    private String tryToMoveBackward() {
+    private Response tryToMoveBackward() {
         try {
             Room previousRoom = player.getCurrentRoom();
-            String message = "Moved backward\n" + player.moveBackward();
+            Loot loot = player.moveBackward();
             playerController.onMoveFrom(previousRoom);
-            return message;
+            return new Response("Moved backward", loot);
         } catch (MapSiteLockedException mapSiteLockedException) {
-            return mapSiteLockedException.getMessage();
+            return new Response(mapSiteLockedException.getMessage());
         }
     }
 

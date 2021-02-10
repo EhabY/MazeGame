@@ -32,16 +32,8 @@ public class TransactionHandler {
     player.addGoldToInventory(price);
   }
 
-  public String listAll() {
-    return listSellerItems() + "\n" + listSellerPriceList();
-  }
-
-  public String listSellerItems() {
-    return seller.getItemList();
-  }
-
-  public String listSellerPriceList() {
-    return seller.getFormattedPriceList();
+  public Seller getSeller() {
+    return seller;
   }
 
   @Override

@@ -144,6 +144,16 @@ public class JsonEncoderImpl implements JsonEncoder {
     }
 
     @Override
+    public String visit(Player player) {
+        JSONObject playerJson = new JSONObject();
+        playerJson.put("orientation", player.getDirection().toString().toLowerCase());
+        Loot loot = player.getLoot();
+        playerJson.put("gold", loot.getGold());
+        playerJson.put("items", getItemListJson(loot.getItems()));
+        return playerJson.toString();
+    }
+
+    @Override
     public String visit(PlayerController playerController) {
         JSONObject playerControllerJson = new JSONObject();
         playerControllerJson.put("mapConfiguration", getMapConfigurationJson(playerController));
@@ -151,16 +161,12 @@ public class JsonEncoderImpl implements JsonEncoder {
     }
 
     private JSONObject getMapConfigurationJson(PlayerController playerController) {
-        JSONObject mapConfigJson = new JSONObject();
         Player player = playerController.getPlayer();
+        JSONObject mapConfigJson = new JSONObject(visit(player));
         mapConfigJson.put("startRoomsID", new JSONArray().put(player.getCurrentRoom().getId()));
         MazeMap map = (MazeMap) getPrivateField(playerController, "map");
         mapConfigJson.put("endRoomID", map.getEndRoom().getId());
         mapConfigJson.put("time", map.getTimeInSeconds() - getElapsedTime(playerController));
-        mapConfigJson.put("orientation", player.getDirection().toString().toLowerCase());
-        Loot loot = player.getLoot();
-        mapConfigJson.put("gold", loot.getGold());
-        mapConfigJson.put("items", getItemListJson(loot.getItems()));
         return mapConfigJson;
     }
 

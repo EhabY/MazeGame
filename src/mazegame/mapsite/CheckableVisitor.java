@@ -1,9 +1,11 @@
 package mazegame.mapsite;
 
+import mazegame.Response;
+
 public interface CheckableVisitor {
-  String visit(Hangable hangable);
+  Response visit(Hangable hangable);
 
-  String visit(Chest chest);
+  Response visit(Chest chest);
 
-  String visit(Door door);
+  Response visit(Door door);
 }

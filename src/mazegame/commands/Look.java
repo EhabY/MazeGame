@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
+import mazegame.Response;
 import mazegame.player.Player;
 import java.util.Objects;
 
@@ -12,13 +13,15 @@ public class Look implements Command {
     }
 
     @Override
-    public String execute() {
+    public Response execute() {
         ValidityResponse response = ActionValidityChecker.inExploreMode(playerController.getGameState());
+        String message;
         if(response.valid) {
             Player player = this.playerController.getPlayer();
-            return player.look();
+            message = player.look();
         } else {
-            return response.message;
+            message = response.message;
         }
+        return new Response(message);
     }
 }

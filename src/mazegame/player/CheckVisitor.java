@@ -1,5 +1,6 @@
 package mazegame.player;
 
+import mazegame.Response;
 import mazegame.item.Key;
 import mazegame.mapsite.CheckableVisitor;
 import mazegame.mapsite.Chest;
@@ -16,30 +17,33 @@ final class CheckVisitor implements CheckableVisitor {
   }
 
   @Override
-  public String visit(Hangable hangable) {
+  public Response visit(Hangable hangable) {
     Key foundKey = hangable.takeHiddenKey();
-
+    String message;
     if (foundKey.equals(Key.NO_KEY)) {
-      return "";
+      message = "Found nothing!";
     } else {
       inventory.addItem(foundKey);
-      return "The " + foundKey.getName() + " key was acquired";
+      message = "The " + foundKey.getName() + " key was acquired";
     }
+    return new Response(message);
   }
 
   @Override
-  public String visit(Chest chest) {
+  public Response visit(Chest chest) {
     Loot loot = chest.acquireLoot();
     inventory.addLoot(loot);
-    return loot.toString();
+    return new Response("", loot);
   }
 
   @Override
-  public String visit(Door door) {
+  public Response visit(Door door) {
+    String message;
     if (door.isLocked()) {
-      return "Door is locked, " + door.getKeyName() + " key is needed to unlock";
+      message = "Door is locked, " + door.getKeyName() + " key is needed to unlock";
     } else {
-      return "Door is open";
+      message = "Door is open";
     }
+    return new Response(message);
   }
 }
