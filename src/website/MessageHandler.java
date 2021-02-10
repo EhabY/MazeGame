@@ -24,11 +24,11 @@ public class MessageHandler {
 
         Message response;
         if(type.equalsIgnoreCase("username")) {
-            response = new ResponseMessage(initializePlayer(user, content));
+            response = new ResponseMessage(initializePlayer(user, content), content);
         } else if(type.equalsIgnoreCase("ready")) {
-            response = new ResponseMessage(makePlayerReady(user));
+            response = new ResponseMessage(makePlayerReady(user), content);
         } else if(type.equalsIgnoreCase("command")) {
-            response = new ResponseMessage(executeCommand(user, content));
+            response = new ResponseMessage(executeCommand(user, content), content);
         } else if(type.equalsIgnoreCase("map")) {
             response = new MapMessage(getMazeMapJson(user));
         } else {
