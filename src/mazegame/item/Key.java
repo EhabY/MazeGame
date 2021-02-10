@@ -27,10 +27,6 @@ public final class Key implements Item {
     return !pool.containsKey(name);
   }
 
-  public String getKeyName() {
-    return name;
-  }
-
   @Override
   public void accept(ItemVisitor visitor) {
     visitor.visit(this);

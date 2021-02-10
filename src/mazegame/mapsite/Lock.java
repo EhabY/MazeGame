@@ -15,7 +15,7 @@ public class Lock implements Lockable {
 
   @Override
   public String getKeyName() {
-    return key.getKeyName();
+    return key.getName();
   }
 
   @Override

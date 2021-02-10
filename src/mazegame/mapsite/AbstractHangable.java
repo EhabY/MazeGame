@@ -19,7 +19,7 @@ public abstract class AbstractHangable implements Hangable {
 
   @Override
   public String getKeyName() {
-    return hiddenKey.getKeyName();
+    return hiddenKey.getName();
   }
 
   @Override
