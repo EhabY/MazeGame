@@ -112,7 +112,7 @@ public class GameParser {
 
   private MazeMap parseMazeMap(JSONObject gameJson) {
     JSONObject mapConfigJson = gameJson.getJSONObject("mapConfiguration");
-    List<Room> startingRooms = parseStartingRooms(mapConfigJson.getJSONArray("startingRooms"));
+    List<Room> startingRooms = parseStartingRooms(mapConfigJson.getJSONArray("startRoomsID"));
     int endRoomID = mapConfigJson.getInt("endRoomID");
     long gold = mapConfigJson.getLong("gold");
     long timeInSeconds = mapConfigJson.getLong("time");

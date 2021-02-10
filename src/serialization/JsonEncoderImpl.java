@@ -148,7 +148,7 @@ public class JsonEncoderImpl implements JsonEncoder {
     private JSONObject getMapConfigurationJson(PlayerController playerController) {
         JSONObject mapConfigJson = new JSONObject();
         Player player = playerController.getPlayer();
-        mapConfigJson.put("startRoomID", player.getCurrentRoom().getId());
+        mapConfigJson.put("startRoomsID", new JSONArray().put(player.getCurrentRoom().getId()));
         MazeMap map = (MazeMap) getPrivateField(playerController, "map");
         mapConfigJson.put("endRoomID", map.getEndRoom().getId());
         mapConfigJson.put("time", map.getTimeInSeconds() - getElapsedTime(playerController));
@@ -173,7 +173,8 @@ public class JsonEncoderImpl implements JsonEncoder {
         roomJson.put("loot", getLootJson(loot));
         for (Direction direction : Direction.values()) {
             SerializableMapSite serializableMapSite = room.getMapSite(direction);
-            roomJson.put(direction.toString().toLowerCase(), serializableMapSite.applyEncoder(this));
+            JSONObject mapSiteJson = new JSONObject(serializableMapSite.applyEncoder(this));
+            roomJson.put(direction.toString().toLowerCase(), mapSiteJson);
         }
         return roomJson.toString();
     }

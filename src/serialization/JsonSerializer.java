@@ -47,7 +47,8 @@ public class JsonSerializer {
   }
 
   private void serializeRoom(Room room) {
-    roomsJson.put(room.applyEncoder(jsonEncoder));
+    JSONObject roomJson = new JSONObject(room.applyEncoder(jsonEncoder));
+    roomsJson.put(roomJson);
   }
 
   private void visitNeighboringRooms(Room room) {
