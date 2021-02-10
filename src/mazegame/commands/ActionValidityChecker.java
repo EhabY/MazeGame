@@ -1,6 +1,5 @@
-package mazegame.util;
+package mazegame.commands;
 
-import mazegame.ValidityResponse;
 import mazegame.State;
 import mazegame.mapsite.Checkable;
 import mazegame.mapsite.Door;

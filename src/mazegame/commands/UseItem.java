@@ -1,11 +1,9 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.ValidityResponse;
 import mazegame.exceptions.InvalidUseOfItem;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.player.Player;
-import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class UseItem implements ItemCommand {

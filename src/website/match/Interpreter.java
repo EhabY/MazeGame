@@ -19,8 +19,6 @@ import mazegame.commands.SwitchLights;
 import mazegame.commands.TurnLeft;
 import mazegame.commands.TurnRight;
 import mazegame.commands.UseItem;
-import serialization.JsonEncoder;
-import serialization.JsonEncoderImpl;
 import serialization.JsonSerializer;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import java.util.Map;
@@ -31,7 +29,6 @@ public class Interpreter {
     private final Map<String, Command> generalCommands = new CaseInsensitiveMap<>();
     private final Map<String, ItemCommand> itemCommands = new CaseInsensitiveMap<>();
     private final PlayerController playerController;
-    private final JsonEncoder jsonEncoder = new JsonEncoderImpl();
     private final AtomicBoolean executingOp = new AtomicBoolean(false);
 
     Interpreter(PlayerController playerController) {

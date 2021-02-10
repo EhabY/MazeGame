@@ -1,11 +1,9 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.ValidityResponse;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.player.Player;
 import mazegame.room.Room;
-import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class MoveForward implements Command {

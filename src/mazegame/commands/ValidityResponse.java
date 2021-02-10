@@ -1,4 +1,4 @@
-package mazegame;
+package mazegame.commands;
 
 public class ValidityResponse {
   public static final ValidityResponse VALID_RESPONSE = new ValidityResponse(true, "");

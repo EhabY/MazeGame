@@ -1,12 +1,10 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.ValidityResponse;
 import mazegame.State;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
 import mazegame.trade.TransactionHandler;
-import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class StartTrade implements Command {

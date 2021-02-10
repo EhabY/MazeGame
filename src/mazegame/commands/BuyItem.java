@@ -1,11 +1,9 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.ValidityResponse;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.exceptions.NotEnoughGoldException;
 import mazegame.trade.TransactionHandler;
-import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class BuyItem implements ItemCommand {

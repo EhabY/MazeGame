@@ -1,9 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.ValidityResponse;
 import mazegame.State;
-import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
 
 public class FinishTrade implements Command {
