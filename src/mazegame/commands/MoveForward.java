@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.player.Player;
 import mazegame.room.Room;
@@ -19,7 +19,7 @@ public class MoveForward implements Command {
 
     @Override
     public String execute() {
-        Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), playerController.getGameState());
         if (response.valid) {
             return tryToMoveForward();
         } else {

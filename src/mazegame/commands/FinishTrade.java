@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.State;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
@@ -15,7 +15,7 @@ public class FinishTrade implements Command {
 
     @Override
     public String execute() {
-        Response response = ActionValidityChecker.inTradeMode(playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.inTradeMode(playerController.getGameState());
         if (response.valid) {
             playerController.setGameState(State.EXPLORE);
             playerController.setTransactionHandler(null);

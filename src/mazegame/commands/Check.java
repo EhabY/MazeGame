@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.player.Player;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class Check implements Command {
     @Override
     public String execute() {
         Player player = this.playerController.getPlayer();
-        Response response = ActionValidityChecker.canCheck(player.getMapSiteAhead(), playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.canCheck(player.getMapSiteAhead(), playerController.getGameState());
         if (response.valid) {
             return player.checkAhead();
         } else {

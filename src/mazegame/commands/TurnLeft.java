@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.player.Player;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
@@ -15,7 +15,7 @@ public class TurnLeft implements Command {
 
     @Override
     public String execute() {
-        Response response = ActionValidityChecker.inExploreMode(playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.inExploreMode(playerController.getGameState());
         if(response.valid) {
             Player player = this.playerController.getPlayer();
             player.turnLeft();

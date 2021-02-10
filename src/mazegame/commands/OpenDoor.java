@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.player.Player;
 import mazegame.util.ActionValidityChecker;
 import java.util.Objects;
@@ -16,7 +16,7 @@ public class OpenDoor implements Command {
     @Override
     public String execute() {
         Player player = playerController.getPlayer();
-        Response response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.canOpenDoor(player.getMapSiteAhead(), playerController.getGameState());
         return response.message.equals("") ? "Nothing happens" : response.message;
     }
 }

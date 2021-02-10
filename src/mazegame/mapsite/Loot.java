@@ -2,12 +2,15 @@ package mazegame.mapsite;
 
 import mazegame.item.Item;
 import mazegame.util.ItemFormatter;
+import serialization.JsonEncodable;
+import serialization.JsonEncoder;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-public final class Loot {
+public final class Loot implements JsonEncodable {
   public static final Loot EMPTY_LOOT = new Loot(0);
   private final long gold;
   private final List<Item> itemsList;
@@ -27,6 +30,11 @@ public final class Loot {
 
   public List<Item> getItems() {
     return itemsList;
+  }
+
+  @Override
+  public String applyEncoder(JsonEncoder encoder) {
+    return encoder.visit(this);
   }
 
   @Override

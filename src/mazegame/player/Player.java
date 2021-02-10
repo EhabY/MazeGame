@@ -49,16 +49,16 @@ public class Player {
     position.turnRight();
   }
 
-  public String moveForward() {
+  public Loot moveForward() {
     Loot loot = position.moveForward();
     inventory.addLoot(loot);
-    return loot.equals(Loot.EMPTY_LOOT) ? "" : loot.toString();
+    return loot;
   }
 
-  public String moveBackward() {
+  public Loot moveBackward() {
     Loot loot = position.moveBackward();
     inventory.addLoot(loot);
-    return loot.equals(Loot.EMPTY_LOOT) ? "" : loot.toString();
+    return loot;
   }
 
   public Room getCurrentRoom() {

@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.trade.TransactionHandler;
 import mazegame.util.ActionValidityChecker;
@@ -16,7 +16,7 @@ public class SellItem implements ItemCommand {
 
     @Override
     public String execute(String itemName) {
-        Response response = ActionValidityChecker.inTradeMode(playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.inTradeMode(playerController.getGameState());
         if (response.valid) {
             return tryToSell(itemName);
         } else {

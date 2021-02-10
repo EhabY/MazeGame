@@ -56,6 +56,11 @@ public class JsonEncoderImpl implements JsonEncoder {
         return chestJson.toString();
     }
 
+    @Override
+    public String visit(Loot loot) {
+        return getLootJson(loot).toString();
+    }
+
     private JSONObject getLootJson(Loot loot) {
         JSONObject lootJson = new JSONObject();
         lootJson.put("gold", loot.getGold());

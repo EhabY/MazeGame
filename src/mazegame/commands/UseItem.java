@@ -1,7 +1,7 @@
 package mazegame.commands;
 
 import mazegame.PlayerController;
-import mazegame.Response;
+import mazegame.ValidityResponse;
 import mazegame.exceptions.InvalidUseOfItem;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.player.Player;
@@ -17,7 +17,7 @@ public class UseItem implements ItemCommand {
 
     @Override
     public String execute(String itemName) {
-        Response response = ActionValidityChecker.inExploreMode(playerController.getGameState());
+        ValidityResponse response = ActionValidityChecker.inExploreMode(playerController.getGameState());
         if(response.valid) {
             return tryToUseItem(itemName);
         } else {
