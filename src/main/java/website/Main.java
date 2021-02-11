@@ -9,6 +9,7 @@ import java.util.concurrent.ConcurrentHashMap;
 public class Main {
     private static final int TIMEOUT = 30 * 60 * 60;
     public static void main(String[] args) {
+        Spark.staticFileLocation("/public");
         Spark.webSocketIdleTimeoutMillis(TIMEOUT);
         Spark.webSocket("/websocket/match", MatchWebSocketHandler.class);
 

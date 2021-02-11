@@ -7,13 +7,12 @@ import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 import spark.ModelAndView;
 import spark.TemplateEngine;
-
 import java.util.Locale;
 import java.util.Map;
 
 
 public class ThymeleafTemplateEngine extends TemplateEngine {
-    private static final String DEFAULT_PREFIX = "templates/";
+    private static final String DEFAULT_PREFIX = "public/";
     private static final String DEFAULT_SUFFIX = ".html";
     private static final long DEFAULT_CACHE_TTL_MS = 3600000L;
 
