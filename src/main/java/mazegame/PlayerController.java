@@ -2,7 +2,7 @@ package mazegame;
 
 import mazegame.events.EventHandler;
 import mazegame.events.GameEvent;
-import mazegame.events.MoveListener;
+import mazegame.events.MatchListener;
 import mazegame.events.StateListener;
 import mazegame.mapsite.Loot;
 import mazegame.player.Player;
@@ -71,8 +71,12 @@ public class PlayerController implements JsonEncodable {
     fightCommandsQueue.add(command);
   }
 
-  public void onMoveFrom(Room previousRoom) {
+  public void moveFrom(Room previousRoom) {
     eventHandler.triggerMoveEvent(previousRoom);
+  }
+
+  public void quitMatch() {
+    eventHandler.triggerQuitEvent();
   }
 
   public Room getCurrentRoom() {
@@ -95,11 +99,11 @@ public class PlayerController implements JsonEncodable {
     return player.getLoot();
   }
 
-  public void addMoveListener(MoveListener listener) {
+  public void addMatchListener(MatchListener listener) {
     eventHandler.addListener(listener);
   }
 
-  public void addListener(StateListener listener) {
+  public void addStateListener(StateListener listener) {
     eventHandler.addListener(listener);
   }
 

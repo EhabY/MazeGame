@@ -50,7 +50,7 @@ public class MatchCreatorInitializer {
     }
 
     private void addEventListener(Session user, PlayerController playerController) {
-        playerController.addListener((event, message) -> {
+        playerController.addStateListener((event, message) -> {
             Future<Void> sent = sendEventMessageToUser(event, message, user);
             if(event == GameEvent.LOST_MATCH || event == GameEvent.WON_MATCH) {
                 waitForFuture(sent);

@@ -1,13 +1,16 @@
 package mazegame.room;
 
 import mazegame.Direction;
+import mazegame.item.Item;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.Lootable;
 import mazegame.mapsite.SerializableMapSite;
 import serialization.JsonEncodable;
 import serialization.Encoder;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -46,6 +49,13 @@ public class Room implements JsonEncodable, Lootable {
 
   public int getId() {
     return id;
+  }
+
+  public void addLoot(Loot newLoot) {
+    long totalGold = loot.getGold() + newLoot.getGold();
+    List<Item> totalItems = new ArrayList<>(loot.getItems());
+    totalItems.addAll(newLoot.getItems());
+    this.loot = new Loot(totalGold, totalItems);
   }
 
   @Override

@@ -31,7 +31,7 @@ public class MoveBackward implements Command {
         try {
             Room previousRoom = player.getCurrentRoom();
             Loot loot = player.moveBackward();
-            playerController.onMoveFrom(previousRoom);
+            playerController.moveFrom(previousRoom);
             return new Response("Moved backward", loot);
         } catch (MapSiteLockedException mapSiteLockedException) {
             return new Response(mapSiteLockedException.getMessage());

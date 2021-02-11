@@ -14,6 +14,7 @@ import mazegame.commands.MoveBackward;
 import mazegame.commands.MoveForward;
 import mazegame.commands.OpenDoor;
 import mazegame.commands.PlayerStatus;
+import mazegame.commands.Quit;
 import mazegame.commands.SellItem;
 import mazegame.commands.StartTrade;
 import mazegame.commands.SwitchLights;
@@ -38,7 +39,6 @@ public class Interpreter {
     }
 
     private void initializeCommandMaps(PlayerController playerController) {
-        generalCommands.put("save", () -> new Response(JsonSerializer.serializeGameState(playerController)));
         generalCommands.put("left", new TurnLeft(playerController));
         generalCommands.put("right", new TurnRight(playerController));
         generalCommands.put("forward", new MoveForward(playerController));
@@ -51,6 +51,8 @@ public class Interpreter {
         generalCommands.put("list", new ListItems(playerController));
         generalCommands.put("finish trade", new FinishTrade(playerController));
         generalCommands.put("switchlights", new SwitchLights(playerController));
+        generalCommands.put("save", () -> new Response(JsonSerializer.serializeGameState(playerController)));
+        generalCommands.put("quit", new Quit(playerController));
         itemCommands.put("buy", new BuyItem(playerController));
         itemCommands.put("sell", new SellItem(playerController));
         itemCommands.put("use", new UseItem(playerController));

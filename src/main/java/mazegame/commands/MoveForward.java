@@ -31,7 +31,7 @@ public class MoveForward implements Command {
         try {
             Room previousRoom = player.getCurrentRoom();
             Loot loot = player.moveForward();
-            playerController.onMoveFrom(previousRoom);
+            playerController.moveFrom(previousRoom);
             return new Response("Moved forward", loot);
         } catch (MapSiteLockedException mapSiteLockedException) {
             return new Response(mapSiteLockedException.getMessage());

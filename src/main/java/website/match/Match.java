@@ -78,6 +78,10 @@ public class Match {
         addPlayerToRoom(playerController);
     }
 
+    void removePlayer(PlayerController playerController) {
+        notifyPlayerLost(playerController);
+    }
+
     private void removePlayerFromRoom(Room previousRoom) {
         synchronized (locks.get(previousRoom)) {
             roomToPlayerMap.remove(previousRoom);

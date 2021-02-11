@@ -4,6 +4,7 @@ import mapgenerator.MapConfiguration;
 import mapgenerator.MapGenerator;
 import mazegame.MazeMap;
 import mazegame.PlayerController;
+import mazegame.events.MatchListener;
 import mazegame.room.Room;
 import org.eclipse.jetty.websocket.api.Session;
 import parser.GameParser;
@@ -57,7 +58,7 @@ public class MatchCreator {
     private void startMatch() {
         MazeMap mazeMap = generateRandomMap();
         Map<Session, PlayerController> playerControllerMap = createPlayerControllers(mazeMap);
-        this.listener.matchStarted(playerControllerMap);
+        this.listener.onMatchStart(playerControllerMap);
         this.match = new Match(mazeMap, playerControllerMap.values(), this.conflictResolver);
         this.gameStarted = true;
     }
@@ -77,13 +78,23 @@ public class MatchCreator {
             Session session = playerEntry.getValue();
             playerControllerMap.put(session, new PlayerController(username, map, startingRoom));
         }
-        addMoveListeners(playerControllerMap.values());
+        addMatchListeners(playerControllerMap.values());
         return playerControllerMap;
     }
 
-    private void addMoveListeners(Collection<PlayerController> players) {
-        for(PlayerController player : players) {
-            player.addMoveListener(fromRoom -> match.moveFrom(player, fromRoom));
+    private void addMatchListeners(Collection<PlayerController> players) {
+        for(PlayerController playerController : players) {
+            playerController.addMatchListener(new MatchListener() {
+                @Override
+                public void onMove(Room fromRoom) {
+                    match.moveFrom(playerController, fromRoom);
+                }
+
+                @Override
+                public void onQuit() {
+                    match.removePlayer(playerController);
+                }
+            });
         }
     }
 

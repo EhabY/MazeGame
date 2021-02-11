@@ -5,5 +5,5 @@ import org.eclipse.jetty.websocket.api.Session;
 import java.util.Map;
 
 public interface MatchStartedListener {
-    void matchStarted(Map<Session, PlayerController> playersMap);
+    void onMatchStart(Map<Session, PlayerController> playersMap);
 }
