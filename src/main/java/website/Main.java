@@ -7,7 +7,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
-    private static final int TIMEOUT = 30 * 60 * 60;
+    private static final int TIMEOUT = 30 * 60 * 60 * 1000;
     public static void main(String[] args) {
         Spark.staticFileLocation("/public");
         Spark.webSocketIdleTimeoutMillis(TIMEOUT);

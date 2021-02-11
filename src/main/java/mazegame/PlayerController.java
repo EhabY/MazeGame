@@ -18,6 +18,7 @@ import java.util.concurrent.BlockingDeque;
 import java.util.concurrent.LinkedBlockingDeque;
 
 public class PlayerController implements JsonEncodable {
+  private final String username;
   private final Player player;
   private final MazeMap map;
   private final BlockingDeque<String> fightCommandsQueue = new LinkedBlockingDeque<>();
@@ -27,10 +28,10 @@ public class PlayerController implements JsonEncodable {
   private final EventHandler eventHandler = new EventHandler();
 
   public PlayerController(String username, MazeMap map, Room startRoom) {
+    this.username = username;
     this.map = Objects.requireNonNull(map);
     this.player =
         new Player(
-                username,
                 getRandomDirection(),
                 startRoom,
             map.getStartingGold(),
@@ -47,6 +48,7 @@ public class PlayerController implements JsonEncodable {
 
   public void setGameState(State state) {
     this.state = state;
+    eventHandler.triggerGameEvent(GameEvent.CHANGED_STATE, this.state.name());
   }
 
   public State getGameState() {
@@ -78,7 +80,7 @@ public class PlayerController implements JsonEncodable {
   }
 
   public String getUsername() {
-    return player.getName();
+    return username;
   }
 
   public void addGold(long gold) {
@@ -128,14 +130,14 @@ public class PlayerController implements JsonEncodable {
     eventHandler.triggerGameEvent(GameEvent.SENDING_PLAYER_LIST, usernames.toString());
   }
 
-  public void lostMatch(String message) {
-    state = State.LOST;
-    eventHandler.triggerGameEvent(GameEvent.LOST_MATCH, message);
-  }
-
   public void wonMatch(String message) {
     state = State.WON;
     eventHandler.triggerGameEvent(GameEvent.WON_MATCH, message);
+  }
+
+  public void lostMatch(String message) {
+    state = State.LOST;
+    eventHandler.triggerGameEvent(GameEvent.LOST_MATCH, message);
   }
 
   @Override
