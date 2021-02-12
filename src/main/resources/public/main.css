@@ -1,73 +1,123 @@
-@import url(https://fonts.googleapis.com/css?family=PT+Sans:400,400italic);
+@import url(https://fonts.googleapis.com/css2?family=Almendra+SC&family=Amarante&display=swap);
 
-@import url(https://fonts.googleapis.com/css?family=Droid+Serif);
+* {
+    font-family: 'Amarante', cursive;
+    font-size: 18px;
+}
 
 html, body {
-    background:#2F1E27;
+    background: #2F1E27;
+    color: #ddd;
 }
 
 body {
-    text-align:center;
+    text-align: center;
+}
+
+.main-container {
+    text-align: center;
+    position: relative;
+    top: 100px;
+    max-width: 1000px;
+    margin: auto;
+    padding-bottom: 40px;
+}
+
+h1, h2 {
+    font-family: 'Almendra SC', serif;
+}
+
+.main-container h1 {
+    text-align: center;
+    color: #fff;
+    font-weight: 100;
+    font-size: 2em;
+    margin-bottom: 30px;
+}
+
+.main-container h2 {
+    color: #d3b6ca;
+    text-align: center;
+    font-size: 1.2em;
+}
+
+.main-container span {
+    display: inline-block;
 }
 
 .container {
-    position:relative;
-    top:100px;
+    margin: 20px 0;
 }
 
-.container h1, .container span {
-    font-family:"Pt Sans", helvetica, sans-serif;
+.fields {
+    margin-bottom: 25px;
 }
 
-.container h1 {
-    text-align:center;
-    color:#fff;
-    font-weight:100;
-    font-size:2em;
-    margin-bottom:10px;
+.btn-container  {
+    display: flex;
+    justify-content: space-evenly;
 }
 
-.container h2 {
-    font-family:"droid serif";
-    font-style:italic;
-    color:#d3b6ca;
-    text-align:center;
-    font-size:1.2em;
-}
-
-form {
-    margin-top:25px;
-    display:inline-block;
-    width:100%;
-}
-
-.container span {
-    margin-bottom:22px;
-    display:inline-block;
+.btn-3d {
+    justify-content: center;
+    width: 20%;
+    max-width: 180px;
+    padding: 15px;
+    color: #ddd;
 }
 
 input {
-    border:none;
-    outline:none;
-    display:inline-block;
-    height:34px;
-    vertical-align:middle;
-    position:relative;
-    border-radius:22px;
-    width:220px;
-    box-sizing:border-box;
-    padding:0 18px;
+    border: none;
+    outline: none;
+    display: inline-block;
+    height: 45px;
+    vertical-align: middle;
+    position: relative;
+    border-radius: 22px;
+    width: 350px;
+    box-sizing: border-box;
+    padding: 0 18px;
+    font-size: 18px;
 }
 
-input[type="button"] {
-    background:rgba(197,62,126,.33) ! important;
-    color:#fff;
-    position:relative;
-    left:9px;
-    top:25px;
-    cursor:pointer;
+#submit {
+    padding: 8px 20px;
+    margin-left: 50px;
+    width: auto;
 }
 
-.submit {
-    margin-bottom: 15px;
+.response-container {
+    color: #ddd;
+    font-size: 18px;
+    font-style: italic;
+    width: 90%;
+    min-height: 150px;
+    height: auto;
+    margin: auto;
+}
+
+.response-container>* {
+    margin-bottom: 10px;
+}
+
+.response-container > .message {
+    font-size: 24px;
+}
+
+.data {
+    text-align: left;
+    margin: 0 10%;
+}
+
+.item-info, .player-name {
+    width: auto !important;
+    padding: 5px 10px;
+    cursor: pointer;
+    background-color: #483941;
+    margin: 5px;
+    border-radius: 5px;
+}
+
+.player-name {
+    cursor: default;
 }
