@@ -2,8 +2,7 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.exceptions.ItemNotFoundException;
-import mazegame.trade.TransactionHandler;
+import mazegame.trade.TradeHandler;
 import java.util.Objects;
 
 public class SellItem implements ItemCommand {
@@ -26,12 +25,11 @@ public class SellItem implements ItemCommand {
     }
 
     private String tryToSell(String itemName) {
-        try {
-            TransactionHandler transactionHandler = playerController.getTransactionHandler();
-            transactionHandler.sell(itemName);
+        TradeHandler tradeHandler = playerController.getTradeHandler();
+        if(tradeHandler.sell(itemName)) {
             return itemName + " sold";
-        } catch (ItemNotFoundException itemNotFoundException) {
-            return itemNotFoundException.getMessage();
+        } else {
+            return tradeHandler.getReason();
         }
     }
 }

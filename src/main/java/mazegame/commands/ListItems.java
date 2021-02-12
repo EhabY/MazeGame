@@ -2,7 +2,7 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.trade.TransactionHandler;
+import mazegame.trade.TradeHandler;
 import java.util.Objects;
 
 public class ListItems implements Command {
@@ -16,8 +16,8 @@ public class ListItems implements Command {
     public Response execute() {
         ValidityResponse response = ActionValidityChecker.inTradeMode(playerController.getGameState());
         if (response.valid) {
-            TransactionHandler transactionHandler = playerController.getTransactionHandler();
-            return new Response("", transactionHandler.getSeller());
+            TradeHandler tradeHandler = playerController.getTradeHandler();
+            return new Response("", tradeHandler.getSeller());
         } else {
             return new Response(response.message);
         }

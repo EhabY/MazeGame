@@ -2,11 +2,14 @@ package website.match;
 
 import mapgenerator.MapConfiguration;
 import mazegame.PlayerController;
+import mazegame.State;
 import mazegame.events.GameEvent;
+import mazegame.events.StateListener;
 import org.eclipse.jetty.websocket.api.Session;
 import website.fighting.ConflictResolver;
 import website.message.EventMessage;
 import website.message.Message;
+import website.message.StateChangeMessage;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
@@ -50,11 +53,19 @@ public class MatchCreatorInitializer {
     }
 
     private void addEventListener(Session user, PlayerController playerController) {
-        playerController.addStateListener((event, message) -> {
-            Future<Void> sent = sendEventMessageToUser(event, message, user);
-            if(event == GameEvent.LOST_MATCH || event == GameEvent.WON_MATCH) {
-                waitForFuture(sent);
-                user.close();
+        playerController.addStateListener(new StateListener() {
+            @Override
+            public void onStateChange(State state, String message) {
+                Future<Void> sent = sendEventMessageToUser(state, message, user);
+                if(state == State.LOST || state == State.WON) {
+                    waitForFuture(sent);
+                    user.close();
+                }
+            }
+
+            @Override
+            public void onGameEvent(GameEvent event, String message) {
+                sendEventMessageToUser(event, message, user);
             }
         });
     }
@@ -71,6 +82,11 @@ public class MatchCreatorInitializer {
 
     private Future<Void> sendEventMessageToUser(GameEvent gameEvent, String message, Session user) {
         Message eventMessage = new EventMessage(message, gameEvent);
+        return user.getRemote().sendStringByFuture(eventMessage.getPayload());
+    }
+
+    private Future<Void> sendEventMessageToUser(State state, String message, Session user) {
+        Message eventMessage = new StateChangeMessage(message, state);
         return user.getRemote().sendStringByFuture(eventMessage.getPayload());
     }
 }

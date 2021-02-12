@@ -1,5 +1,8 @@
 package mazegame.events;
 
+import mazegame.State;
+
 public interface StateListener {
-    void onStateChange(GameEvent event, String message);
+    void onStateChange(State state, String message);
+    void onGameEvent(GameEvent event, String message);
 }

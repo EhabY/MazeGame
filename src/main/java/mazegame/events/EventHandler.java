@@ -1,5 +1,6 @@
 package mazegame.events;
 
+import mazegame.State;
 import mazegame.room.Room;
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,13 @@ public class EventHandler {
 
     public void triggerGameEvent(GameEvent gameEvent, String message) {
         for(StateListener listener : stateListeners) {
-            listener.onStateChange(gameEvent, message);
+            listener.onGameEvent(gameEvent, message);
+        }
+    }
+
+    public void triggerStateChangeEvent(State state, String message) {
+        for(StateListener listener : stateListeners) {
+            listener.onStateChange(state, message);
         }
     }
 }

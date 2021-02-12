@@ -85,12 +85,28 @@ public class Player implements JsonEncodable {
     return checkable.accept(checkVisitor);
   }
 
+  public void switchLight() {
+    position.switchLight();
+  }
+
+  public Direction getDirection() {
+    return position.getDirection();
+  }
+
+  public long getGold() {
+    return inventory.getGold();
+  }
+
   public void addGoldToInventory(long gold) {
     inventory.addGold(gold);
   }
 
   public void removeGoldFromInventory(long gold) {
     inventory.subtractGold(gold);
+  }
+
+  public boolean hasItem(String name) {
+    return inventory.hasItem(name);
   }
 
   public void addItemToInventory(Item item) {
@@ -106,20 +122,12 @@ public class Player implements JsonEncodable {
     item.accept(useItemVisitor);
   }
 
-  public void switchLight() {
-    position.switchLight();
-  }
-
   public void addLoot(Loot loot) {
     inventory.addLoot(loot);
   }
 
   public Loot getLoot() {
     return inventory.getInventoryAsLoot();
-  }
-
-  public Direction getDirection() {
-    return position.getDirection();
   }
 
   @Override

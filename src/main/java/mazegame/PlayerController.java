@@ -7,7 +7,7 @@ import mazegame.events.StateListener;
 import mazegame.mapsite.Loot;
 import mazegame.player.Player;
 import mazegame.room.Room;
-import mazegame.trade.TransactionHandler;
+import mazegame.trade.TradeHandler;
 import serialization.JsonEncodable;
 import serialization.Encoder;
 import java.time.Instant;
@@ -22,10 +22,10 @@ public class PlayerController implements JsonEncodable {
   private final Player player;
   private final MazeMap map;
   private final BlockingDeque<String> fightCommandsQueue = new LinkedBlockingDeque<>();
-  private TransactionHandler transactionHandler;
+  private final EventHandler eventHandler = new EventHandler();
+  private TradeHandler tradeHandler;
   private State state = State.EXPLORE;
   private final Instant gameStart = Instant.now();
-  private final EventHandler eventHandler = new EventHandler();
 
   public PlayerController(String username, MazeMap map, Room startRoom) {
     this.username = username;
@@ -46,21 +46,21 @@ public class PlayerController implements JsonEncodable {
     return player;
   }
 
-  public void setGameState(State state) {
+  public void setGameState(State state, String message) {
     this.state = state;
-    eventHandler.triggerGameEvent(GameEvent.CHANGED_STATE, this.state.name());
+    eventHandler.triggerStateChangeEvent(state, message);
   }
 
   public State getGameState() {
     return state;
   }
 
-  public void setTransactionHandler(TransactionHandler transactionHandler) {
-    this.transactionHandler = transactionHandler;
+  public void setTradeHandler(TradeHandler tradeHandler) {
+    this.tradeHandler = tradeHandler;
   }
 
-  public TransactionHandler getTransactionHandler() {
-    return transactionHandler;
+  public TradeHandler getTradeHandler() {
+    return tradeHandler;
   }
 
   public String getNextCommand() throws InterruptedException {
@@ -107,19 +107,12 @@ public class PlayerController implements JsonEncodable {
     eventHandler.addListener(listener);
   }
 
-  public void startFight(String message) {
-    state = State.FIGHT;
-    eventHandler.triggerGameEvent(GameEvent.START_FIGHT, message);
+  public void startFight() {
+    setGameState(State.FIGHT, "Fight has commenced!");
   }
 
   public void wonFight(String message) {
-    state = State.EXPLORE;
-    eventHandler.triggerGameEvent(GameEvent.WON_FIGHT, message);
-  }
-
-  public void lostFight(String message) {
-    state = State.LOST;
-    eventHandler.triggerGameEvent(GameEvent.LOST_FIGHT, message);
+    setGameState(State.EXPLORE, message);
   }
 
   public void tieFight(String message) {
@@ -135,13 +128,11 @@ public class PlayerController implements JsonEncodable {
   }
 
   public void wonMatch(String message) {
-    state = State.WON;
-    eventHandler.triggerGameEvent(GameEvent.WON_MATCH, message);
+    setGameState(State.WON, message);
   }
 
   public void lostMatch(String message) {
-    state = State.LOST;
-    eventHandler.triggerGameEvent(GameEvent.LOST_MATCH, message);
+    setGameState(State.LOST, message);
   }
 
   @Override
@@ -156,8 +147,8 @@ public class PlayerController implements JsonEncodable {
         + player
         + ", map="
         + map
-        + ", transactionHandler="
-        + transactionHandler
+        + ", tradeHandler="
+        + tradeHandler
         + ", state="
         + state
         + ", gameStart="

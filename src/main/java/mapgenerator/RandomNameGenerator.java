@@ -32,12 +32,7 @@ public class RandomNameGenerator {
         return names.get(random.nextInt(numberOfNames));
     }
 
-    public List<String> getHalfOfAllNames() {
-        Set<String> randomizedNames = new HashSet<>();
-        while(randomizedNames.size() < names.size()/2) {
-            randomizedNames.add(getRandomName());
-        }
-
-        return new ArrayList<>(randomizedNames);
+    public List<String> getAllNames() {
+        return new ArrayList<>(this.names);
     }
 }

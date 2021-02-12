@@ -5,7 +5,8 @@ import mazegame.Response;
 import mazegame.State;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
-import mazegame.trade.TransactionHandler;
+import mazegame.trade.TradeHandler;
+
 import java.util.Objects;
 
 public class StartTrade implements Command {
@@ -21,17 +22,17 @@ public class StartTrade implements Command {
         ValidityResponse response = ActionValidityChecker.canStartTrade(player.getMapSiteAhead(), playerController.getGameState());
         if (response.valid) {
             Seller seller = (Seller) player.getMapSiteAhead();
-            TransactionHandler transactionHandler = initiateTrade(player, seller);
-            return new Response("Trade initiated", transactionHandler.getSeller());
+            TradeHandler tradeHandler = initiateTrade(player, seller);
+            return new Response("Trade initiated", tradeHandler.getSeller());
         } else {
             return new Response(response.message);
         }
     }
 
-    private TransactionHandler initiateTrade(Player player, Seller seller) {
-        TransactionHandler transactionHandler = TransactionHandler.startTransaction(player, seller);
-        playerController.setTransactionHandler(transactionHandler);
-        playerController.setGameState(State.TRADE);
-        return transactionHandler;
+    private TradeHandler initiateTrade(Player player, Seller seller) {
+        TradeHandler tradeHandler = TradeHandler.startTransaction(player, seller);
+        playerController.setTradeHandler(tradeHandler);
+        playerController.setGameState(State.TRADE, "Started trading");
+        return tradeHandler;
     }
 }

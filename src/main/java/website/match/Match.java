@@ -19,6 +19,8 @@ import java.util.TimerTask;
 public class Match {
     private static final String WON_MATCH_MESSAGE = "Congratulations, YOU WON!";
     private static final String LOST_MATCH_MESSAGE = "Sadly, you lost the match :(!";
+    private static final String WON_FIGHT_MESSAGE = "You have won the fight!";
+    private static final String LOST_FIGHT_MESSAGE = "You have lost the fight :(!";
     private final Set<PlayerController> players = new HashSet<>();
     private final Map<Room, PlayerController> roomToPlayerMap = new ConcurrentHashMap<>();
     private final Map<Room, Object> locks = new ConcurrentHashMap<>();
@@ -80,6 +82,7 @@ public class Match {
 
     void removePlayer(PlayerController playerController) {
         notifyPlayerLost(playerController);
+        broadcastPlayerList();
     }
 
     private void removePlayerFromRoom(Room previousRoom) {
@@ -117,6 +120,7 @@ public class Match {
         for(PlayerController playerController : players) {
             playerController.addGold(goldPerPlayer);
         }
+        playerController1.wonFight(WON_FIGHT_MESSAGE);
         broadcastPlayerList();
     }
 

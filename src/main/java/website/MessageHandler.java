@@ -14,11 +14,14 @@ import website.message.Message;
 import website.message.ResponseMessage;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MessageHandler {
     private final Map<Session, String> usernames = new ConcurrentHashMap<>();
     private final Map<Session, PlayerConfiguration> players = new ConcurrentHashMap<>();
     private final MatchCreatorInitializer matchCreatorInitializer;
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
     public MessageHandler(MapConfiguration mapConfiguration, ConflictResolver conflictResolver) {
         this.matchCreatorInitializer = new MatchCreatorInitializer(players, mapConfiguration, conflictResolver);
@@ -64,7 +67,7 @@ public class MessageHandler {
         }
         String username = usernames.get(user);
         MatchCreator matchCreator = matchCreatorInitializer.getMatchCreator();
-        matchCreator.makeReady(username);
+        executor.execute(() -> matchCreator.makeReady(username));
         return new Response(username + " is ready!");
     }
 

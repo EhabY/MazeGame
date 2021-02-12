@@ -16,8 +16,8 @@ public class FinishTrade implements Command {
     public Response execute() {
         ValidityResponse response = ActionValidityChecker.inTradeMode(playerController.getGameState());
         if (response.valid) {
-            playerController.setGameState(State.EXPLORE);
-            playerController.setTransactionHandler(null);
+            playerController.setGameState(State.EXPLORE, "Finished trading");
+            playerController.setTradeHandler(null);
             return new Response("Exited trade mode");
         } else {
             return new Response(response.message);

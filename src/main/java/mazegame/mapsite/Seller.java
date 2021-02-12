@@ -6,7 +6,6 @@ import mazegame.item.ItemManager;
 import mazegame.util.ItemFormatter;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import serialization.Encoder;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -25,23 +24,23 @@ public class Seller implements SerializableMapSite {
   }
 
   public long getItemPrice(String name) {
-    if (priceList.containsKey(name)) {
+    if (itemExists(name)) {
       return priceList.get(name);
     } else {
       throw new ItemNotFoundException("Item not found");
     }
   }
 
+  public boolean itemExists(String name) {
+    return priceList.containsKey(name);
+  }
+
   public Item takeItem(String name) {
     return itemManager.takeFromItems(name);
   }
 
-  public String getItemList() {
-    return itemManager.toString();
-  }
-
-  public String getFormattedPriceList() {
-    return ItemFormatter.formatPriceList(priceList);
+  public boolean hasItem(String name) {
+    return itemManager.hasItem(name);
   }
 
   @Override
@@ -56,6 +55,6 @@ public class Seller implements SerializableMapSite {
 
   @Override
   public String toString() {
-    return "Seller{" + "items=" + getItemList() + ", priceList=" + getFormattedPriceList() + '}';
+    return "Seller{" + "items=" + itemManager.toString() + ", priceList=" + priceList + '}';
   }
 }

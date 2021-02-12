@@ -2,9 +2,8 @@ package mazegame.commands;
 
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.exceptions.ItemNotFoundException;
-import mazegame.exceptions.NotEnoughGoldException;
-import mazegame.trade.TransactionHandler;
+import mazegame.trade.TradeHandler;
+
 import java.util.Objects;
 
 public class BuyItem implements ItemCommand {
@@ -27,12 +26,11 @@ public class BuyItem implements ItemCommand {
     }
 
     private String tryToBuy(String itemName) {
-        try {
-            TransactionHandler transactionHandler = playerController.getTransactionHandler();
-            transactionHandler.buy(itemName);
+        TradeHandler tradeHandler = playerController.getTradeHandler();
+        if(tradeHandler.buy(itemName)) {
             return itemName + " bought and acquired";
-        } catch (ItemNotFoundException | NotEnoughGoldException exception) {
-            return exception.getMessage();
+        } else {
+            return tradeHandler.getReason();
         }
     }
 }

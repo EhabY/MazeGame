@@ -46,6 +46,10 @@ class Inventory {
     return gold;
   }
 
+  boolean hasItem(String name) {
+    return itemManager.hasItem(name);
+  }
+
   Flashlight getFlashlight() {
     return (Flashlight) getItem(Flashlight.FLASHLIGHT_NAME);
   }

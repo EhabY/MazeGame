@@ -874,20 +874,20 @@ void sell(String itemName) {
 Then in the TradeHandler class:
 ```Java
 public TradeHandler(Player player, Seller seller) {
-   transactionHandler = TransactionHandler.startTransaction(player, seller);
+   tradeHandler = TransactionHandler.startTransaction(player, seller);
 }
 
 public String list() {
-   return transactionHandler.listSellerItems() + "\n" + transactionHandler.listSellerPriceList();
+   return tradeHandler.listSellerItems() + "\n" + tradeHandler.listSellerPriceList();
 }
 
 public String buy(String itemName) {
-   transactionHandler.buy(itemName);
+   tradeHandler.buy(itemName);
    return itemName + " bought and acquired";
 }
 
 public String sell(String itemName) {
-   transactionHandler.sell(itemName);
+   tradeHandler.sell(itemName);
    return itemName + " sold";
 }
 ```
