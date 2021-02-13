@@ -3,7 +3,7 @@ package website.fighting;
 import mazegame.PlayerController;
 import mazegame.item.Item;
 import mazegame.mapsite.Loot;
-import mazegame.player.ScoreCalculator;
+
 import java.util.List;
 
 public class SimpleScoreCalculator implements ScoreCalculator {

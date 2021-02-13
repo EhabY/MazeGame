@@ -33,7 +33,7 @@ public class Interpreter {
     private final PlayerController playerController;
     private final AtomicBoolean executingOp = new AtomicBoolean(false);
 
-    Interpreter(PlayerController playerController) {
+    public Interpreter(PlayerController playerController) {
         this.playerController = Objects.requireNonNull(playerController);
         initializeCommandMaps(this.playerController);
     }

@@ -18,12 +18,14 @@ public class Door extends AbstractLockable implements Checkable {
       door = new Door(key, locked);
     }
 
-    public void setRoom(Room room) {
+    public Builder setRoom(Room room) {
       door.room = room;
+      return this;
     }
 
-    public void setOtherRoom(Room otherRoom) {
+    public Builder setOtherRoom(Room otherRoom) {
       door.otherRoom = otherRoom;
+      return this;
     }
 
     public Door getDoor() {

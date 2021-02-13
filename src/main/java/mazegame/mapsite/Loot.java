@@ -1,7 +1,6 @@
 package mazegame.mapsite;
 
 import mazegame.item.Item;
-import mazegame.util.ItemFormatter;
 import serialization.JsonEncodable;
 import serialization.Encoder;
 
@@ -39,6 +38,6 @@ public final class Loot implements JsonEncodable {
 
   @Override
   public String toString() {
-    return "Gold = " + getGold() + "\n" + ItemFormatter.formatItems(itemsList);
+    return "Gold = " + getGold() + "\n" + itemsList.toString();
   }
 }

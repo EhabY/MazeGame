@@ -1,7 +1,6 @@
 package mazegame.item;
 
 import mazegame.exceptions.ItemNotFoundException;
-import mazegame.util.ItemFormatter;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -24,7 +23,7 @@ public class ItemManager {
   }
 
   public void add(Item item) {
-    String name = getNameType(item);
+    String name = item.getUniqueName();
     if (hasItem(name)) {
       items.get(name).add(item);
     } else {
@@ -32,12 +31,6 @@ public class ItemManager {
       itemList.add(item);
       items.put(name, itemList);
     }
-  }
-
-  private String getNameType(Item item) {
-    String name = item.getName();
-    String type = item.getType();
-    return name.equals("") ? type : name + " " + type;
   }
 
   public boolean hasItem(String name) {
@@ -88,6 +81,6 @@ public class ItemManager {
 
   @Override
   public String toString() {
-    return ItemFormatter.formatItems(items);
+    return items.toString();
   }
 }

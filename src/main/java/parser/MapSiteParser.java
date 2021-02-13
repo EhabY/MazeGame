@@ -68,17 +68,22 @@ class MapSiteParser {
   }
 
   private boolean doorAlreadyCreated(int roomID, int otherRoomID) {
-    return doorBetweenRooms.containsKey(new ImmutablePair<>(otherRoomID, roomID));
+    return doorBetweenRooms.containsKey(getSortedPair(roomID, otherRoomID));
   }
 
   private Door getDoorBetweenRooms(int roomID, int otherRoomID) {
-    return doorBetweenRooms.get(new ImmutablePair<>(otherRoomID, roomID)).doorBuilder.getDoor();
+    return doorBetweenRooms.get(getSortedPair(otherRoomID, roomID)).doorBuilder.getDoor();
+  }
+
+  private ImmutablePair<Integer, Integer> getSortedPair(int num1, int num2) {
+    int min = Math.min(num1, num2);
+    int max = Math.max(num1, num2);
+    return new ImmutablePair<>(min, max);
   }
 
   private Door createDoor(int roomID, int otherRoomID, String keyName, boolean locked) {
     Door.Builder doorBuilder = new Door.Builder(Key.fromString(keyName), locked);
-    ImmutablePair<Integer, Integer> thisRoomDoor = new ImmutablePair<>(roomID, otherRoomID);
-    doorBetweenRooms.put(thisRoomDoor, new DoorInfo(roomID, otherRoomID, doorBuilder));
+    doorBetweenRooms.put(getSortedPair(roomID, otherRoomID), new DoorInfo(roomID, otherRoomID, doorBuilder));
     return doorBuilder.getDoor();
   }
 

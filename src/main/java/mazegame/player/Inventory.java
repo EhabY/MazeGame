@@ -17,7 +17,7 @@ class Inventory {
   }
 
   Inventory(long gold, Collection<? extends Item> initialItems) {
-    this.gold = gold;
+    this.gold = requireNotNegative(gold);
     itemManager = new ItemManager(initialItems);
   }
 

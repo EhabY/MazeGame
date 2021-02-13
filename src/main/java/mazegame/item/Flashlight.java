@@ -13,8 +13,12 @@ public final class Flashlight implements Item {
   }
 
   public Flashlight(boolean turnedOn) {
+    this(turnedOn, "");
+  }
+
+  public Flashlight(boolean turnedOn, String name) {
     this.turnedOn = turnedOn;
-    name = "";
+    this.name = name;
   }
 
   public void toggle() {
@@ -32,7 +36,7 @@ public final class Flashlight implements Item {
 
   @Override
   public String getType() {
-    return "Flashlight";
+    return FLASHLIGHT_NAME;
   }
 
   @Override

@@ -1,4 +1,4 @@
-package mazegame.player;
+package website.fighting;
 
 import mazegame.PlayerController;
 

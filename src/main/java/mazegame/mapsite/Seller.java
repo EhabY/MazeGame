@@ -3,7 +3,6 @@ package mazegame.mapsite;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.item.Item;
 import mazegame.item.ItemManager;
-import mazegame.util.ItemFormatter;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import serialization.Encoder;
 import java.util.Collection;

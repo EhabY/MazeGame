@@ -4,7 +4,6 @@ import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import serialization.Encoder;
-
 import java.util.Objects;
 
 public class Chest extends AbstractLockable implements Checkable, Lootable {

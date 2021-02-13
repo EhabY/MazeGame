@@ -11,13 +11,13 @@ public abstract class AbstractLockable implements Lockable {
 
   protected AbstractLockable(Key key, boolean locked) {
     lock = new Lock(key);
-    if (shouldToggleLock(locked)) {
+    if (shouldToggleLock(key, locked)) {
       lock.toggleLock(key);
     }
   }
 
-  private boolean shouldToggleLock(boolean locked) {
-    return locked && !lock.isLocked() || !locked && lock.isLocked();
+  private boolean shouldToggleLock(Key key, boolean locked) {
+    return !key.equals(Key.NO_KEY) && (locked && !lock.isLocked() || !locked && lock.isLocked());
   }
 
   @Override

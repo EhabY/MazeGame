@@ -105,8 +105,7 @@ public class GameParser {
       int otherRoomID = doorInfo.otherRoomID;
       Door.Builder doorBuilder = doorInfo.doorBuilder;
 
-      doorBuilder.setRoom(rooms.get(roomID));
-      doorBuilder.setOtherRoom(rooms.get(otherRoomID));
+      doorBuilder.setRoom(rooms.get(roomID)).setOtherRoom(rooms.get(otherRoomID));
     }
   }
 

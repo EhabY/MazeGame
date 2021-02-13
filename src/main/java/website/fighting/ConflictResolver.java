@@ -1,7 +1,7 @@
 package website.fighting;
 
 import mazegame.PlayerController;
-import mazegame.player.ScoreCalculator;
+
 import java.util.Objects;
 
 public class ConflictResolver {

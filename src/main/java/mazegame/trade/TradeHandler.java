@@ -80,6 +80,7 @@ public class TradeHandler {
     } else if(!playerHasItem) {
       reason = "Player does not have " + itemName + "!";
     } else {
+      reason = "";
       return true;
     }
 

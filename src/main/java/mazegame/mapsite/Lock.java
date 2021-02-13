@@ -30,7 +30,7 @@ public class Lock implements Lockable {
   }
 
   private boolean canToggleLock(Key key) {
-    return (hasKey() && key.equals(this.key)) || key.equals(Key.MASTER_KEY);
+    return hasKey() && (key.equals(this.key) || key.equals(Key.MASTER_KEY));
   }
 
   private boolean hasKey() {
