@@ -118,6 +118,10 @@ input {
     border-radius: 5px;
 }
 
+.loot-gold {
+    cursor: default;
+}
+
 .player-name {
     cursor: default;
 }

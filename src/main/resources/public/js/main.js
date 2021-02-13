@@ -3,16 +3,30 @@ $(document).ready(function() {
     let ready = false;
     let username;
     let state;
+
     $("#submit").click(function () {
         if (ws === null) {
             createWebSocket();
+            changeToReadyButton();
         } else if (ready) {
             sendMessage("command", getInputContent());
         } else {
-            ready = true;
-            sendMessage("ready", "");
+            makeReady();
         }
     });
+
+    function changeToReadyButton() {
+        let submitButton = $("#submit");
+        submitButton.removeClass("btn-disabled");
+        submitButton.html("Ready");
+    }
+
+    function makeReady() {
+        ready = true;
+        $("#submit").html("Send");
+        disableAllInputs();
+        sendMessage("ready", "");
+    }
 
     function createWebSocket() {
         ws = new WebSocket("ws://localhost:4567/websocket/match");
@@ -21,10 +35,12 @@ $(document).ready(function() {
             console.log(event);
             username = getInputContent();
             sendMessage("username", username);
+            $("#inputText").prop("disabled", true);
         }
 
         ws.onclose = function (event) {
             console.log(event);
+            setResponseBoxMessage(event.reason);
         }
 
         ws.onmessage = function (event) {
@@ -164,9 +180,9 @@ $(document).ready(function() {
             return "<span>Found nothing!</span>";
         }
 
-        let messageHtml = "<div class='loot'><span>Acquired the following:</span>";
-        messageHtml += "<span>Gold: " + lootJson.gold + "</span>";
-        messageHtml += getFormattedItems(lootJson.items) + "</div>";
+        let messageHtml = "<div class='loot'><h3>Acquired the following:</h3>";
+        messageHtml += "<div><span class='item-info loot-gold'>" + lootJson.gold + " Gold</span>";
+        messageHtml += getFormattedItems(lootJson.items) + "</div></div>";
         return messageHtml;
     }
 
@@ -249,7 +265,7 @@ $(document).ready(function() {
             setResponseBoxMessage(message.content);
         } else if(message.eventType === "REQUESTING_INPUT") {
             setResponseBoxData("<br/><span> Please enter an answer: " + message.content + "</span><br/>");
-            enableInput();
+            enableSending();
         } else {
             console.log("Unknown eventType " + message.eventType);
         }
@@ -262,8 +278,9 @@ $(document).ready(function() {
         return playersHtml;
     }
 
-    function enableInput() {
+    function enableSending() {
         $("#inputText").prop("disabled", false);
+        $("#submit").prop("disabled", false);
     }
 
     // Event binding
@@ -328,8 +345,12 @@ $(document).ready(function() {
     })
 
     $("#download-btn").click(function () {
-        sendMessage("map", getInputContent());
+        sendMessage("map", "");
     });
+
+    function getInputContent() {
+        return $("#inputText").val();
+    }
 
     $(document).on("click",'.item-info',function() {
         let element = $(this);
@@ -337,12 +358,10 @@ $(document).ready(function() {
             $("#inputText").val(this.innerText);
         } else {
             let child = element.children(".item")[0];
-            $("#inputText").val(child.innerText);
+            if(child !== undefined) {
+                $("#inputText").val(child.innerText);
+            }
         }
     });
-
-    function getInputContent() {
-        return document.getElementById("inputText").value;
-    }
 
 });
