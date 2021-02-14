@@ -7,15 +7,18 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class Main {
-    private static final int TIMEOUT = 30 * 60 * 60 * 1000;
+    public static final int TIMEOUT = 30 * 60 * 1000;
+    public static final String HOME = "/";
+    public static final String STATIC_FILES = "/public";
+    public static final String MATCH_WEBSOCKET = "/websocket/match";
+
     public static void main(String[] args) {
-        Spark.staticFileLocation("/public");
+        Spark.staticFileLocation(STATIC_FILES);
         Spark.webSocketIdleTimeoutMillis(TIMEOUT);
-        Spark.webSocket("/websocket/match", MatchWebSocketHandler.class);
+        Spark.webSocket(MATCH_WEBSOCKET, MatchWebSocketHandler.class);
 
-        Spark.get("/", (request, response) -> {
+        Spark.get(HOME, (request, response) -> {
             Map<String, Object> model = new ConcurrentHashMap<>();
-
             return new ThymeleafTemplateEngine().render(new ModelAndView(model, "matchview"));
         });
 

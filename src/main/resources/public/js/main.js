@@ -40,7 +40,7 @@ $(document).ready(function() {
 
         ws.onclose = function (event) {
             console.log(event);
-            setResponseBoxMessage(event.reason);
+            setResponseBoxData("<span>" + event.reason + "</span>");
         }
 
         ws.onmessage = function (event) {
