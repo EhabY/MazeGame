@@ -3,5 +3,6 @@ package website.fighting;
 import mazegame.PlayerController;
 
 public interface ScoreCalculator {
-    long calculateScore(PlayerController playerController);
+
+  long calculateScore(PlayerController playerController);
 }

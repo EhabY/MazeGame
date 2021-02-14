@@ -1,15 +1,16 @@
 package mazegame.item;
 
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
-import serialization.Encoder;
 import java.util.Map;
 import java.util.Objects;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
+import serialization.Encoder;
 
 public final class Key implements Item {
-  private final String name;
+
   private static final Map<String, Key> pool = new CaseInsensitiveMap<>();
   public static final Key NO_KEY = Key.fromString("");
   public static final Key MASTER_KEY = Key.fromString("Master");
+  private final String name;
 
   private Key(String name) {
     this.name = Objects.requireNonNull(name);

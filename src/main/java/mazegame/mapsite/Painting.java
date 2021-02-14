@@ -4,6 +4,7 @@ import mazegame.item.Key;
 import serialization.Encoder;
 
 public class Painting extends AbstractHangable {
+
   private static final String DESCRIPTION = "Painting";
 
   public Painting(Key hiddenKey) {

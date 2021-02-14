@@ -7,40 +7,19 @@ import mazegame.room.Room;
 import serialization.Encoder;
 
 public class Door extends AbstractLockable implements Checkable {
+
   private static final String DESCRIPTION = "Door";
   private Room room;
   private Room otherRoom;
-
-  public static class Builder {
-    private final Door door;
-
-    public Builder(Key key, boolean locked) {
-      door = new Door(key, locked);
-    }
-
-    public Builder setRoom(Room room) {
-      door.room = room;
-      return this;
-    }
-
-    public Builder setOtherRoom(Room otherRoom) {
-      door.otherRoom = otherRoom;
-      return this;
-    }
-
-    public Door getDoor() {
-      return door;
-    }
-  }
 
   private Door(Key key, boolean locked) {
     super(key, locked);
   }
 
   public Room getNextRoom(Room roomFrom) {
-    if(isLocked()) {
+    if (isLocked()) {
       throw new MapSiteLockedException(
-              "Door locked, " + getKeyName() + " key is needed to unlock");
+          "Door locked, " + getKeyName() + " key is needed to unlock");
     }
 
     if (roomFrom.equals(this.room)) {
@@ -70,5 +49,28 @@ public class Door extends AbstractLockable implements Checkable {
   @Override
   public String toString() {
     return "Door{" + "roomID=" + room.getId() + ", otherRoomID=" + otherRoom.getId() + '}';
+  }
+
+  public static class Builder {
+
+    private final Door door;
+
+    public Builder(Key key, boolean locked) {
+      door = new Door(key, locked);
+    }
+
+    public Builder setRoom(Room room) {
+      door.room = room;
+      return this;
+    }
+
+    public Builder setOtherRoom(Room otherRoom) {
+      door.otherRoom = otherRoom;
+      return this;
+    }
+
+    public Door getDoor() {
+      return door;
+    }
   }
 }

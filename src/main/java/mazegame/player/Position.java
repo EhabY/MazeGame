@@ -1,5 +1,6 @@
 package mazegame.player;
 
+import java.util.Objects;
 import mazegame.Direction;
 import mazegame.item.Flashlight;
 import mazegame.mapsite.DarkMapSite;
@@ -7,9 +8,9 @@ import mazegame.mapsite.Door;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
-import java.util.Objects;
 
 class Position {
+
   private Direction direction;
   private Room currentRoom;
 

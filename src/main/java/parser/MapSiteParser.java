@@ -1,5 +1,8 @@
 package parser;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import mazegame.item.Item;
 import mazegame.item.Key;
 import mazegame.mapsite.Chest;
@@ -15,24 +18,10 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 class MapSiteParser {
+
   final Map<ImmutablePair<Integer, Integer>, DoorInfo> doorBetweenRooms = new HashMap<>();
-
-  static class DoorInfo {
-    final int roomID;
-    final int otherRoomID;
-    final Door.Builder doorBuilder;
-
-    DoorInfo(int roomID, int otherRoomID, Door.Builder doorBuilder) {
-      this.roomID = roomID;
-      this.otherRoomID = otherRoomID;
-      this.doorBuilder = doorBuilder;
-    }
-  }
 
   SerializableMapSite parseMapSite(JSONObject mapSiteJson) {
     String mapSiteType = mapSiteJson.getString("mapSite").toLowerCase();
@@ -58,7 +47,7 @@ class MapSiteParser {
     int roomID = doorJson.getInt("roomID");
     int otherRoomID = doorJson.getInt("otherRoomID");
 
-    if(doorAlreadyCreated(roomID, otherRoomID)) {
+    if (doorAlreadyCreated(roomID, otherRoomID)) {
       return getDoorBetweenRooms(roomID, otherRoomID);
     } else {
       String keyName = doorJson.getString("key");
@@ -83,13 +72,14 @@ class MapSiteParser {
 
   private Door createDoor(int roomID, int otherRoomID, String keyName, boolean locked) {
     Door.Builder doorBuilder = new Door.Builder(Key.fromString(keyName), locked);
-    doorBetweenRooms.put(getSortedPair(roomID, otherRoomID), new DoorInfo(roomID, otherRoomID, doorBuilder));
+    doorBetweenRooms
+        .put(getSortedPair(roomID, otherRoomID), new DoorInfo(roomID, otherRoomID, doorBuilder));
     return doorBuilder.getDoor();
   }
 
   private boolean isLockableLocked(JSONObject lockableJson) {
     return lockableJson.getString("key").length() > 0 &&
-            (!lockableJson.has("locked") || lockableJson.getBoolean("locked"));
+        (!lockableJson.has("locked") || lockableJson.getBoolean("locked"));
   }
 
   private Wall parseWall(JSONObject wallJson) {
@@ -134,5 +124,18 @@ class MapSiteParser {
     }
 
     return priceList;
+  }
+
+  static class DoorInfo {
+
+    final int roomID;
+    final int otherRoomID;
+    final Door.Builder doorBuilder;
+
+    DoorInfo(int roomID, int otherRoomID, Door.Builder doorBuilder) {
+      this.roomID = roomID;
+      this.otherRoomID = otherRoomID;
+      this.doorBuilder = doorBuilder;
+    }
   }
 }

@@ -1,6 +1,7 @@
 package mazegame.room;
 
 public class LightSwitch {
+
   private boolean lightsOn;
 
   public LightSwitch(boolean lightsOn) {

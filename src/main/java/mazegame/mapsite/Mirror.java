@@ -4,6 +4,7 @@ import mazegame.item.Key;
 import serialization.Encoder;
 
 public class Mirror extends AbstractHangable {
+
   private static final String DESCRIPTION = "You See a silhouette of you";
 
   public Mirror(Key hiddenKey) {

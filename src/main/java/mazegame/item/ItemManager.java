@@ -1,16 +1,18 @@
 package mazegame.item;
 
-import mazegame.exceptions.ItemNotFoundException;
-import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import mazegame.exceptions.ItemNotFoundException;
+import org.apache.commons.collections4.map.CaseInsensitiveMap;
 
 public class ItemManager {
+
   private final Map<String, List<Item>> items = new CaseInsensitiveMap<>();
 
-  public ItemManager() {}
+  public ItemManager() {
+  }
 
   public ItemManager(Collection<? extends Item> itemsList) {
     add(itemsList);
@@ -72,7 +74,7 @@ public class ItemManager {
 
   public List<Item> getItemList() {
     List<Item> itemList = new ArrayList<>();
-    for(Map.Entry<String, List<Item>> entry : items.entrySet()) {
+    for (Map.Entry<String, List<Item>> entry : items.entrySet()) {
       itemList.addAll(entry.getValue());
     }
 

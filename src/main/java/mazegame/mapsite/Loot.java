@@ -1,15 +1,15 @@
 package mazegame.mapsite;
 
-import mazegame.item.Item;
-import serialization.JsonEncodable;
-import serialization.Encoder;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import mazegame.item.Item;
+import serialization.Encoder;
+import serialization.JsonEncodable;
 
 public final class Loot implements JsonEncodable {
+
   public static final Loot EMPTY_LOOT = new Loot(0);
   private final long gold;
   private final List<Item> itemsList;

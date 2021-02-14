@@ -1,12 +1,13 @@
 package mazegame.mapsite;
 
+import java.util.Objects;
 import mazegame.Response;
 import mazegame.exceptions.MapSiteLockedException;
 import mazegame.item.Key;
 import serialization.Encoder;
-import java.util.Objects;
 
 public class Chest extends AbstractLockable implements Checkable, Lootable {
+
   private static final String DESCRIPTION = "Chest";
   private Loot loot;
 

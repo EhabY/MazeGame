@@ -1,5 +1,11 @@
 package mazegame;
 
+import java.time.Instant;
+import java.util.Collection;
+import java.util.Objects;
+import java.util.Random;
+import java.util.concurrent.BlockingDeque;
+import java.util.concurrent.LinkedBlockingDeque;
 import mazegame.events.EventHandler;
 import mazegame.events.GameEvent;
 import mazegame.events.MatchListener;
@@ -8,32 +14,27 @@ import mazegame.mapsite.Loot;
 import mazegame.player.Player;
 import mazegame.room.Room;
 import mazegame.trade.TradeHandler;
-import serialization.JsonEncodable;
 import serialization.Encoder;
-import java.time.Instant;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Random;
-import java.util.concurrent.BlockingDeque;
-import java.util.concurrent.LinkedBlockingDeque;
+import serialization.JsonEncodable;
 
 public class PlayerController implements JsonEncodable {
+
   private final String username;
   private final Player player;
   private final MazeMap map;
   private final BlockingDeque<String> fightCommandsQueue = new LinkedBlockingDeque<>();
   private final EventHandler eventHandler = new EventHandler();
+  private final Instant gameStart = Instant.now();
   private TradeHandler tradeHandler;
   private State state = State.EXPLORE;
-  private final Instant gameStart = Instant.now();
 
   public PlayerController(String username, MazeMap map, Room startRoom) {
     this.username = username;
     this.map = Objects.requireNonNull(map);
     this.player =
         new Player(
-                getRandomDirection(),
-                startRoom,
+            getRandomDirection(),
+            startRoom,
             map.getStartingGold(),
             map.getInitialItems());
   }
@@ -55,12 +56,12 @@ public class PlayerController implements JsonEncodable {
     return state;
   }
 
-  public void setTradeHandler(TradeHandler tradeHandler) {
-    this.tradeHandler = tradeHandler;
-  }
-
   public TradeHandler getTradeHandler() {
     return tradeHandler;
+  }
+
+  public void setTradeHandler(TradeHandler tradeHandler) {
+    this.tradeHandler = tradeHandler;
   }
 
   public String getNextCommand() throws InterruptedException {

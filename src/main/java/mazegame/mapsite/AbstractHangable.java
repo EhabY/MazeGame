@@ -1,10 +1,11 @@
 package mazegame.mapsite;
 
+import java.util.Objects;
 import mazegame.Response;
 import mazegame.item.Key;
-import java.util.Objects;
 
 public abstract class AbstractHangable implements Hangable {
+
   private final String description;
   private Key hiddenKey;
 

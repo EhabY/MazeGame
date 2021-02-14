@@ -1,10 +1,11 @@
 package mazegame.mapsite;
 
+import java.util.Objects;
 import mazegame.exceptions.InvalidUseOfItem;
 import mazegame.item.Key;
-import java.util.Objects;
 
 public class Lock implements Lockable {
+
   private final Key key;
   private boolean locked;
 

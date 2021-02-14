@@ -1,12 +1,13 @@
 package mazegame.item;
 
-import serialization.Encoder;
 import java.util.Objects;
+import serialization.Encoder;
 
 public final class Flashlight implements Item {
+
   public static final String FLASHLIGHT_NAME = "Flashlight";
-  private boolean turnedOn;
   private final String name;
+  private boolean turnedOn;
 
   public Flashlight() {
     this(false);

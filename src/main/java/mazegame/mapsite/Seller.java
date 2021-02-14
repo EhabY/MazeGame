@@ -1,14 +1,15 @@
 package mazegame.mapsite;
 
+import java.util.Collection;
+import java.util.Map;
 import mazegame.exceptions.ItemNotFoundException;
 import mazegame.item.Item;
 import mazegame.item.ItemManager;
 import org.apache.commons.collections4.map.CaseInsensitiveMap;
 import serialization.Encoder;
-import java.util.Collection;
-import java.util.Map;
 
 public class Seller implements SerializableMapSite {
+
   private static final String DESCRIPTION = "Seller";
   private final ItemManager itemManager;
   private final Map<String, Long> priceList;

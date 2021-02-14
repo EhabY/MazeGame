@@ -1,11 +1,12 @@
 package mazegame.trade;
 
-import mazegame.item.Item;
-import mazegame.player.Player;
-import mazegame.mapsite.Seller;
 import java.util.Objects;
+import mazegame.item.Item;
+import mazegame.mapsite.Seller;
+import mazegame.player.Player;
 
 public class TradeHandler {
+
   private final Player player;
   private final Seller seller;
   private String reason;
@@ -28,7 +29,7 @@ public class TradeHandler {
   }
 
   public boolean buy(String itemName) {
-    if(canBuy(itemName)) {
+    if (canBuy(itemName)) {
       long price = seller.getItemPrice(itemName);
       player.removeGoldFromInventory(price);
       Item itemBought = seller.takeItem(itemName);
@@ -44,11 +45,11 @@ public class TradeHandler {
     boolean sellerHasItem = seller.hasItem(itemName);
     long playerGold = player.getGold();
 
-    if(!itemExists) {
+    if (!itemExists) {
       reason = itemName + " does not exist!";
-    } else if(!sellerHasItem) {
+    } else if (!sellerHasItem) {
       reason = "Seller does not have " + itemName + "!";
-    } else if(playerGold < seller.getItemPrice(itemName)) {
+    } else if (playerGold < seller.getItemPrice(itemName)) {
       long itemPrice = seller.getItemPrice(itemName);
       reason = "Not enough gold (have " + playerGold + ", but need " + itemPrice + ")!";
     } else {
@@ -60,7 +61,7 @@ public class TradeHandler {
   }
 
   public boolean sell(String itemName) {
-    if(canSell(itemName)) {
+    if (canSell(itemName)) {
       Item itemSold = player.takeItemFromInventory(itemName);
       seller.addItem(itemSold);
       long price = seller.getItemPrice(itemName);
@@ -75,9 +76,9 @@ public class TradeHandler {
     boolean itemExists = seller.itemExists(itemName);
     boolean playerHasItem = player.hasItem(itemName);
 
-    if(!itemExists) {
+    if (!itemExists) {
       reason = itemName + " does not exist!";
-    } else if(!playerHasItem) {
+    } else if (!playerHasItem) {
       reason = "Player does not have " + itemName + "!";
     } else {
       reason = "";

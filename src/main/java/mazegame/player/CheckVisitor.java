@@ -1,5 +1,6 @@
 package mazegame.player;
 
+import java.util.Objects;
 import mazegame.Response;
 import mazegame.item.Key;
 import mazegame.mapsite.CheckableVisitor;
@@ -7,9 +8,9 @@ import mazegame.mapsite.Chest;
 import mazegame.mapsite.Door;
 import mazegame.mapsite.Hangable;
 import mazegame.mapsite.Loot;
-import java.util.Objects;
 
 final class CheckVisitor implements CheckableVisitor {
+
   private final Inventory inventory;
 
   public CheckVisitor(Inventory inventory) {

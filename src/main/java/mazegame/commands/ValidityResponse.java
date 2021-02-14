@@ -1,6 +1,7 @@
 package mazegame.commands;
 
 public class ValidityResponse {
+
   public static final ValidityResponse VALID_RESPONSE = new ValidityResponse(true, "");
   public final boolean valid;
   public final String message;

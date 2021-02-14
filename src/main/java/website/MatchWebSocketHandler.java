@@ -14,29 +14,32 @@ import website.message.Message;
 
 @WebSocket
 public class MatchWebSocketHandler {
-    private final MessageHandler messageHandler;
 
-    public MatchWebSocketHandler() {
-        MapConfiguration mapConfiguration = new DefaultMapConfiguration.Builder().build();
-        ConflictResolver conflictResolver = new ConflictResolver(new SimpleScoreCalculator(), new RockPaperScissors());
-        this.messageHandler = new MessageHandler(mapConfiguration, conflictResolver);
-    }
+  private final MessageHandler messageHandler;
 
-    @OnWebSocketConnect
-    public void onConnect(Session user) {}
+  public MatchWebSocketHandler() {
+    MapConfiguration mapConfiguration = new DefaultMapConfiguration.Builder().build();
+    ConflictResolver conflictResolver = new ConflictResolver(new SimpleScoreCalculator(),
+        new RockPaperScissors());
+    this.messageHandler = new MessageHandler(mapConfiguration, conflictResolver);
+  }
 
-    @OnWebSocketClose
-    public void onClose(Session user, int statusCode, String reason) {
-        messageHandler.removeUser(user);
-    }
+  @OnWebSocketConnect
+  public void onConnect(Session user) {
+  }
 
-    @OnWebSocketMessage
-    public void onMessage(Session user, String message) {
-        Message response = messageHandler.getResponseFromMessage(user, message);
-        sendMessageToUser(response.getPayload(), user);
-    }
+  @OnWebSocketClose
+  public void onClose(Session user, int statusCode, String reason) {
+    messageHandler.removeUser(user);
+  }
 
-    private void sendMessageToUser(String response, Session user) {
-        user.getRemote().sendStringByFuture(response);
-    }
+  @OnWebSocketMessage
+  public void onMessage(Session user, String message) {
+    Message response = messageHandler.getResponseFromMessage(user, message);
+    sendMessageToUser(response.getPayload(), user);
+  }
+
+  private void sendMessageToUser(String response, Session user) {
+    user.getRemote().sendStringByFuture(response);
+  }
 }

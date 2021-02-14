@@ -1,5 +1,7 @@
 package parser;
 
+import java.util.ArrayList;
+import java.util.List;
 import mazegame.item.Flashlight;
 import mazegame.item.Item;
 import mazegame.item.Key;
@@ -7,12 +9,11 @@ import mazegame.mapsite.Loot;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.ArrayList;
-import java.util.List;
 
 class ItemParser {
 
-  private ItemParser() {}
+  private ItemParser() {
+  }
 
   static List<Item> parseItemsArray(JSONArray itemsJson) {
     List<Item> items = new ArrayList<>();

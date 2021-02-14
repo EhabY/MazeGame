@@ -8,7 +8,9 @@ import mazegame.mapsite.MapSite;
 import mazegame.mapsite.Seller;
 
 public class ActionValidityChecker {
-  private ActionValidityChecker() {}
+
+  private ActionValidityChecker() {
+  }
 
   public static ValidityResponse canOpenDoor(MapSite mapSite, State state) {
     if (state != State.EXPLORE) {
@@ -28,9 +30,10 @@ public class ActionValidityChecker {
   }
 
   private static ValidityResponse checkIfLocked(Lockable lockable) {
-    if(lockable.isLocked()) {
+    if (lockable.isLocked()) {
       String mapSiteType = lockable.getClass().getSimpleName();
-      return new ValidityResponse(false,  mapSiteType + " is locked, " + lockable.getKeyName() + " key is needed to unlock");
+      return new ValidityResponse(false,
+          mapSiteType + " is locked, " + lockable.getKeyName() + " key is needed to unlock");
     } else {
       return ValidityResponse.VALID_RESPONSE;
     }
@@ -45,7 +48,7 @@ public class ActionValidityChecker {
       return new ValidityResponse(false, "Nothing to check");
     }
 
-    if(isLockable(mapSite)) {
+    if (isLockable(mapSite)) {
       return checkIfLocked((Lockable) mapSite);
     }
 

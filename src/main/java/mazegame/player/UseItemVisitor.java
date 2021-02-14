@@ -1,13 +1,14 @@
 package mazegame.player;
 
+import java.util.Objects;
 import mazegame.exceptions.InvalidUseOfItem;
 import mazegame.item.Flashlight;
 import mazegame.item.ItemVisitor;
 import mazegame.item.Key;
 import mazegame.mapsite.Lockable;
-import java.util.Objects;
 
 final class UseItemVisitor implements ItemVisitor {
+
   Player player;
 
   UseItemVisitor(Player player) {

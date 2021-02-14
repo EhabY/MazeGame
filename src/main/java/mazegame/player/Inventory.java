@@ -1,16 +1,17 @@
 package mazegame.player;
 
+import java.util.Collection;
+import java.util.Collections;
 import mazegame.exceptions.NotEnoughGoldException;
 import mazegame.item.Flashlight;
 import mazegame.item.Item;
 import mazegame.item.ItemManager;
 import mazegame.mapsite.Loot;
-import java.util.Collection;
-import java.util.Collections;
 
 class Inventory {
-  private long gold;
+
   private final ItemManager itemManager;
+  private long gold;
 
   Inventory(long gold) {
     this(gold, Collections.emptyList());

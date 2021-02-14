@@ -1,5 +1,7 @@
 package mazegame.player;
 
+import java.util.Collections;
+import java.util.List;
 import mazegame.Direction;
 import mazegame.Response;
 import mazegame.item.Item;
@@ -7,12 +9,11 @@ import mazegame.mapsite.Checkable;
 import mazegame.mapsite.Loot;
 import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
-import serialization.JsonEncodable;
 import serialization.Encoder;
-import java.util.Collections;
-import java.util.List;
+import serialization.JsonEncodable;
 
 public class Player implements JsonEncodable {
+
   private final Position position;
   private final Inventory inventory;
   private final UseItemVisitor useItemVisitor;

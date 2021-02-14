@@ -3,5 +3,6 @@ package website.fighting;
 import mazegame.PlayerController;
 
 public interface TieBreaker {
-    PlayerController breakTie(PlayerController playerController1, PlayerController playerController2);
+
+  PlayerController breakTie(PlayerController playerController1, PlayerController playerController2);
 }

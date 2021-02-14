@@ -1,20 +1,21 @@
 package mazegame.room;
 
-import mazegame.Direction;
-import mazegame.item.Item;
-import mazegame.mapsite.Loot;
-import mazegame.mapsite.Lootable;
-import mazegame.mapsite.SerializableMapSite;
-import serialization.JsonEncodable;
-import serialization.Encoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import mazegame.Direction;
+import mazegame.item.Item;
+import mazegame.mapsite.Loot;
+import mazegame.mapsite.Lootable;
+import mazegame.mapsite.SerializableMapSite;
+import serialization.Encoder;
+import serialization.JsonEncodable;
 
 public class Room implements JsonEncodable, Lootable {
+
   private final int id;
   private final Map<Direction, SerializableMapSite> mapSites;
   private final LightSwitch lightSwitch;
@@ -24,7 +25,8 @@ public class Room implements JsonEncodable, Lootable {
     this(id, mapSites, lightSwitch, Loot.EMPTY_LOOT);
   }
 
-  public Room(int id, Map<Direction, SerializableMapSite> mapSites, LightSwitch lightSwitch, Loot loot) {
+  public Room(int id, Map<Direction, SerializableMapSite> mapSites, LightSwitch lightSwitch,
+      Loot loot) {
     this.id = id;
     this.mapSites = Collections.unmodifiableMap(new EnumMap<>(mapSites));
     this.lightSwitch = Objects.requireNonNull(lightSwitch);
@@ -89,6 +91,6 @@ public class Room implements JsonEncodable, Lootable {
 
   @Override
   public String toString() {
-      return "Room{" + "id=" + id + ", lightSwitch=" + lightSwitch + ", loot=" + loot +  '}';
+    return "Room{" + "id=" + id + ", lightSwitch=" + lightSwitch + ", loot=" + loot + '}';
   }
 }

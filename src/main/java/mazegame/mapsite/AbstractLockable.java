@@ -3,6 +3,7 @@ package mazegame.mapsite;
 import mazegame.item.Key;
 
 public abstract class AbstractLockable implements Lockable {
+
   private final Lock lock;
 
   protected AbstractLockable(Key key) {

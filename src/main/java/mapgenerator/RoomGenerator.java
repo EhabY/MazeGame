@@ -11,104 +11,105 @@ import java.util.Queue;
 import java.util.SplittableRandom;
 
 public class RoomGenerator {
-    public static final int MINIMUM_DIFFICULTY = 1;
-    public static final int MAXIMUM_DIFFICULTY = 10;
-    private final int size;
-    private final JSONObject[] rooms;
-    private final int difficulty;
-    private final List<Integer> startingRooms = new ArrayList<>();
-    private final Queue<Integer> roomsQueue = new ArrayDeque<>();
-    private final SplittableRandom random = new SplittableRandom();
 
-    RoomGenerator(int size, int difficulty) {
-        this.size = size;
-        this.rooms = new JSONObject[this.size];
-        this.difficulty = difficulty;
-    }
+  public static final int MINIMUM_DIFFICULTY = 1;
+  public static final int MAXIMUM_DIFFICULTY = 10;
+  private final int size;
+  private final JSONObject[] rooms;
+  private final int difficulty;
+  private final List<Integer> startingRooms = new ArrayList<>();
+  private final Queue<Integer> roomsQueue = new ArrayDeque<>();
+  private final SplittableRandom random = new SplittableRandom();
 
-    public JSONObject getRoom(int id) {
-        return rooms[id];
-    }
+  RoomGenerator(int size, int difficulty) {
+    this.size = size;
+    this.rooms = new JSONObject[this.size];
+    this.difficulty = difficulty;
+  }
 
-    public JSONObject createRoomIfNull(int id) {
-        if(rooms[id] == null) {
-            rooms[id] = getBasicRoom(id);
-            roomsQueue.add(id);
-        }
-        return rooms[id];
-    }
+  public JSONObject getRoom(int id) {
+    return rooms[id];
+  }
 
-    private JSONObject getBasicRoom(int id) {
-        JSONObject room = new JSONObject();
-        room.put("id", id);
-        room.put("lightswitch", getLightswitch());
-        return room;
+  public JSONObject createRoomIfNull(int id) {
+    if (rooms[id] == null) {
+      rooms[id] = getBasicRoom(id);
+      roomsQueue.add(id);
     }
+    return rooms[id];
+  }
 
-    public JSONArray getAllRooms() {
-        JSONArray jsonArray = new JSONArray();
-        for(int i = 0; i < this.size; i++) {
-            if(roomCreated(i)) {
-                jsonArray.put(rooms[i]);
-            }
-        }
-        jsonArray.put(getEndRoom());
-        return jsonArray;
-    }
+  private JSONObject getBasicRoom(int id) {
+    JSONObject room = new JSONObject();
+    room.put("id", id);
+    room.put("lightswitch", getLightswitch());
+    return room;
+  }
 
-    private JSONObject getEndRoom() {
-        JSONObject endRoom = getBasicRoom(this.size);
-        for(Direction direction : Direction.values()) {
-            endRoom.put(direction.toString().toLowerCase(), WallGenerator.getWall());
-        }
-        return endRoom;
+  public JSONArray getAllRooms() {
+    JSONArray jsonArray = new JSONArray();
+    for (int i = 0; i < this.size; i++) {
+      if (roomCreated(i)) {
+        jsonArray.put(rooms[i]);
+      }
     }
+    jsonArray.put(getEndRoom());
+    return jsonArray;
+  }
 
-    public int generateStartingPosition() {
-        int currentPosition = getRandomRoomID();
-        JSONObject currentRoom = createRoomIfNull(currentPosition);
-        rooms[currentPosition] = currentRoom;
-        startingRooms.add(currentPosition);
-        return currentPosition;
+  private JSONObject getEndRoom() {
+    JSONObject endRoom = getBasicRoom(this.size);
+    for (Direction direction : Direction.values()) {
+      endRoom.put(direction.toString().toLowerCase(), WallGenerator.getWall());
     }
+    return endRoom;
+  }
 
-    private int getRandomRoomID() {
-        int position;
-        do {
-            position = random.nextInt(this.size);
-        } while(roomCreated(position));
-        return position;
-    }
+  public int generateStartingPosition() {
+    int currentPosition = getRandomRoomID();
+    JSONObject currentRoom = createRoomIfNull(currentPosition);
+    rooms[currentPosition] = currentRoom;
+    startingRooms.add(currentPosition);
+    return currentPosition;
+  }
 
-    private boolean roomCreated(int position) {
-        return rooms[position] != null;
-    }
+  private int getRandomRoomID() {
+    int position;
+    do {
+      position = random.nextInt(this.size);
+    } while (roomCreated(position));
+    return position;
+  }
 
-    private JSONObject getLightswitch() {
-        JSONObject lightswitchJson = new JSONObject();
-        lightswitchJson.put("hasLights", hasLights());
-        lightswitchJson.put("lightsOn", areLightsOn());
-        return lightswitchJson;
-    }
+  private boolean roomCreated(int position) {
+    return rooms[position] != null;
+  }
 
-    private boolean hasLights() {
-        int chance = random.nextInt(MAXIMUM_DIFFICULTY);
-        return chance < MAXIMUM_DIFFICULTY - difficulty + MINIMUM_DIFFICULTY;
-    }
+  private JSONObject getLightswitch() {
+    JSONObject lightswitchJson = new JSONObject();
+    lightswitchJson.put("hasLights", hasLights());
+    lightswitchJson.put("lightsOn", areLightsOn());
+    return lightswitchJson;
+  }
 
-    private boolean areLightsOn() {
-        return random.nextBoolean();
-    }
+  private boolean hasLights() {
+    int chance = random.nextInt(MAXIMUM_DIFFICULTY);
+    return chance < MAXIMUM_DIFFICULTY - difficulty + MINIMUM_DIFFICULTY;
+  }
 
-    public List<Integer> getStartingRooms() {
-        return startingRooms;
-    }
+  private boolean areLightsOn() {
+    return random.nextBoolean();
+  }
 
-    public Queue<Integer> getCreatedRoomsQueue() {
-        return roomsQueue;
-    }
+  public List<Integer> getStartingRooms() {
+    return startingRooms;
+  }
 
-    public boolean roomHasMapSite(int roomID, Direction direction) {
-        return rooms[roomID] != null && rooms[roomID].has(direction.toString().toLowerCase());
-    }
+  public Queue<Integer> getCreatedRoomsQueue() {
+    return roomsQueue;
+  }
+
+  public boolean roomHasMapSite(int roomID, Direction direction) {
+    return rooms[roomID] != null && rooms[roomID].has(direction.toString().toLowerCase());
+  }
 }
