@@ -24,6 +24,7 @@ public class Match {
   private final Set<PlayerController> players = new HashSet<>();
   private final Map<Room, PlayerController> roomToPlayerMap = new ConcurrentHashMap<>();
   private final Map<Room, Object> locks = new ConcurrentHashMap<>();
+  private final Map<Room, Boolean> inFight = new ConcurrentHashMap<>();
   private final MazeMap mazeMap;
   private final ConflictResolver conflictResolver;
 
@@ -32,6 +33,7 @@ public class Match {
     this.players.addAll(players);
     for (Room room : mazeMap.getRooms()) {
       locks.put(room, new Object());
+      inFight.put(room, false);
     }
 
     for (PlayerController player : players) {
@@ -73,6 +75,7 @@ public class Match {
       playerController.lostMatch(message);
     }
     players.clear();
+    roomToPlayerMap.clear();
   }
 
   void moveFrom(PlayerController playerController, Room previousRoom) {
@@ -80,9 +83,15 @@ public class Match {
     addPlayerToRoom(playerController);
   }
 
-  void removePlayer(PlayerController playerController) {
+  void kickPlayer(PlayerController playerController) {
     notifyPlayerLost(playerController);
+    removePlayerFromMatch(playerController);
     broadcastPlayerList();
+  }
+
+  private void removePlayerFromMatch(PlayerController playerController) {
+    players.remove(playerController);
+    removePlayerFromRoom(playerController.getCurrentRoom());
   }
 
   private void removePlayerFromRoom(Room previousRoom) {
@@ -92,44 +101,78 @@ public class Match {
   }
 
   private void addPlayerToRoom(PlayerController playerController) {
+    notifyPlayerIfWaiting(playerController);
     Room room = playerController.getCurrentRoom();
     synchronized (locks.get(room)) {
       if (roomToPlayerMap.containsKey(room)) {
-        playerController = getWinner(playerController, roomToPlayerMap.get(room));
+        PlayerController winner = startFight(playerController);
+        roomToPlayerMap.put(room, winner);
+        broadcastPlayerList();
+      } else {
+        roomToPlayerMap.put(room, playerController);
       }
-      roomToPlayerMap.put(room, playerController);
       notifyIfWon(playerController);
     }
   }
 
-  private PlayerController getWinner(PlayerController playerController1,
-      PlayerController playerController2) {
-    PlayerController winner = conflictResolver
-        .resolveConflict(playerController1, playerController2);
-    if (winner.equals(playerController1)) {
-      firstBeatSecond(playerController1, playerController2);
+  private void notifyPlayerIfWaiting(PlayerController playerController) {
+    Room room = playerController.getCurrentRoom();
+    if(inFight.get(room)) {
+      playerController.startFight();
+    }
+  }
+
+  private PlayerController startFight(PlayerController playerController) {
+    Room room = playerController.getCurrentRoom();
+    inFight.put(room, true);
+    playerController = getWinnerInFight(playerController, roomToPlayerMap.get(room));
+    inFight.put(room, false);
+    return playerController;
+  }
+
+  private PlayerController getWinnerInFight(PlayerController controller1, PlayerController controller2) {
+    PlayerController winner = conflictResolver.resolveConflict(controller1, controller2);
+    if (winner.equals(controller1)) {
+      firstBeatSecond(controller1, controller2);
     } else {
-      firstBeatSecond(playerController2, playerController1);
+      firstBeatSecond(controller2, controller1);
     }
     return winner;
   }
 
-  private void firstBeatSecond(PlayerController playerController1,
-      PlayerController playerController2) {
-    notifyPlayerLost(playerController2);
-    Loot loot = playerController2.getLoot();
-    playerController1.addLoot(new Loot(loot.getGold() % players.size(), loot.getItems()));
-    long goldPerPlayer = loot.getGold() / players.size();
+  private void firstBeatSecond(PlayerController controller1, PlayerController controller2) {
+    Loot loot = controller2.getLoot();
+    giveLootTo(loot, controller1);
+    distributeGold(loot.getGold());
+    notifyPlayerWonFight(controller1);
+    notifyPlayerLost(controller2);
+  }
+
+  private void giveLootTo(Loot loot, PlayerController playerController) {
+    int numberOfPlayers = players.size() - 1;
+    long remainingGold = getRemainingGold(loot.getGold(), numberOfPlayers);
+    Loot winnerShare = new Loot(remainingGold, loot.getItems());
+    playerController.addLoot(winnerShare);
+  }
+
+  private long getRemainingGold(long gold, int numberOfPlayers) {
+    return gold % numberOfPlayers;
+  }
+
+  private void distributeGold(long gold) {
+    int numberOfPlayers = players.size() - 1;
+    long goldPerPlayer = gold / numberOfPlayers;
     for (PlayerController playerController : players) {
       playerController.addGold(goldPerPlayer);
     }
-    playerController1.wonFight(WON_FIGHT_MESSAGE);
-    broadcastPlayerList();
+  }
+
+  private void notifyPlayerWonFight(PlayerController playerController) {
+    playerController.wonFight(WON_FIGHT_MESSAGE);
   }
 
   private void notifyPlayerLost(PlayerController playerController) {
     playerController.lostMatch(LOST_MATCH_MESSAGE);
-    players.remove(playerController);
   }
 
   private void notifyIfWon(PlayerController playerController) {
@@ -140,7 +183,7 @@ public class Match {
 
   private void notifyPlayerWon(PlayerController playerController) {
     playerController.wonMatch(WON_MATCH_MESSAGE);
-    players.remove(playerController);
+    removePlayerFromMatch(playerController);
     notifyAllLost(LOST_MATCH_MESSAGE);
   }
 

@@ -94,7 +94,7 @@ public class MatchCreator {
 
         @Override
         public void onQuit() {
-          match.removePlayer(playerController);
+          match.kickPlayer(playerController);
         }
       });
     }

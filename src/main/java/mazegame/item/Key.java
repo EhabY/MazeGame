@@ -16,16 +16,9 @@ public final class Key implements Item {
     this.name = Objects.requireNonNull(name);
   }
 
-  public static synchronized Key fromString(String name) {
-    if (isNewKey(name)) {
-      pool.put(name, new Key(name));
-    }
-
+  public static Key fromString(String name) {
+    pool.putIfAbsent(name, new Key(name));
     return pool.get(name);
-  }
-
-  private static boolean isNewKey(String name) {
-    return !pool.containsKey(name);
   }
 
   @Override

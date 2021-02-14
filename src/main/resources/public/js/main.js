@@ -66,9 +66,16 @@ $(document).ready(function() {
     }
 
     function statusChange(response) {
-        return response.type === "response" && (response.command.startsWith("buy") ||
-            response.command.startsWith("sell") || response.command === "check" ||
-            response.command === "forward" || response.command === "backward" ||
+        let lootedFromRoom = false;
+        if(response.type === "response" &&
+            response.command === "forward" || response.command === "backward") {
+            let lootJson = JSON.parse(response.content.data);
+            lootedFromRoom = lootJson.gold !== 0 || lootJson.items.length !== 0;
+        }
+
+        return state !== "FIGHT" && response.type === "response" &&
+            (response.command.startsWith("buy") || response.command.startsWith("sell") ||
+            response.command === "check" || lootedFromRoom ||
             response.command === "left" || response.command === "right") ||
             (response.type === "event" && response.eventType === "SENDING_PLAYER_LIST");
     }
@@ -100,6 +107,7 @@ $(document).ready(function() {
         } else if(state !== "FIGHT") {
             processCommandResponse(response);
         } else {
+            setResponseBoxMessage(response.content.message);
             console.log(response);
         }
     }
@@ -113,7 +121,8 @@ $(document).ready(function() {
 
     function getFormattedItems(items) {
         let itemsHtml = "";
-        $.each(items, (i, item) => itemsHtml += "<span class='item item-info'>" + formatItem(item) + "</span>" );
+        $.each(items, (i, item) => itemsHtml +=
+            "<span class='item item-info'>" + capitalize(formatItem(item)) + "</span>");
         return itemsHtml;
     }
 
@@ -202,6 +211,7 @@ $(document).ready(function() {
             setTradeState();
         } else if(state === "FIGHT") {
             setFightState();
+            setResponseBoxMessage("A fight has commenced");
         } else {
             disableAllInputs();
         }
