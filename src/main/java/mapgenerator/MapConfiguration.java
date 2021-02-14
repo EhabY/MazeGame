@@ -4,19 +4,21 @@ import mapgenerator.mapsitegenerator.MapSiteGenerator;
 import org.json.JSONObject;
 
 public interface MapConfiguration {
-    void setNumberOfPlayers(int numberOfPlayers);
 
-    int getNumberOfPlayers();
+  int getNumberOfPlayers();
 
-    int getSide();
+  void setNumberOfPlayers(int numberOfPlayers);
 
-    int getLevels();
+  int getSide();
 
-    int getStepsPerLevel();
+  int getLevels();
 
-    int getDifficulty();
+  int getStepsPerLevel();
 
-    WeightedRandomizer<MapSiteGenerator> getMapSiteRandomizer(RandomNameGenerator randomNameGenerator);
+  int getDifficulty();
 
-    JSONObject getConfiguration();
+  WeightedRandomizer<MapSiteGenerator> getMapSiteRandomizer(
+      RandomNameGenerator randomNameGenerator);
+
+  JSONObject getConfiguration();
 }

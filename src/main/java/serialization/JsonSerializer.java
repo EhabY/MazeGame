@@ -1,5 +1,9 @@
 package serialization;
 
+import java.util.ArrayDeque;
+import java.util.HashSet;
+import java.util.Queue;
+import java.util.Set;
 import mazegame.Direction;
 import mazegame.PlayerController;
 import mazegame.item.Key;
@@ -8,12 +12,9 @@ import mazegame.mapsite.MapSite;
 import mazegame.room.Room;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import java.util.ArrayDeque;
-import java.util.HashSet;
-import java.util.Queue;
-import java.util.Set;
 
 public class JsonSerializer {
+
   private final Encoder encoder = new JsonEncoder();
   private final Set<Integer> visitedRooms;
   private final Queue<Room> roomsQueue;
@@ -74,7 +75,7 @@ public class JsonSerializer {
     boolean toggled = toggleIfLocked(door);
     Room otherRoom = door.getNextRoom(room);
 
-    if(toggled) {
+    if (toggled) {
       door.toggleLock(Key.MASTER_KEY);
     }
 
@@ -82,7 +83,7 @@ public class JsonSerializer {
   }
 
   private boolean toggleIfLocked(Door door) {
-    if(door.isLocked()) {
+    if (door.isLocked()) {
       door.toggleLock(Key.MASTER_KEY);
       return true;
     }

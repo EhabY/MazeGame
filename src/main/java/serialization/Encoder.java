@@ -14,16 +14,28 @@ import mazegame.player.Player;
 import mazegame.room.Room;
 
 public interface Encoder {
-    String visit(Flashlight flashlight);
-    String visit(Key key);
-    String visit(Chest chest);
-    String visit(Door door);
-    String visit(Loot loot);
-    String visit(Mirror mirror);
-    String visit(Painting painting);
-    String visit(Seller seller);
-    String visit(Wall wall);
-    String visit(Player player);
-    String visit(PlayerController playerController);
-    String visit(Room room);
+
+  String visit(Flashlight flashlight);
+
+  String visit(Key key);
+
+  String visit(Chest chest);
+
+  String visit(Door door);
+
+  String visit(Loot loot);
+
+  String visit(Mirror mirror);
+
+  String visit(Painting painting);
+
+  String visit(Seller seller);
+
+  String visit(Wall wall);
+
+  String visit(Player player);
+
+  String visit(PlayerController playerController);
+
+  String visit(Room room);
 }

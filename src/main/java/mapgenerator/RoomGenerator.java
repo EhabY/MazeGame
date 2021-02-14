@@ -1,14 +1,14 @@
 package mapgenerator;
 
-import mapgenerator.mapsitegenerator.WallGenerator;
-import mazegame.Direction;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 import java.util.SplittableRandom;
+import mapgenerator.mapsitegenerator.WallGenerator;
+import mazegame.Direction;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 public class RoomGenerator {
 
