@@ -57,14 +57,24 @@ public class PathGenerator {
     List<Direction> path = new ArrayList<>(iterations);
     Direction previousDirection = null;
     while (path.size() < iterations) {
-      Direction direction = getRandomDirection();
-      if (direction != previousDirection && positionManager.isDirectionValid(position, direction)) {
-        path.add(direction);
-        position = positionManager.getPositionAfterMoving(position, direction);
-        previousDirection = direction.left().left();
-      }
+      Direction direction = getUniqueValidDirection(position, previousDirection);
+      path.add(direction);
+      position = positionManager.getPositionAfterMoving(position, direction);
+      previousDirection = direction.left().left();
     }
     return path;
+  }
+
+  private Direction getUniqueValidDirection(int position, Direction previousDirection) {
+    Direction direction = getRandomDirection();
+    while(isNotUniqueOrValid(position, direction, previousDirection)) {
+      direction = getRandomDirection();
+    }
+    return direction;
+  }
+
+  private boolean isNotUniqueOrValid(int position, Direction direction, Direction previousDirection) {
+    return direction == previousDirection || !positionManager.isDirectionValid(position, direction);
   }
 
   private Direction getRandomDirection() {
@@ -73,14 +83,18 @@ public class PathGenerator {
 
   private int createPath(int currentPosition, List<Direction> path) {
     for (Direction stepDirection : path) {
-      int nextPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
-      roomGenerator.createRoomIfNull(nextPosition);
-      if (!roomGenerator.roomHasMapSite(currentPosition, stepDirection)) {
-        createDoorBetweenRooms(currentPosition, nextPosition, stepDirection);
-      }
-      currentPosition = nextPosition;
+      createDoorIfEmptyDirection(currentPosition, stepDirection);
+      currentPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
     }
     return currentPosition;
+  }
+
+  private void createDoorIfEmptyDirection(int currentPosition, Direction stepDirection) {
+    int nextPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
+    roomGenerator.createRoomIfNull(nextPosition);
+    if (!roomGenerator.roomHasMapSite(currentPosition, stepDirection)) {
+      createDoorBetweenRooms(currentPosition, nextPosition, stepDirection);
+    }
   }
 
   private void createDoorBetweenRooms(int roomID, int otherRoomID, Direction directionFrom) {
@@ -97,19 +111,24 @@ public class PathGenerator {
   }
 
   private void generateWinningDoor(int endOfPath) {
-    Direction direction;
-    do {
-      direction = getRandomDirection();
-    } while (roomGenerator.roomHasMapSite(endOfPath, direction));
+    Direction direction = getEmptyRandomDirection(endOfPath);
     int side = positionManager.getSide();
     JSONObject winningDoor = DoorGenerator
         .getCustomJson(endOfPath, side * side, randomNameGenerator.getRandomName());
     addMapSiteToRoomInDirection(winningDoor, endOfPath, direction);
   }
 
+  private Direction getEmptyRandomDirection(int roomID) {
+    Direction direction = getRandomDirection();
+    while(roomGenerator.roomHasMapSite(roomID, direction)) {
+      direction = getRandomDirection();
+    }
+    return direction;
+  }
+
   private void placeKeysInPath(int currentPosition, List<Direction> path) {
     Queue<String> keyNames = getKeyNamesInPath(currentPosition, path);
-    List<MapGenerator.MapSiteLocation> potentialPlaces = new ArrayList<>();
+    List<MapSiteLocation> potentialPlaces = new ArrayList<>();
     for (int i = 0; i < path.size(); i++) {
       Direction stepDirection = path.get(i);
       potentialPlaces.addAll(getEmptyDirections(currentPosition));
@@ -127,9 +146,7 @@ public class PathGenerator {
     for (int i = 0; i < path.size(); i++) {
       Direction stepDirection = path.get(i);
       if (reachedEndOfLevel(i)) {
-        JSONObject currentRoom = roomGenerator.getRoom(currentPosition);
-        JSONObject doorJson = currentRoom.getJSONObject(stepDirection.toString().toLowerCase());
-        keyNames.add(getKeyNameFromJson(doorJson));
+        keyNames.add(getKeyAtEndOfPath(currentPosition, stepDirection));
       }
       currentPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
     }
@@ -137,21 +154,31 @@ public class PathGenerator {
     return keyNames;
   }
 
+  private String getKeyAtEndOfPath(int currentPosition, Direction direction) {
+    JSONObject currentRoom = roomGenerator.getRoom(currentPosition);
+    JSONObject doorJson = currentRoom.getJSONObject(direction.toString().toLowerCase());
+    return getKeyNameFromJson(doorJson);
+  }
+
   private String getKeyNameFromJson(JSONObject doorJson) {
     return doorJson.getString("key");
   }
 
-  private List<MapGenerator.MapSiteLocation> getEmptyDirections(int currentPosition) {
-    List<MapGenerator.MapSiteLocation> emptyDirections = new ArrayList<>();
-    JSONObject currentRoom = roomGenerator.getRoom(currentPosition);
+  private List<MapSiteLocation> getEmptyDirections(int currentPosition) {
+    List<MapSiteLocation> emptyDirections = new ArrayList<>();
     for (Direction direction : Direction.values()) {
-      String directionName = direction.toString().toLowerCase();
-      if (!currentRoom.has(directionName)) {
-        emptyDirections.add(new MapGenerator.MapSiteLocation(currentPosition, direction));
-      }
+      MapSiteLocation mapSiteLocation = new MapSiteLocation(currentPosition, direction);
+      addLocationIfEmpty(mapSiteLocation, emptyDirections);
     }
-
     return emptyDirections;
+  }
+
+  private void addLocationIfEmpty(MapSiteLocation location, List<MapSiteLocation> locations) {
+    JSONObject currentRoom = roomGenerator.getRoom(location.roomID);
+    Direction direction = location.direction;
+    if (!currentRoom.has(direction.toString().toLowerCase())) {
+      locations.add(location);
+    }
   }
 
   private boolean reachedEndOfLevel(int i) {
@@ -171,7 +198,7 @@ public class PathGenerator {
     doorJson.put("locked", locked);
   }
 
-  private void tryToPlaceKey(String keyName, List<MapGenerator.MapSiteLocation> potentialPlaces) {
+  private void tryToPlaceKey(String keyName, List<MapSiteLocation> potentialPlaces) {
     if (!potentialPlaces.isEmpty()) {
       placeKeyRandomly(keyName, potentialPlaces);
     }
@@ -179,9 +206,9 @@ public class PathGenerator {
   }
 
   private void placeKeyRandomly(String keyName,
-      List<MapGenerator.MapSiteLocation> potentialPlaces) {
+      List<MapSiteLocation> potentialPlaces) {
     int randomIndex = random.nextInt(potentialPlaces.size());
-    MapGenerator.MapSiteLocation mapSiteLocation = potentialPlaces.get(randomIndex);
+    MapSiteLocation mapSiteLocation = potentialPlaces.get(randomIndex);
     JSONObject roomWithKey = roomGenerator.getRoom(mapSiteLocation.roomID);
     roomWithKey.put(mapSiteLocation.direction.toString().toLowerCase(),
         KeyHolderGenerator.getKeyHolder(keyName));

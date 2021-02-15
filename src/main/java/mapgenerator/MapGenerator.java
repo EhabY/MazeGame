@@ -116,15 +116,4 @@ public class MapGenerator {
     roomJson.put(direction.toString().toLowerCase(), mapSite);
   }
 
-  static class MapSiteLocation {
-
-    int roomID;
-    Direction direction;
-
-    MapSiteLocation(int roomID, Direction direction) {
-      this.roomID = roomID;
-      this.direction = direction;
-    }
-  }
-
 }
