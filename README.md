@@ -20,46 +20,33 @@ The JavaScript in the website has several responsibilities:
 
 Here are a few screenshots in different stages of the game:
 
-![Screenshot of the landing page](images/1.LandingPage.png "Landing Page")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 1: Landing Page</figcaption>
+Figure 1 - Landing Page:
+![Screenshot of the landing page](images/LandingPage.png "Landing Page")
 
-![Screenshot registration](images/2.Registering.png "Registering")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 2: Registering</figcaption>
+Figure 2 - Game Started:
+![Screenshot of the game starting](images/GameStarted.png "Game Started")
 
-![Screenshot of making a player ready to play](images/3.MadeReady.png "Make Player Ready")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 3: Make Player Ready</figcaption>
+Figure 3 - Trading:
+![Screenshot of trading](images/Trade.png "Trading")
 
-![Screenshot of the game starting](images/4.GameStarted.png "Game Started")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 4: Game Started</figcaption>
-
-![Screenshot of trading](images/5.Trade.png "Trade")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 5: Trade</figcaption>
-
-![Screenshot of looting a chest](images/6.LootingChest.png "Looting Chest")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 6: Looting Chest</figcaption>
+Figure 4 - Looting a Chest:
+![Screenshot of looting a chest](images/LootingChest.png "Looting a Chest")
 
 <br/>
-Here is a scenario for a fight between two players (notice the player list has 2 names now):
+Here is a scenario for a fight between two players (notice how the player list changes):
 
-![Screenshot of the start of a fight](images/7.StartFight.png "Start of Fight")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 7: Start of Fight</figcaption>
+Figure 5 - Start of Fight:
+![Screenshot of the start of a fight](images/StartFight.png "Start of Fight")
 
-![Screenshot of a player playing Rock](images/7.PlayRock.png "Playing Rock")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 8: A player using Rock</figcaption>
-
-![Screenshot of a player playing Paper](images/9.PlayPaper.png "Playing Paper")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 9: A player using Paper and Winning</figcaption>
-
-![Screenshot of a lost screen](images/10.LostScreen.png "Lost Screen")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 10: Lost Screen</figcaption>
+Figure 6 - Winning a Fight
+![Screenshot of a player winning a fight](images/winningFight.png "Winning a Fight")
 
 <br/>
 
-This is how it would look if there were 8 players in a match:
-
+Figure 7: Multiple Players in the Same Match
 ![Screenshot of multiple players](images/MultiplePlayers.png "Multiple Players in the Same Match")
-<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 10: Multiple Players in the Same Match</figcaption>
 
+<br/>
 
 An example of a download Map (1 player in a 3x3 grid):
 ```Json
@@ -376,6 +363,7 @@ See [mazegame.events package](#mazegameevents) and [website.match package](#webs
 * `WeightedRandom`: given weights, this class returns a random number with the probabilities of given weights.
 * `WeightedRandomizer`: a generic class that returns a random Object <T> with certain weights.
 
+<br/>
 
 ## `mapgenerator.mapsitegenerator`
 * `ChestGenerator`
@@ -388,11 +376,15 @@ See [mazegame.events package](#mazegameevents) and [website.match package](#webs
   
 This package contains random generators that generate Json for all MapSites with some given probabilities.
 
+<br/>
+
 ## `mazegame`
 * `Direction`: Enum class to identify and operate on the orientation of the player. (`NORTH`, `EAST`, `SOUTH`, `WEST`)
 * `PlayerController`: the interface for `Match` and various events.
 * `MazeMap`: stores the map configurations
 * `Response`: a data type that stores the result of an operation in the form of a message (`String`) and a `JsonEncodable`. (`Chest`, `Player`... etc)
+
+<br/>
 
 ## `mazegame.commands`
 * `Command`
@@ -406,12 +398,16 @@ classes to verify the validity of using the commands in the current state.
 It also defines the interfaces used for commands implementation. 
 So adding another command is as simple as creating a new class and implementing either `Command` or `ItemCommand`.
 
+<br/>
+
 ## `mazegame.events`
 * `EventHandler`: handles listeners and the triggering of events.
 * `GameEvent`: Enum with four events `START_MATCH`, `SENDING_PLAYER_LIST`, `TIE_FIGHT`, `REQUESTING_INPUT`.
 * `MatchListener`: interface to listen for Match related events, namely: a move (forward/backward) and quitting.
 * `State`: Enum class for the state of the game. (`EXPLORE`, `TRADE`, `FIGHT`, `WON`, `LOST`)
 * `StateListener`: interface to listen for GameEvents and State changes.
+
+<br/>
 
 ## `mazegame.exceptions`
 * `InvalidUseOfItem`: thrown when the player tries to use an item in a place where it cannot be used, like using the wrong key or using a key with no *`Lockable`* object in-front of the player.
@@ -420,6 +416,8 @@ So adding another command is as simple as creating a new class and implementing 
 * `NoLightsException`: thrown when trying to toggle lights if the room does not have lights.
 * `NotEnoughGoldException`: thrown if the player tries to buy items but does not have enough gold.
 
+<br/>
+
 ## `mazegame.item`
 * `ItemManager`: manages item retrieval and removal.
 * `Item`: an interface used to define *`Item`* classes
@@ -427,22 +425,34 @@ So adding another command is as simple as creating a new class and implementing 
     * `Flashlight`
 * `ItemVisitor`: an interface to define visitors for various `Item`(s)
 
+<br/>
+
 ## `mazegame.mapsite`
 Includes various map sites, and their helper interfaces: `AbstractHangable`, `AbstractLockable`, `Checkable`, `CheckableVisitor`, `Chest`, `DarkMapSite`, `Door`, `Hangable`, `Lock`, `Lockable`, `Loot`, `MapSite`, `Mirror`, `Painting`, `Seller`, `SerializeableMapSite`.
+
+<br/>
 
 ## `mazegame.player`
 Player-centric classes, like, `CheckVisitor`, `Inventory`, `Player`, `Position`, `UseItemVisitor`.
 
+<br/>
+
 ## `mazegame.room`
 Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 
+<br/>
+
 ## `mazegame.trade`
 `TradeHandler` used to handle the communication between the player and the seller and to verify its validity.
+
+<br/>
 
 ## `parser`
 * `GameParser`: a utility class to parse the game.
 * `ItemParser`: parses the items (`Key` and `Flashlight`) in the game
 * `MapSiteParser`: parses the various map sites in the game.
+
+<br/>
 
 ## `serialization`
 * `Encoder`: an interface visitor that defines which objects a serializer must implement for the serializer to work correctly.
@@ -450,13 +460,19 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 * `JsonEncoder`: an implementation of Encoder that encodes objects to a Json format.
 * `JsonSerializer`: given a PlayerController, the sole public method `String serializeGameState(PlayerController playerController)` can be used to save the state of the game.
 
+<br/>
+
 ## `website`
 * `Main`: the main program that runs the server and the WebSocket.
 * `MatchWebSocketHandler`: contains the WebSocket actions. (`onOpen`, `onMessage`, `onClose`)
 * `MessageHandler`: has a single method `Message getResponseFromMessage(Session user, String messageAsJson)` that returns a `Message` which is then sent to the user by `MatchWebSocketHandler`.
 
+<br/>
+
 ## `website.engine`
 * `ThymeleafTemplateEngine` Contains a generic implementation of ThymeLeaf engine for use with SparkJava
+
+<br/>
 
 ## `website.fighting`
 * `ConflictResolver`: a class that determines the winner in a conflict between players. This determination is based on the implemented ScoreCalculator and eventually TieBreaker interfaces.
@@ -465,6 +481,8 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 * `ScoreCalculator`: an interface with a single method `long calculateScore(PlayerController playerController)` used to calculate a players score when fighting.
 * `SimpleScoreCalculator`: a score calculator that calculates the score by adding the gold, number of flashlights x 2, number of keys x 10.
 * `TieBreaker`: an interface with a single method `PlayerController breakTie(PlayerController playerController1, PlayerController playerController2)` used to break ties and return the winner.
+
+<br/>
 
 ## `website.match`
 * `Interpreter`: contains a single public method `Response execute(String command)` that executes one action at a time and return the response.
@@ -475,6 +493,7 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 * `MovementManager`: responsible for moving players from room X to room Y.
 * `PlayerConfiguration`: a data structure that contains the Interpreter, and the MatchCreator instance of a player.
 
+<br/>
 
 ## `website.message`
 * `BasicMessage`: an abstract class that is used as a basic template for `Message`
@@ -485,6 +504,7 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 * `ResponseMessage`: contains the response to a request, and the command that was issued to get this response.
 * `StateChangeMessage`: contains the new state of the player (see State Enum)
 
+<br/>
 
 ## Front-End
 ### `src/main/resources/public`
@@ -495,3 +515,4 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 * `js/main.js`: the JavaScript that handles all the events (clicks and typing) and communicates with the server.
 * `favicon/`: contains the favicon of the website in several formats.
 
+<br/>
