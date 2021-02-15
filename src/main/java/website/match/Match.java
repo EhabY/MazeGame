@@ -12,7 +12,6 @@ import mazegame.MazeMap;
 import mazegame.PlayerController;
 import mazegame.room.Room;
 import website.fighting.ConflictResolver;
-import website.fighting.FightManager;
 
 public class Match {
 
@@ -25,8 +24,7 @@ public class Match {
   Match(MazeMap mazeMap, Collection<PlayerController> players, ConflictResolver conflictResolver) {
     this.mazeMap = Objects.requireNonNull(mazeMap);
     this.players.addAll(players);
-    this.movementManager = new MovementManager(mazeMap.getRooms(), players,
-        new FightManager(this.players, conflictResolver));
+    this.movementManager = new MovementManager(this.players, mazeMap.getRooms(), conflictResolver);
     broadcastPlayerList();
     setMatchTimer(this.mazeMap.getTimeInSeconds() * 1000);
   }

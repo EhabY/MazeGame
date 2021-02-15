@@ -1,5 +1,6 @@
 package website.fighting;
 
+import java.util.Collection;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -16,9 +17,13 @@ public class FightManager {
   private final Set<PlayerController> players;
   private final ConflictResolver conflictResolver;
 
-  public FightManager(Set<PlayerController> players, ConflictResolver conflictResolver) {
+  public FightManager(Set<PlayerController> players, Collection<Room> rooms,
+      ConflictResolver conflictResolver) {
     this.players = Objects.requireNonNull(players);
     this.conflictResolver = Objects.requireNonNull(conflictResolver);
+    for(Room room : rooms) {
+      inFight.put(room, false);
+    }
   }
 
   public void notifyPlayerIfWaiting(PlayerController playerController) {

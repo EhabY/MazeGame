@@ -2,10 +2,11 @@ package website.match;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import mazegame.PlayerController;
 import mazegame.room.Room;
+import website.fighting.ConflictResolver;
 import website.fighting.FightManager;
 
 public class MovementManager {
@@ -14,11 +15,11 @@ public class MovementManager {
   private final Map<Room, Object> locks = new ConcurrentHashMap<>();
   private final FightManager fightManager;
 
-  MovementManager(Collection<Room> rooms, Collection<PlayerController> players,
-      FightManager fightManager) {
+  MovementManager(Set<PlayerController> players, Collection<Room> rooms,
+      ConflictResolver conflictResolver) {
+    this.fightManager = new FightManager(players, rooms, conflictResolver);
     createLocksForRooms(rooms);
     addPlayersToRooms(players);
-    this.fightManager = Objects.requireNonNull(fightManager);
   }
 
   private void createLocksForRooms(Collection<Room> rooms) {
