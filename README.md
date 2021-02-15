@@ -309,8 +309,8 @@ There is also an option to save the current state of the map (in Json) for the c
 
 When a player enters a new room, a `MatchListener` is fired, which tells the match that the player has moved from room X to room Y.
 The match then moves the player and checks (synchronously) if the room is already occupied.
-If it is then a fight ensues. To get input from the user to break the tie, a `BlockingQueue` is defined in `PlayerController`.
-This `BlockingQueue` acts as a buffer between the Server and the `Match`.
+If it is then a fight ensues. To get input from the user to break the tie, a `BlockingDeque` is defined in `PlayerController`.
+This `BlockingDeque` acts as a buffer between the Server and the `Match`.
 
 The fighting logic was also made very customizable.
 The `ConflictResolver` class uses the `long calculateScore(PlayerController)` method defined in `ScoreCalculator` interface to calculate each player’s score to determine the winner.

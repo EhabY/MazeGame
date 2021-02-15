@@ -944,7 +944,7 @@ public void triggerMoveEvent(Room previousRoom) {
 
 ### *Item 81: Prefer concurrency utilities to wait and notify*
 I have always tried to use thread-safe data structure or let the system handle synchronization for me (like the use of WebSockets in SparkJava).
-In fact, I have never used `wait` or `notify`, instead depended on data structures like `ConcurrentHashMap`, and `BlockingQueue`. 
+In fact, I have never used `wait` or `notify`, instead depended on data structures like `ConcurrentHashMap`, and `BlockingDeque`. 
 Along with synchronized blocks and methods.
 
 
@@ -1296,11 +1296,13 @@ The Map was mainly used to store the items by mapping the name (a String) to the
 
 While the Set and Queue were used to mark the visited nodes (rooms) and to queue the order of the visiting, respectively. Sets don’t allow duplication and Hashsets are extremely fast, so it makes sense to use it to mark visited rooms.
 
-A special type of Queue was also used, which is a `BlockingQueue`.
+A special type of Queue was also used, which is a `BlockingDeque`.
 It was used to in the tiebreaker since the mini-game can be customized.
 There was a need to block and wait for input, this essentially made it possible without the use of `wait` and `notify`.
 
 Finally, lists were simply used as a way to save a collection of items, since it required no searching; it was the perfect data structure for that.
+
+See also the Back-End section in the `README.md`.
 
 <br/>
 
@@ -1308,6 +1310,34 @@ Finally, lists were simply used as a way to save a collection of items, since it
 
 Since there isn't many shared data between players, there was little modification needed to the game itself.
 For example, the Door lock can be accessed by 2 players (each from a different side), so the access and the toggling is synchronized.
+
+In *`Lock`*:
+```Java
+public void toggleLock(Key key) {
+  if (canToggleLock(key)) {
+    synchronized (this) {
+      locked = !locked;
+    }
+  } else {
+    throw new InvalidUseOfItem("Key doesn't match the lock");
+  }
+}
+
+@Override
+public synchronized boolean isLocked() {
+  return locked;
+}
+```
+
+In *`Room`*:
+```Java
+@Override
+  public synchronized Loot acquireLoot() {
+    Loot loot = this.loot;
+    this.loot = Loot.EMPTY_LOOT;
+    return loot;
+  }
+```
 
 Another small modification is the use of `ConcurrentHashMap`, which is a thread-safe `HashMap` with atomic and multi-threaded specific operations.
 
@@ -1321,6 +1351,7 @@ When a player is victorious then the lock is released, and the 3rd player can th
 
 Whenever a player loses (either quits or loses in a fight) the rest of the players are notified of the new player list and gold is distributed accordingly to them all.
 
+See also [Item 79 (Avoid Excessive Synchronization)](#item-79-avoid-excessive-synchronization).
 
 # DevOps
 The use of Maven to manage the project made it easy to include dependencies, and share the project with more people.
