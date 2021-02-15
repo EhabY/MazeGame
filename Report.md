@@ -5,6 +5,7 @@
    * [General](#general)
    * [Java](#java)
    * [Names](#names)
+   * [Tests](#tests)
 2. [Joshua Bloch’s *Effective Java*](#joshua-blochs-effective-java)
    * [Creating and Destroying Objects](#creating-and-destroying-objects)
    * [Methods Common to All Objects](#methods-common-to-all-objects)
@@ -14,8 +15,21 @@
    * [Methods](#methods)
    * [General Programming](#general-programming)
    * [Exceptions](#exceptions)
+   * [Concurrency](#concurrency)
+   * [Serialization](#serialization)
 3. [Design Patterns](#design-patterns)
+   * [Strategy Pattern](#strategy-pattern)
+   * [Special Case Pattern](#null-object-or-special-case-pattern)
+   * [Command Pattern](#command-pattern)
+   * [Visitor Pattern](#visitor-pattern)
+   * [Facade Pattern](#facade-pattern)
+   * [Mediator Pattern](#mediator-pattern)
 4. [SOLID Principles](#solid-principles)
+   * [Single-Responsibility Principle](#single-responsibility-principle)
+   * [Open-Closed Principle](#open-closed-principle)
+   * [Liskov Substitution Principle](#liskov-substitution-principle)
+   * [Interface Segregation Principle](#interface-segregation-principle)
+   * [Dependency Inversion Principle](#dependency-inversion-principle)
 5. [Google's Java Styling Guide](#googles-java-styling-guide)
 6. [Data Structures](#data-structures)
 7. [Synchronization](#synchronization)
@@ -904,6 +918,7 @@ if(gold < 0) {
 
 <br/>
 
+## Concurrency
 ### *Item 78: Synchronize access to shared mutable data*
 See [the synchronization section](#synchronization).
 
@@ -948,6 +963,7 @@ In fact, I have never used `wait` or `notify`, instead depended on data structur
 Along with synchronized blocks and methods.
 
 
+## Serialization
 ### *Item 85: Prefer alternatives to Java serialization*
 As mentioned above, the serialization was done using Json.
 This was extremely convenient since we also had to implement and send data to users using the Web which is very Json friendly.
