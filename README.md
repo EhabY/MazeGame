@@ -1,240 +1,497 @@
-# Project Structure
-## cli package
+# System Design
+
+## Introduction
+This rendition of the World Navigator game is made web-based, online, and between multiple people. 
+In theory, there is no limit to the number of players, since the map is generated on the fly when the match is started.
+
+## Front-End
+When navigating to the game website, you are greeted with a simple input, and a send button. 
+You enter your name and click send, this registers the user with the entered name, assuming it is unique. 
+When the button is clicked again, then the client notifies the server that the player is ready to play. 
+When all players are ready, the map is generated, and the match is started.
+
+The JavaScript in the website has several responsibilities:
+* Opens the WebSocket and communicates with the server.
+* Sends user requests in an appropriate format.
+* Dynamically loads content to display to user.
+* Requests an updated Player Status when a command that modifies the status is sent.
+* Permits only valid operations to be executed.
+* Listens to all the click events for all buttons and items.
+
+Here are a few screenshots in different stages of the game:
+
+![Screenshot of the landing page](images/1.LandingPage.png "Landing Page")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 1: Landing Page</figcaption>
+
+![Screenshot registration](images/2.Registering.png "Registering")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 2: Registering</figcaption>
+
+![Screenshot of making a player ready to play](images/3.MadeReady.png "Make Player Ready")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 3: Make Player Ready</figcaption>
+
+![Screenshot of the game starting](images/4.GameStarted.png "Game Started")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 4: Game Started</figcaption>
+
+![Screenshot of trading](images/5.Trade.png "Trade")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 5: Trade</figcaption>
+
+![Screenshot of looting a chest](images/6.LootingChest.png "Looting Chest")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 6: Looting Chest</figcaption>
+
+<br/>
+Here is a scenario for a fight between two players (notice the player list has 2 names now):
+
+![Screenshot of the start of a fight](images/7.StartFight.png "Start of Fight")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 7: Start of Fight</figcaption>
+
+![Screenshot of a player playing Rock](images/7.PlayRock.png "Playing Rock")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 8: A player using Rock</figcaption>
+
+![Screenshot of a player playing Paper](images/9.PlayPaper.png "Playing Paper")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 9: A player using Paper and Winning</figcaption>
+
+![Screenshot of a lost screen](images/10.LostScreen.png "Lost Screen")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 10: Lost Screen</figcaption>
+
+<br/>
+
+This is how it would look if there were 8 players in a match:
+
+![Screenshot of multiple players](images/MultiplePlayers.png "Multiple Players in the Same Match")
+<figcaption style="margin-top: -15px; margin-bottom: 30px; text-align: center;">Figure 10: Multiple Players in the Same Match</figcaption>
+
+
+An example of a download Map (1 player in a 3x3 grid):
+```Json
+{
+  "rooms": [
+    {
+      "east": {
+        "locked": false,
+        "mapSite": "Door",
+        "roomID": 1,
+        "otherRoomID": 2,
+        "key": "Lich Ornament"
+      },
+      "south": {
+        "locked": false,
+        "mapSite": "Door",
+        "roomID": 1,
+        "otherRoomID": 4,
+        "key": "Sunshard"
+      },
+      "lightswitch": {
+        "hasLights": true,
+        "lightsOn": true
+      },
+      "north": {
+        "hiddenKey": "",
+        "mapSite": "Painting"
+      },
+      "west": {
+        "hiddenKey": "Sunshard",
+        "mapSite": "Painting"
+      },
+      "id": 1
+    },
+    {
+      "east": {
+        "hiddenKey": "Lich Ornament",
+        "mapSite": "Mirror"
+      },
+      "south": {
+        "locked": true,
+        "mapSite": "Door",
+        "roomID": 2,
+        "otherRoomID": 5,
+        "key": "Lich Ornament"
+      },
+      "lightswitch": {
+        "hasLights": true,
+        "lightsOn": false
+      },
+      "north": {
+        "hiddenKey": "Lich Ornament",
+        "mapSite": "Painting"
+      },
+      "west": {
+        "locked": false,
+        "mapSite": "Door",
+        "roomID": 2,
+        "otherRoomID": 1,
+        "key": "Lich Ornament"
+      },
+      "id": 2
+    },
+    {
+      "east": {
+        "hiddenKey": "Lich Ornament",
+        "mapSite": "Mirror"
+      },
+      "south": {
+        "hiddenKey": "Lich Ornament",
+        "mapSite": "Painting"
+      },
+      "lightswitch": {
+        "hasLights": true,
+        "lightsOn": false
+      },
+      "north": {
+        "locked": false,
+        "mapSite": "Door",
+        "roomID": 4,
+        "otherRoomID": 1,
+        "key": "Sunshard"
+      },
+      "west": {
+        "loot": {
+          "gold": 0,
+          "items": []
+        },
+        "locked": true,
+        "mapSite": "Chest",
+        "key": "Sunshard"
+      },
+      "id": 4
+    },
+    {
+      "east": {
+        "locked": false,
+        "mapSite": "Door",
+        "roomID": 5,
+        "otherRoomID": 9,
+        "key": "Desolation Harp"
+      },
+      "south": {
+        "hiddenKey": "",
+        "mapSite": "Painting"
+      },
+      "lightswitch": {
+        "hasLights": true,
+        "lightsOn": false
+      },
+      "north": {
+        "locked": true,
+        "mapSite": "Door",
+        "roomID": 5,
+        "otherRoomID": 2,
+        "key": "Lich Ornament"
+      },
+      "west": {
+        "mapSite": "Seller",
+        "items": [
+          {
+            "name": "Desolation Harp",
+            "type": "Key"
+          },
+          {
+            "name": "Lich Ornament",
+            "type": "Key"
+          },
+          {
+            "name": "Flashlight",
+            "type": "Flashlight"
+          }
+        ],
+        "priceList": [
+          {
+            "price": 15,
+            "name": "Desolation Harp Key"
+          },
+          {
+            "price": 5,
+            "name": "Lich Ornament Key"
+          },
+          {
+            "price": 13,
+            "name": "Sunshard Key"
+          },
+          {
+            "price": 10,
+            "name": "Flashlight"
+          }
+        ]
+      },
+      "id": 5
+    },
+    {
+      "east": {
+        "mapSite": "wall"
+      },
+      "south": {
+        "mapSite": "wall"
+      },
+      "lightswitch": {
+        "hasLights": true,
+        "lightsOn": false
+      },
+      "north": {
+        "mapSite": "wall"
+      },
+      "west": {
+        "mapSite": "wall"
+      },
+      "id": 9
+    }
+  ],
+  "mapConfiguration": {
+    "gold": 10,
+    "time": 540,
+    "endRoomID": 9,
+    "items": [
+      {
+        "name": "Flashlight",
+        "type": "Flashlight"
+      }
+    ],
+    "startRoomsID": [
+      4
+    ]
+  }
+}
+```
+
+## Map Generation
+The generation of the map is not purely random, it has some logic to it. 
+The generated map starts with N number of rooms, where N is the number of players. 
+Then a random path is generated, this path is split into levels, and you have to unlock the door at the end of a level to go to the next one.
+The key to unlock a said door, is placed randomly along this generated path.
+At the end of each path, there is a winning door that when opened the player wins.
+
+After the paths are generated for each level and each player, a Breadth First Search (BFS) is performed from all the generated rooms at once, then for every empty direction in the room, a randomly generated MapSite is placed.
+If that MapSite is a door, then that opens a path to another room on the other side.
+
+For the game to be fun, there must be many open doors that lead to dead-ends and distract the player.
+So, I made the doors have a probability of 50% when generating a MapSite with it being locked only 25% of the time.
+The rest of the 50% is split evenly between the Mirror, Painting, Wall, Chest, and Seller with 10% each.
+
+This generation logic guarantees that there 100% exists a solution to the maze, while also not making it easy to beat.
+
+Every little detail is also generated based on some probability in its respective class, which can be edited to hone the generator or bias it toward a certain outcome.
+
+Looking at the `ChestGenerator` class, where we can potentially generate an infinite amount of items, depending on the probabilities:
+```Java
+private static final int PROBABILITY = 100;
+private static final int ITEM_PROBABILITY = 40;
+private static final int FLASHLIGHT_PROBABILITY = 20;
+
+...
+
+private JSONArray getItemsList() {
+  JSONArray itemsList = new JSONArray();
+  int chance = random.nextInt(PROBABILITY);
+  while (chance < ITEM_PROBABILITY) {
+    itemsList.put(getItemJson());
+    chance = random.nextInt(PROBABILITY);
+  }
+  return itemsList;
+}
+
+private JSONObject getItemJson() {
+  int chance = random.nextInt(PROBABILITY);
+  if (chance < FLASHLIGHT_PROBABILITY) {
+    return ItemGenerator.getFlashlightJson();
+  } else {
+    return ItemGenerator.getKeyJson(randomNameGenerator.getRandomName());
+  }
+}
+```
+
+A difficulty can also be defined which results in worse probabilities for certain items, less time, and just having a plain harder game.
+For example, by changing the difficulty we can make it more probable for a room to have no lights:
+
+```Java
+private boolean hasLights() {
+  int chance = random.nextInt(MAXIMUM_DIFFICULTY);
+  return chance < MAXIMUM_DIFFICULTY - difficulty + MINIMUM_DIFFICULTY;
+}
+```
+This changes the probability of having lights in a room from 100% (at difficulty of 1) to 10% (at difficulty of 10).
+
+
+These configurations can be edited by implementing the `MapConfiguration` interface and passing it to the `MapGenerator`, or when using `DefaultMapConfiguration` the configurations can also be customized with the builder.
+
+Since the generated map is in Json format, it can be saved, modified, and used later without much effort.
+This is especially convenient if a randomly generated map was particularly fun!
+
+## Back-End
+The game is played normally like the CLI version except for buttons instead of manually writing the commands.
+In fact, the same `Interpreter` for the CLI was used, with some modifications, to execute incoming commands.
+You can also click on the items to select them to execute "use", "sell", or "buy" commands.
+There is also an option to save the current state of the map (in Json) for the current player or even the original map itself!
+
+When a player enters a new room, a `MatchListener` is fired, which tells the match that the player has moved from room X to room Y.
+The match then moves the player and checks (synchronously) if the room is already occupied.
+If it is then a fight ensues. To get input from the user to break the tie, a `BlockingQueue` is defined in `PlayerController`.
+This `BlockingQueue` acts as a buffer between the Server and the `Match`.
+
+The fighting logic was also made very customizable.
+The `ConflictResolver` class uses the `long calculateScore(PlayerController)` method defined in `ScoreCalculator` interface to calculate each player’s score to determine the winner.
+If there is a tie then `PlayerController breakTie(PlayerController, PlayerController)` method in `TieBreaker` interface can be used to implement whatever tie breaking mini-game (Rock-paper-scissors was used here).
+Both of these interfaces can be used to implement custom logic, without changing anything, whether for calculating the score used to determine the winner or the tiebreaker in case of equal scores.
+
+After a user sends a request to the server (using the WebSocket connection), it is forwarded to MessageHandler.
+There are 4 types of messages supported so far:
+* Username message: registers the user in a game with a certain username
+* Ready message: marks the player as ready to play.
+* Map message: sends the map being played in Json format.
+* Command message: executes the requested command in the game.
+
+Since responses can differ based on the request, I defined a Message interface with a single `String getPayload()` method that returns a formatted `String` representation of the payload.
+Then I made 5 different types of messages that can be sent to the user (see [website.message package](#websitemessage))
+
+## Listeners
+There are 2 types of listeners placed on certain events. 
+`MatchListener` and `StateListener`
+
+### `MatchListener`
+The Match class which is responsible for coordinating the state of the players and the interaction between them, has no access to the commands being executed.
+* A `onMove` listener was placed in PlayerController so `Forward` and `Backward` commands can then trigger the listener to notify that match that a player moved some room to the other.
+* The match also listens to another event, `onQuit` which removes the player from the match and drops their items and gold in the room.
+
+### `StateListener`
+The second type of listener is the state listener, which also listens to 2 events:
+* A GameEvent - `onGameEvent`
+* A StateChange event - `onStateChange`
+
+The GameEvent is used by the `Match` to notify the player of a certain event.
+While the `State` tracks the current state the player is in which can restrict some actions or even end the game.
+Both of these events are then reported to the user by sending either an `EventMessage`, or a `StateChangeMessage`.
+
+See [mazegame.events package](#mazegameevents) and [website.match package](#websitematch) for more information.
+
+
+# Project Structure & Packages
+## `mapgenerator`
+* `DefaultMapConfiguration`: the default configuration for generating a map. (implemented the MapConfiguration interface)
+* `ItemGenerator`: contains static methods that generate an item (in Json) given its name.
+* `MapConfiguration`: an interface that defines the properties of the generator (Number of levels, steps per level, difficulty, and size of the map).
+* `MapGenerator`: the main class for this package. It generates the all the rooms and mapSites (except the ones generated in `PathGenerator`)
+* `MovementManager`: a class responsible for checking the validity of a certain move (such a move is within the limits of the map)
+* `PathGenerator`: generates a random path with a certain number of steps and levels.
+  Then places a key within the path that opens a door at the end of a level.
+
+* `RandomNameGenerator`: a class that returns a random name.
+* `RoomGenerator`: responsible for creating and managing rooms.
+* `WeightedRandom`: given weights, this class returns a random number with the probabilities of given weights.
+* `WeightedRandomizer`: a generic class that returns a random Object <T> with certain weights.
+
+
+## `mapgenerator.mapsitegenerator`
+* `ChestGenerator`
+* `DoorGenerator`
+* `HangableGenerator`
+* `KeyHolderGenerator`
+* `MapSiteGenerator` (interface)
+* `SellerGenerator`
+* `WallGenerator`
+  
+This package contains random generators that generate Json for all MapSites with some given probabilities.
+
+## `mazegame`
+* `Direction`: Enum class to identify and operate on the orientation of the player. (`NORTH`, `EAST`, `SOUTH`, `WEST`)
+* `PlayerController`: the interface for `Match` and various events.
+* `MazeMap`: stores the map configurations
+* `Response`: a data type that stores the result of an operation in the form of a message (`String`) and a `JsonEncodable`. (`Chest`, `Player`... etc)
+
+## `mazegame.commands`
 * `Command`
 * `ItemCommand`
+* `ActionValidityChecker`
+* `ValidityResponse`
+* Rest of the commands
 
-This package includes the interfaces used for command line parsing. Both interfaces have a single `execute` method.
+This package includes all the implemented commands, along with the "checker" 
+classes to verify the validity of using the commands in the current state.
+It also defines the interfaces used for commands implementation. 
+So adding another command is as simple as creating a new class and implementing either `Command` or `ItemCommand`.
 
-## exceptions package
+## `mazegame.events`
+* `EventHandler`: handles listeners and the triggering of events.
+* `GameEvent`: Enum with four events `START_MATCH`, `SENDING_PLAYER_LIST`, `TIE_FIGHT`, `REQUESTING_INPUT`.
+* `MatchListener`: interface to listen for Match related events, namely: a move (forward/backward) and quitting.
+* `State`: Enum class for the state of the game. (`EXPLORE`, `TRADE`, `FIGHT`, `WON`, `LOST`)
+* `StateListener`: interface to listen for GameEvents and State changes.
+
+## `mazegame.exceptions`
 * `InvalidUseOfItem`: thrown when the player tries to use an item in a place where it cannot be used, like using the wrong key or using a key with no *`Lockable`* object in-front of the player.
 * `ItemNotFoundException`: thrown when a requested item does not exist.
 * `MapSiteLockedException`: thrown when trying to open a locked object.
 * `NoLightsException`: thrown when trying to toggle lights if the room does not have lights.
 * `NotEnoughGoldException`: thrown if the player tries to buy items but does not have enough gold.
 
-## item package
-* `ItemManager`: Manages item retrieval and removal.
-* `Item`: An interface used to define *`Item`* classes
+## `mazegame.item`
+* `ItemManager`: manages item retrieval and removal.
+* `Item`: an interface used to define *`Item`* classes
     * `Key`
     * `Flashlight`
-* `ItemVisitor`: An interface to define visitors for various `Item`(s)
+* `ItemVisitor`: an interface to define visitors for various `Item`(s)
 
-## mapsite package
+## `mazegame.mapsite`
 Includes various map sites, and their helper interfaces: `AbstractHangable`, `AbstractLockable`, `Checkable`, `CheckableVisitor`, `Chest`, `DarkMapSite`, `Door`, `Hangable`, `Lock`, `Lockable`, `Loot`, `MapSite`, `Mirror`, `Painting`, `Seller`, `SerializeableMapSite`.
 
-## parser package
-* `GameParser`: a utility class to parse the game.
-* `ItemParser`: parses the items in the game
-* `MapSiteParser`: parses the various map sites in the game.
-
-## player package
+## `mazegame.player`
 Player-centric classes, like, `CheckVisitor`, `Inventory`, `Player`, `Position`, `UseItemVisitor`.
 
-## room package
+## `mazegame.room`
 Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 
-## trade package
-`TradeHandler` and `TransactionHandlers` used to handle the communication between the player and the seller.
+## `mazegame.trade`
+`TradeHandler` used to handle the communication between the player and the seller and to verify its validity.
 
-## util package
-General utility classes for item formatting, JSON serialization, or checking the validity of a certain action.
+## `parser`
+* `GameParser`: a utility class to parse the game.
+* `ItemParser`: parses the items (`Key` and `Flashlight`) in the game
+* `MapSiteParser`: parses the various map sites in the game.
 
-## mazegame package
-* `Direction`: Enum class to identify and operate on the orientation of the player.
-* `GameMaster`: The public API that moves all parts of the game.
-* `Interpreter`: The command line parser and interpreter.
-* `JsonSerializable`: An interface with a single `toJson` method
-* `MazeMap`: Stores the map configurations
-* `Response`: A data type that stores the message and a boolean that indicates the success or failure of an operation.
-* `State`: Enum class for the state of the game. (EXPLORE, TRADE, WON, LOST)
+## `serialization`
+* `Encoder`: an interface visitor that defines which objects a serializer must implement for the serializer to work correctly.
+* `JsonEncodable`: an interface that defines which objects can be Json serializable. It contains the single method `String encodeUsing(Encoder encoder);`
+* `JsonEncoder`: an implementation of Encoder that encodes objects to a Json format.
+* `JsonSerializer`: given a PlayerController, the sole public method `String serializeGameState(PlayerController playerController)` can be used to save the state of the game.
 
-# How to Use
-Write a JSON map or use the included (simple) test map. The format of the map is intuitive if you follow this sample (time is in seconds):
-```JSON
-{
-  "mapConfiguration": {
-    "startRoomID": 1,
-    "endRoomID": 3,
-    "time": 1000,
-    "orientation": "north",
-    "gold": 2,
-    "items": []
-  },
-  "rooms": [
-    {
-      "id": 1,
-      "lightswitch": {
-        "hasLights": true,
-        "lightsOn": true
-      },
-      "north": {
-        "siteMap": "Door",
-        "roomID": 1,
-        "otherRoomID": 2,
-        "key": "Dragon Glass",
-        "locked": true
-      },
-      "east": {
-        "siteMap": "Chest",
-        "loot": {
-          "gold": 15,
-          "items": [
-            {
-              "name": "Flashlight",
-              "type": "Flashlight"
-            },
-            {
-              "name": "Dragon Glass",
-              "type": "Key"
-            }
-          ]
-        },
-        "key": "",
-        "locked": false
-      },
-      "south": {
-        "siteMap": "Mirror",
-        "hiddenKey": ""
-      },
-      "west": {
-        "siteMap": "Wall"
-      }
-    },
-    {
-      "id": 2,
-      "lightswitch": {
-        "hasLights": false,
-        "lightsOn": false
-      },
-      "north": {
-        "siteMap": "Door",
-        "roomID": 2,
-        "otherRoomID": 3,
-        "key": "Monkee",
-        "locked": true
-      },
-      "east": {
-        "siteMap": "Painting",
-        "hiddenKey": ""
-      },
-      "south": {
-        "siteMap": "Door",
-        "roomID": 1,
-        "otherRoomID": 2,
-        "key": "Dragon Glass",
-        "locked": true
-      },
-      "west": {
-        "siteMap": "Seller",
-        "items": [
-          {
-            "name": "Monkee",
-            "type": "Key"
-          }
-        ],
-        "priceList": [
-          {
-            "name": "Monkee Key",
-            "price": 18
-          },
-          {
-            "name": "Dragon Glass Key",
-            "price": 3
-          },
-          {
-            "name": "Flashlight",
-            "price": 5
-          }
-        ]
-      }
-    },
-    {
-      "id": 3,
-      "lightswitch": {
-        "hasLights": true,
-        "lightsOn": false
-      },
-      "north": {
-        "siteMap": "Wall"
-      },
-      "east": {
-        "siteMap": "Wall"
-      },
-      "south": {
-        "siteMap": "Door",
-        "roomID": 2,
-        "otherRoomID": 3,
-        "key": "Monkee",
-        "locked": true
-      },
-      "west": {
-        "siteMap": "Wall"
-      }
-    }
-  ]
-}
-```
+## `website`
+* `Main`: the main program that runs the server and the WebSocket.
+* `MatchWebSocketHandler`: contains the WebSocket actions. (`onOpen`, `onMessage`, `onClose`)
+* `MessageHandler`: has a single method `Message getResponseFromMessage(Session user, String messageAsJson)` that returns a `Message` which is then sent to the user by `MatchWebSocketHandler`.
 
-Place the map file in the *MazeGame* directory, then simply run the project (Interpreter) and enter the file name without the extension. That’s it, now the game is running!
+## `website.engine`
+* `ThymeleafTemplateEngine` Contains a generic implementation of ThymeLeaf engine for use with SparkJava
 
-## List of commands:
-Commands and names of items are case-insensitive
-* Left
-* Right
-* Forward
-* Backward
-* Playerstatus
-* Look
-* Check mirror
-* Check painting
-* Check chest
-* Check door
-* Open
-* Trade
-* List
-* Sell \<item>
-* Buy \<item>
-* Finish trade
-* Use \<item>
-* Save \<filename>
-* Quit
-* Restart
+## `website.fighting`
+* `ConflictResolver`: a class that determines the winner in a conflict between players. This determination is based on the implemented ScoreCalculator and eventually TieBreaker interfaces.
+* `FightManager`: a class that handles the fighting between players in a room.
+* `RockPaperScissors`: a simple implementation of TieBreaker that breaks ties using a game of Rock-Paper-Scissors.
+* `ScoreCalculator`: an interface with a single method `long calculateScore(PlayerController playerController)` used to calculate a players score when fighting.
+* `SimpleScoreCalculator`: a score calculator that calculates the score by adding the gold, number of flashlights x 2, number of keys x 10.
+* `TieBreaker`: an interface with a single method `PlayerController breakTie(PlayerController playerController1, PlayerController playerController2)` used to break ties and return the winner.
+
+## `website.match`
+* `Interpreter`: contains a single public method `Response execute(String command)` that executes one action at a time and return the response.
+* `Match`: notifies the winners and losers of the game. This class manages the whole match and connects various components together.
+* `MatchCreator`: keep track of everything pre-game, like the players, their usernames, and whether they are ready to play or not. It generates the map and creates a `Match` instance when all players are ready.
+* `MatchCreatorInitializer`: creates MatchCreators when needed, this class effectively makes it possible to play multiple matches at the same time.
+* `MatchStartedListener`: a listener with method `void onMatchStart(Map<Session, PlayerController> playersMap)` that is triggered when all the players are ready and the game starts.
+* `MovementManager`: responsible for moving players from room X to room Y.
+* `PlayerConfiguration`: a data structure that contains the Interpreter, and the MatchCreator instance of a player.
 
 
-## Example
-*savedMap.json* is the same map but with a further progression. Here's how to optimally play it:
-```
-Please enter map name: savedMap
-> look
-Seller
-> trade
+## `website.message`
+* `BasicMessage`: an abstract class that is used as a basic template for `Message`
+* `EventMessage`: contains the name of the event that happened (see GameEvent Enum)
+* `InvalidMessage`: contains the error message for an invalid request
+* `MapMessage`: contains the Json of the generated map
+* `Message`: an interface with method `String getPayload()` that serves as the template for all types of messages.
+* `ResponseMessage`: contains the response to a request, and the command that was issued to get this response.
+* `StateChangeMessage`: contains the new state of the player (see State Enum)
 
-Trade initiated: 
-Items: [
-	1 x Monkee Key
-	1 x Dragon Glass Key
-]
 
-Price list: [
-	Monkee Key for $18
-	Flashlight for $5
-	Dragon Glass Key for $3
-]
-
-> buy Monkee Key
-Monkee Key bought and acquired
-> finish trade
-Exited trade mode
-> right
-Turned right
-> check
-Door is locked, Monkee key is needed to unlock
-> use Monkee key
-used Monkee key
-> forward
-Moved forward
-Congratulations! YOU WON!
-```
-
-`>` indicates a user input.
+## Front-End
+### `src/main/resources/public`
+* `matchview.html`: the HTML that is served to the user when they navigate to "/"
+* `css/button.css`: the stylesheet for the buttons.
+* `css/main.css`: the stylesheet for the whole website.
+* `js/FileSaver.js`: used to download the Json of the map.
+* `js/main.js`: the JavaScript that handles all the events (clicks and typing) and communicates with the server.
+* `favicon/`: contains the favicon of the website in several formats.
 
