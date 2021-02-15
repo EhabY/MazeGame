@@ -11,7 +11,7 @@ public class MapGenerator {
 
   private final MapConfiguration mapConfiguration;
   private final RoomGenerator roomGenerator;
-  private final MovementManager movementManager;
+  private final PositionManager positionManager;
   private final PathGenerator pathGenerator;
   private final WeightedRandomizer<MapSiteGenerator> mapSiteRandomizer;
 
@@ -21,10 +21,10 @@ public class MapGenerator {
     RandomNameGenerator randomNameGenerator = new RandomNameGenerator(side);
     this.mapConfiguration = mapConfiguration;
     this.roomGenerator = new RoomGenerator(size, mapConfiguration.getDifficulty());
-    this.movementManager = new MovementManager(side);
+    this.positionManager = new PositionManager(side);
     this.pathGenerator = new PathGenerator(mapConfiguration.getNumberOfPlayers(),
         mapConfiguration.getLevels(), mapConfiguration.getStepsPerLevel(), roomGenerator,
-        movementManager, randomNameGenerator);
+        positionManager, randomNameGenerator);
     this.mapSiteRandomizer = mapConfiguration.getMapSiteRandomizer(randomNameGenerator);
   }
 
@@ -84,9 +84,9 @@ public class MapGenerator {
 
   private boolean isInvalidMapSite(JSONObject mapSiteJson, int currentPosition,
       Direction direction) {
-    int nextPosition = movementManager.getPositionAfterMoving(currentPosition, direction);
+    int nextPosition = positionManager.getPositionAfterMoving(currentPosition, direction);
     Direction oppositeDirection = direction.left().left();
-    boolean cannotCreateDoor = !movementManager.isDirectionValid(currentPosition, direction);
+    boolean cannotCreateDoor = !positionManager.isDirectionValid(currentPosition, direction);
     return isMapSiteDoor(mapSiteJson) &&
         (cannotCreateDoor || roomGenerator.roomHasMapSite(nextPosition, oppositeDirection));
   }
@@ -97,7 +97,7 @@ public class MapGenerator {
 
   private JSONObject fixDoorBetweenRooms(JSONObject doorJson, int currentPosition,
       Direction direction) {
-    int nextPosition = movementManager.getPositionAfterMoving(currentPosition, direction);
+    int nextPosition = positionManager.getPositionAfterMoving(currentPosition, direction);
     Direction oppositeDirection = direction.left().left();
     doorJson = setRoomIDsInDoor(currentPosition, nextPosition, doorJson);
     addMapSiteToRoomInDirection(DoorGenerator.getOppositeDoor(doorJson), nextPosition,

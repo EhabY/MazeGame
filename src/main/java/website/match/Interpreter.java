@@ -5,7 +5,7 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.State;
+import mazegame.events.State;
 import mazegame.commands.BuyItem;
 import mazegame.commands.Check;
 import mazegame.commands.Command;

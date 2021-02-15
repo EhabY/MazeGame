@@ -9,6 +9,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import mazegame.events.EventHandler;
 import mazegame.events.GameEvent;
 import mazegame.events.MatchListener;
+import mazegame.events.State;
 import mazegame.events.StateListener;
 import mazegame.mapsite.Loot;
 import mazegame.player.Player;

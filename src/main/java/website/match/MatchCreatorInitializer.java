@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import mapgenerator.MapConfiguration;
 import mazegame.PlayerController;
-import mazegame.State;
+import mazegame.events.State;
 import mazegame.events.GameEvent;
 import mazegame.events.StateListener;
 import org.eclipse.jetty.websocket.api.Session;

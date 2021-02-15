@@ -2,11 +2,11 @@ package mapgenerator;
 
 import mazegame.Direction;
 
-public class MovementManager {
+public class PositionManager {
 
   private final int side;
 
-  MovementManager(int side) {
+  PositionManager(int side) {
     this.side = side;
   }
 

@@ -1,6 +1,6 @@
 package mazegame.commands;
 
-import mazegame.State;
+import mazegame.events.State;
 import mazegame.mapsite.Checkable;
 import mazegame.mapsite.Door;
 import mazegame.mapsite.Lockable;

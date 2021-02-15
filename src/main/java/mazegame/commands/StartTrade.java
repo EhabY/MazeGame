@@ -3,7 +3,7 @@ package mazegame.commands;
 import java.util.Objects;
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.State;
+import mazegame.events.State;
 import mazegame.mapsite.Seller;
 import mazegame.player.Player;
 import mazegame.trade.TradeHandler;

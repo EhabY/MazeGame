@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import mazegame.State;
 import mazegame.room.Room;
 
 public class EventHandler {

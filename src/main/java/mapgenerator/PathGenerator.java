@@ -17,18 +17,18 @@ public class PathGenerator {
   private final int levels;
   private final int stepsPerLevel;
   private final RoomGenerator roomGenerator;
-  private final MovementManager movementManager;
+  private final PositionManager positionManager;
   private final RandomNameGenerator randomNameGenerator;
   private final SplittableRandom random = new SplittableRandom();
 
   public PathGenerator(int numberOfPlayers, int levels, int stepsPerLevel,
-      RoomGenerator roomGenerator, MovementManager movementManager,
+      RoomGenerator roomGenerator, PositionManager positionManager,
       RandomNameGenerator randomNameGenerator) {
     this.numberOfPlayers = numberOfPlayers;
     this.levels = levels;
     this.stepsPerLevel = stepsPerLevel;
     this.roomGenerator = Objects.requireNonNull(roomGenerator);
-    this.movementManager = Objects.requireNonNull(movementManager);
+    this.positionManager = Objects.requireNonNull(positionManager);
     this.randomNameGenerator = Objects.requireNonNull(randomNameGenerator);
   }
 
@@ -58,9 +58,9 @@ public class PathGenerator {
     Direction previousDirection = null;
     while (path.size() < iterations) {
       Direction direction = getRandomDirection();
-      if (direction != previousDirection && movementManager.isDirectionValid(position, direction)) {
+      if (direction != previousDirection && positionManager.isDirectionValid(position, direction)) {
         path.add(direction);
-        position = movementManager.getPositionAfterMoving(position, direction);
+        position = positionManager.getPositionAfterMoving(position, direction);
         previousDirection = direction.left().left();
       }
     }
@@ -73,7 +73,7 @@ public class PathGenerator {
 
   private int createPath(int currentPosition, List<Direction> path) {
     for (Direction stepDirection : path) {
-      int nextPosition = movementManager.getPositionAfterMoving(currentPosition, stepDirection);
+      int nextPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
       roomGenerator.createRoomIfNull(nextPosition);
       if (!roomGenerator.roomHasMapSite(currentPosition, stepDirection)) {
         createDoorBetweenRooms(currentPosition, nextPosition, stepDirection);
@@ -101,7 +101,7 @@ public class PathGenerator {
     do {
       direction = getRandomDirection();
     } while (roomGenerator.roomHasMapSite(endOfPath, direction));
-    int side = movementManager.getSide();
+    int side = positionManager.getSide();
     JSONObject winningDoor = DoorGenerator
         .getCustomJson(endOfPath, side * side, randomNameGenerator.getRandomName());
     addMapSiteToRoomInDirection(winningDoor, endOfPath, direction);
@@ -118,7 +118,7 @@ public class PathGenerator {
         setDoorLock(currentPosition, stepDirection, canPlaceKey);
         tryToPlaceKey(keyNames.remove(), potentialPlaces);
       }
-      currentPosition = movementManager.getPositionAfterMoving(currentPosition, stepDirection);
+      currentPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
     }
   }
 
@@ -131,7 +131,7 @@ public class PathGenerator {
         JSONObject doorJson = currentRoom.getJSONObject(stepDirection.toString().toLowerCase());
         keyNames.add(getKeyNameFromJson(doorJson));
       }
-      currentPosition = movementManager.getPositionAfterMoving(currentPosition, stepDirection);
+      currentPosition = positionManager.getPositionAfterMoving(currentPosition, stepDirection);
     }
 
     return keyNames;
@@ -159,7 +159,7 @@ public class PathGenerator {
   }
 
   private void setDoorLock(int currentPosition, Direction direction, boolean locked) {
-    int nextPosition = movementManager.getPositionAfterMoving(currentPosition, direction);
+    int nextPosition = positionManager.getPositionAfterMoving(currentPosition, direction);
     Direction oppositeDirection = direction.left().left();
     JSONObject currentRoom = roomGenerator.getRoom(currentPosition);
     JSONObject nextRoom = roomGenerator.getRoom(nextPosition);

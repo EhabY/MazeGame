@@ -3,7 +3,7 @@ package website.message;
 import java.util.Objects;
 import org.json.JSONObject;
 
-public class BasicMessage implements Message {
+public abstract class BasicMessage implements Message {
 
   private final String type;
   private final String content;

@@ -3,7 +3,7 @@ package mazegame.commands;
 import java.util.Objects;
 import mazegame.PlayerController;
 import mazegame.Response;
-import mazegame.State;
+import mazegame.events.State;
 
 public class FinishTrade implements Command {
 

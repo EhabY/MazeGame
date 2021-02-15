@@ -1,6 +1,6 @@
 package website.message;
 
-import mazegame.State;
+import mazegame.events.State;
 import org.json.JSONObject;
 
 public class StateChangeMessage extends BasicMessage {
