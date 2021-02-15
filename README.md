@@ -48,7 +48,7 @@ Figure 7: Multiple Players in the Same Match
 
 <br/>
 
-An example of a download Map (1 player in a 3x3 grid):
+An example of a `Download Map` command with 1 player in a 3x3 grid:
 ```Json
 {
   "rooms": [
@@ -354,10 +354,9 @@ See [mazegame.events package](#mazegameevents) and [website.match package](#webs
 * `ItemGenerator`: contains static methods that generate an item (in Json) given its name.
 * `MapConfiguration`: an interface that defines the properties of the generator (Number of levels, steps per level, difficulty, and size of the map).
 * `MapGenerator`: the main class for this package. It generates the all the rooms and mapSites (except the ones generated in `PathGenerator`)
-* `MovementManager`: a class responsible for checking the validity of a certain move (such a move is within the limits of the map)
-* `PathGenerator`: generates a random path with a certain number of steps and levels.
-  Then places a key within the path that opens a door at the end of a level.
-
+* `MapSiteLocation`: A data structure that stores the location of a MapSite (room ID and Direction).
+* `PathGenerator`: generates a random path with a certain number of steps and levels. Then places a key within the path that unlocks a door at the end of a level.
+* `PositionManager`: a class responsible for checking the validity of a certain move (such a move is within the limits of the map)
 * `RandomNameGenerator`: a class that returns a random name.
 * `RoomGenerator`: responsible for creating and managing rooms.
 * `WeightedRandom`: given weights, this class returns a random number with the probabilities of given weights.
