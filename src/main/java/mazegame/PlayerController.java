@@ -51,6 +51,14 @@ public class PlayerController implements JsonEncodable {
   public void setGameState(State state, String message) {
     this.state = state;
     eventHandler.triggerStateChangeEvent(state, message);
+
+    if(hasMatchEnded()) {
+      eventHandler.clearAllListeners();
+    }
+  }
+
+  private boolean hasMatchEnded() {
+    return state == State.WON || state == State.LOST;
   }
 
   public State getGameState() {

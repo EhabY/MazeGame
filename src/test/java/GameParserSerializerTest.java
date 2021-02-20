@@ -9,7 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import parser.GameParser;
 import serialization.JsonSerializer;
-import website.match.Interpreter;
+import website.services.player.Interpreter;
 
 public class GameParserSerializerTest {
 

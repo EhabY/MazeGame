@@ -1,15 +1,15 @@
 package mazegame.events;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import mazegame.room.Room;
 
 public class EventHandler {
 
-  private final List<MatchListener> matchListeners = new ArrayList<>();
-  private final List<StateListener> stateListeners = new ArrayList<>();
+  private final List<MatchListener> matchListeners = new CopyOnWriteArrayList<>();
+  private final List<StateListener> stateListeners = new CopyOnWriteArrayList<>();
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
   public void addListener(MatchListener listener) {
@@ -42,5 +42,10 @@ public class EventHandler {
     for (StateListener listener : stateListeners) {
       listener.onStateChange(state, message);
     }
+  }
+
+  public void clearAllListeners() {
+    matchListeners.clear();
+    stateListeners.clear();
   }
 }

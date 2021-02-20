@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="180x180" th:href="@{/favicon/apple-touch-icon.png}">
+  <link rel="icon" type="image/png" sizes="32x32" th:href="@{/favicon/favicon-32x32.png}">
+  <link rel="icon" type="image/png" sizes="16x16" th:href="@{/favicon/favicon-16x16.png}">
+  <link rel="manifest" th:href="@{/favicon/site.webmanifest}">
+  <title>Login & Signup Forms | WN</title>
+  <link rel="stylesheet" th:href="@{/css/index.css}">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+<div class="wrapper">
+  <div class="title-text">
+    <div class="title login">Login Form</div>
+    <div class="title signup">Signup Form</div>
+  </div>
+  <div th:if="${signedUp}">
+    <p class="text-signup">You have signed up successfully!</p>
+  </div>
+  <div th:if="${used}">
+    <p class="text-error">Username already used!</p>
+  </div>
+  <div class="form-container">
+    <div class="slide-controls">
+      <input type="radio" name="slide" id="login" checked>
+      <input type="radio" name="slide" id="signup">
+      <label for="login" class="slide login">Login</label>
+      <label for="signup" class="slide signup">Signup</label>
+      <div class="slider-tab">
+      </div>
+    </div>
+    <div class="form-inner">
+      <form th:action="@{/}" method="post" class="login">
+        <div class="field">
+          <input type="text" name="username" placeholder="Username"
+                 required autofocus autocomplete="off" />
+        </div>
+        <div class="field">
+          <input type="password" name="password" placeholder="Password" required />
+        </div>
+        <!--<div class="pass-link"><a href="#">Forgot password?</a></div>-->
+        <div class="field btn">
+          <div class="btn-layer">
+          </div>
+          <input type="submit" value="Login">
+        </div>
+        <div th:if="${param.error}">
+          <p class="text-error">[[${session.SPRING_SECURITY_LAST_EXCEPTION.message}]]</p>
+        </div>
+        <div class="signup-link">
+          Not a member? <a href="">Signup now</a></div>
+      </form>
+      <form  th:action="@{/process_register}" th:object="${user}" method="post" class="signup">
+        <div class="field">
+          <input type="text" th:field="*{username}" required
+                 minlength="2" maxlength="30" placeholder="Username" autocomplete="off" />
+        </div>
+        <div class="field">
+          <input type="password" th:field="*{password}"
+                 required minlength="6" maxlength="50" placeholder="Password" />
+        </div>
+        <div class="field">
+          <input type="password" placeholder="Confirm password" oninput="check(this)" required>
+        </div>
+        <div class="field btn">
+          <div class="btn-layer">
+          </div>
+          <input type="submit" value="Signup">
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<script>
+  const loginText = document.querySelector(".title-text .login");
+  const loginForm = document.querySelector("form.login");
+  const loginBtn = document.querySelector("label.login");
+  const signupBtn = document.querySelector("label.signup");
+  const signupLink = document.querySelector("form .signup-link a");
+
+  signupBtn.onclick = (()=>{
+    loginForm.style.marginLeft = "-50%";
+    loginText.style.marginLeft = "-50%";
+  });
+
+  loginBtn.onclick = (()=>{
+    loginForm.style.marginLeft = "0%";
+    loginText.style.marginLeft = "0%";
+  });
+
+  signupLink.onclick = (()=>{
+    signupBtn.click();
+    return false;
+  });
+
+  function check(input) {
+    if (input.value !== document.getElementById("password").value) {
+      input.setCustomValidity("Password Must be Matching.");
+    } else {
+      // input is valid -- reset the error message
+      input.setCustomValidity("");
+    }
+  }
+</script>
+
+<script th:if="${used}">signupBtn.click()</script>
+
+</body>
+</html>
