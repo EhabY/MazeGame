@@ -27,13 +27,13 @@ import website.services.player.PlayerConfig;
 
 @Service
 public class MatchService {
+
   private final Map<String, PlayerConfig> playerMap = new ConcurrentHashMap<>();
   private final Map<String, Interpreter> playerInterpreterMap = new ConcurrentHashMap<>();
   private final MapConfiguration mapConfiguration;
   private final ConflictResolver conflictResolver;
-  private MatchCreator matchCreator;
   private final ExecutorService executor = Executors.newSingleThreadExecutor();
-
+  private MatchCreator matchCreator;
   @Autowired
   private SimpMessagingTemplate simpMessagingTemplate;
 
@@ -67,7 +67,7 @@ public class MatchService {
   }
 
   private MatchCreator createIfNullOrFull() {
-    if(matchCreator == null || matchCreator.hasGameStarted()) {
+    if (matchCreator == null || matchCreator.hasGameStarted()) {
       matchCreator = new MatchCreator(mapConfiguration, conflictResolver, getMatchStartListener());
     }
     return matchCreator;
@@ -75,7 +75,7 @@ public class MatchService {
 
   private MatchStartListener getMatchStartListener() {
     return playerControllers -> {
-      for(PlayerController playerController : playerControllers) {
+      for (PlayerController playerController : playerControllers) {
         playerInterpreterMap.put(playerController.getUsername(),
             new Interpreter(playerController));
         addStateListeners(playerController);
@@ -91,7 +91,7 @@ public class MatchService {
       public void onStateChange(State state, String message) {
         String username = playerController.getUsername();
         sendStateToUser(username, new StateChangeMessage(message, state));
-        if(state == State.LOST || state == State.WON) {
+        if (state == State.LOST || state == State.WON) {
           playerMap.remove(username);
           playerInterpreterMap.remove(username);
         }
@@ -149,7 +149,7 @@ public class MatchService {
   }
 
   public void removePlayer(String username) {
-    if(playerMap.containsKey(username)) {
+    if (playerMap.containsKey(username)) {
       PlayerConfig playerConfig = playerMap.remove(username);
       playerConfig.removePlayer();
     }

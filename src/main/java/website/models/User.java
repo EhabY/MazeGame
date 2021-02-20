@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "users")
 public class User {
+
   @Id
   private String id;
 
@@ -24,7 +25,8 @@ public class User {
   @DBRef
   private Set<Role> roles = new HashSet<>();
 
-  public User() {}
+  public User() {
+  }
 
   public User(String username, String password) {
     this.username = username;

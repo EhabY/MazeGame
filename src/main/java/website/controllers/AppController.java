@@ -23,13 +23,11 @@ import website.repository.UserRepository;
 public class AppController {
 
   @Autowired
+  PasswordEncoder encoder;
+  @Autowired
   private UserRepository userRepository;
-
   @Autowired
   private RoleRepository roleRepository;
-
-  @Autowired
-  PasswordEncoder encoder;
 
   @GetMapping("/")
   public String viewHomePage(Model model) {
@@ -48,7 +46,7 @@ public class AppController {
 
   @PostMapping("/process_register")
   public RedirectView processRegister(User user, RedirectAttributes redirectAttributes) {
-    RedirectView redirectView = new RedirectView("/",true);
+    RedirectView redirectView = new RedirectView("/", true);
 
     if (userRepository.existsByUsernameIgnoreCase(user.getUsername())) {
       redirectAttributes.addFlashAttribute("used", true);

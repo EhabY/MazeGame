@@ -67,13 +67,14 @@ public class PathGenerator {
 
   private Direction getUniqueValidDirection(int position, Direction previousDirection) {
     Direction direction = getRandomDirection();
-    while(isNotUniqueOrValid(position, direction, previousDirection)) {
+    while (isNotUniqueOrValid(position, direction, previousDirection)) {
       direction = getRandomDirection();
     }
     return direction;
   }
 
-  private boolean isNotUniqueOrValid(int position, Direction direction, Direction previousDirection) {
+  private boolean isNotUniqueOrValid(int position, Direction direction,
+      Direction previousDirection) {
     return direction == previousDirection || !positionManager.isDirectionValid(position, direction);
   }
 
@@ -120,7 +121,7 @@ public class PathGenerator {
 
   private Direction getEmptyRandomDirection(int roomID) {
     Direction direction = getRandomDirection();
-    while(roomGenerator.roomHasMapSite(roomID, direction)) {
+    while (roomGenerator.roomHasMapSite(roomID, direction)) {
       direction = getRandomDirection();
     }
     return direction;

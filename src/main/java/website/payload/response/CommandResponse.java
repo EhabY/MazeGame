@@ -16,18 +16,18 @@ public class CommandResponse {
     this(command, getData(response.encodable), response.message);
   }
 
-  private static String getData(JsonEncodable encodable) {
-    if(encodable == null) {
-      return "";
-    } else {
-      return encodable.encodeUsing(JSON_ENCODER);
-    }
-  }
-
   public CommandResponse(String command, String data, String message) {
     this.command = command;
     this.data = data;
     this.message = message;
+  }
+
+  private static String getData(JsonEncodable encodable) {
+    if (encodable == null) {
+      return "";
+    } else {
+      return encodable.encodeUsing(JSON_ENCODER);
+    }
   }
 
   public String getCommand() {

@@ -21,7 +21,7 @@ public class FightManager {
       ConflictResolver conflictResolver) {
     this.players = Objects.requireNonNull(players);
     this.conflictResolver = Objects.requireNonNull(conflictResolver);
-    for(Room room : rooms) {
+    for (Room room : rooms) {
       inFight.put(room, false);
     }
   }

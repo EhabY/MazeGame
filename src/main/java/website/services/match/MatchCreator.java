@@ -102,7 +102,7 @@ public class MatchCreator {
   }
 
   public void removePlayer(String username) {
-    if(hasGameStarted()) {
+    if (hasGameStarted()) {
       PlayerController playerController = playerControllers.remove(username);
       match.kickPlayer(playerController);
     } else {
@@ -112,7 +112,7 @@ public class MatchCreator {
   }
 
   public String getMazeMapJson() {
-    if(hasGameStarted()) {
+    if (hasGameStarted()) {
       return mazeMapJson;
     }
 

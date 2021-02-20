@@ -52,7 +52,7 @@ public class PlayerController implements JsonEncodable {
     this.state = state;
     eventHandler.triggerStateChangeEvent(state, message);
 
-    if(hasMatchEnded()) {
+    if (hasMatchEnded()) {
       eventHandler.clearAllListeners();
     }
   }
