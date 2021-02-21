@@ -17,7 +17,7 @@ public interface MapConfiguration {
 
   int getDifficulty();
 
-  WeightedRandomizer<MapSiteGenerator> getMapSiteRandomizer(
+  WeightedItemRandomizer<MapSiteGenerator> getMapSiteRandomizer(
       RandomNameGenerator randomNameGenerator);
 
   JSONObject getConfiguration();

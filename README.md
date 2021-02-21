@@ -307,6 +307,44 @@ These configurations can be edited by implementing the `MapConfiguration` interf
 Since the generated map is in Json format, it can be saved, modified, and used later without much effort.
 This is especially convenient if a randomly generated map was particularly fun!
 
+## Game
+When implementing the various game class, I made sure to make it easy to add new stuff (items, commands, functionality, MapSites... etc).
+The different player commands were implemented using the Command Pattern (see the report).
+This means that adding a new command means you only have to create a new class and implement a certain interface `Command` or `ItemCommand`.
+
+The items on the other hand, are stored in the `ItemManager` as `Map<String, Item>` where a unique name is used. In the `Item` interface:
+```Java
+default String getUniqueName() {
+  return (getName() + " " + getType()).trim();
+}
+```
+This guarantees that any name for any item will be unique. When querying for a said item, the that unique name is also used.
+"Use Dragon Skull" is ambitious, but "Use Dragon Skull Key" is clear even from the point of view of the player.
+
+Related to the items, is the actual usage of them. Items cannot define how the player uses them, it is not their responsibility, and they don't have access to the player anyway.
+So a `UseItemVisitor` was used to define how the player can use an item. Since `ItemManager` takes `Item`, the addition of new items requires no modification at all.
+It would need to implement Item and its "use" defined in `UseItemVisitor`.
+
+The `MapSite`s follow the same formula. In fact, there are 7 interfaces for the MapSites and when interacting with them, the highest abstraction possible is used.
+For example, in the `look()` method, they are interacted with only as `MapSite`.
+While in the `checkAhead()` method, `Checkable` is used instead. The same logic applies to `Lockable`, `Lootable`, and `Hangable`.
+This is seen clearly in the `Player` class. It literally does not use any concrete `MapSite` class.
+The use of `CheckVisitor` and `UseItemVisitor` made this possible.
+
+
+```Java
+public String look() {
+    ...
+    return mapSite.look();
+  }
+
+  public Response checkAhead() {
+    Checkable checkable = (Checkable) getMapSiteAhead();
+    return checkable.accept(checkVisitor);
+  }
+```
+
+
 ## Back-End
 The game is played normally like the CLI version except for buttons instead of manually writing the commands.
 In fact, the same `Interpreter` for the CLI was used, with some modifications, to execute incoming commands.

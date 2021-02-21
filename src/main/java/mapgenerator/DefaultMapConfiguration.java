@@ -64,9 +64,9 @@ public class DefaultMapConfiguration implements MapConfiguration {
   }
 
   @Override
-  public WeightedRandomizer<MapSiteGenerator> getMapSiteRandomizer(
+  public WeightedItemRandomizer<MapSiteGenerator> getMapSiteRandomizer(
       RandomNameGenerator randomNameGenerator) {
-    WeightedRandomizer<MapSiteGenerator> mapSiteRandomizer = new WeightedRandomizer<>();
+    WeightedItemRandomizer<MapSiteGenerator> mapSiteRandomizer = new WeightedItemRandomizer<>();
     mapSiteRandomizer.addEvent(new DoorGenerator(randomNameGenerator), 5);
     mapSiteRandomizer.addEvent(new HangableGenerator(randomNameGenerator), 2);
     mapSiteRandomizer.addEvent(new ChestGenerator(randomNameGenerator), 1);

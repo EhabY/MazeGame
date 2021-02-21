@@ -3,7 +3,7 @@ package mapgenerator;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WeightedRandomizer<T> {
+public class WeightedItemRandomizer<T> {
 
   private final WeightedRandom randomizer = new WeightedRandom();
   private final List<T> items = new ArrayList<>();
