@@ -110,7 +110,7 @@ The second method also checks if the flashlight is on.
 
 ## General
 ### *G1: Multiple Languages in One Source File*
-The HTML file `matchview.html` that was served to the user had the CSS and JavaScript within the HTML.
+The HTML file `match.html` that was served to the user had the CSS and JavaScript within the HTML.
 However, this then proved cumbersome to manage and edit, so I moved the CSS to 2 different files under `css` directory, and the JavaScript under the `js` directory.
 This is much cleaner and makes it easier to modify any of the code.
 
@@ -958,7 +958,7 @@ public void triggerMoveEvent(Room previousRoom) {
 ```
 
 ### *Item 81: Prefer concurrency utilities to wait and notify*
-I have always tried to use thread-safe data structure or let the system handle synchronization for me (like the use of WebSockets in SparkJava).
+I have always tried to use thread-safe data structure or let the system handle synchronization for me (like the handling of WebSocket/HTTP requests in Spring).
 In fact, I have never used `wait` or `notify`, instead depended on data structures like `ConcurrentHashMap`, and `BlockingDeque`. 
 Along with synchronized blocks and methods.
 
@@ -1357,6 +1357,10 @@ In *`Room`*:
 
 Another small modification is the use of `ConcurrentHashMap`, which is a thread-safe `HashMap` with atomic and multi-threaded specific operations.
 
+There was also the use of `CopyOnWriteArrayList` in the `EventHandler` class.
+It was appropriate because modifications are very rare, mainly in the beginning of the match and at the end.
+While traversals are very frequent (every few seconds).
+
 The real synchronization problem was related to entering or exiting a room. For example, when entering a room, the method `acquireLoot()` is synchronized so only the first player gets the loot there.
 Of course, since the fighting happens when 2 (or more) players enter a room, the operation of removing a player from a room or adding them to a room is synchronized on a lock unique for that room so that other operations in other rooms aren’t impacted.
 When adding a player to a room, a check happens to see if there already exists another player in the room.
@@ -1391,6 +1395,9 @@ In fact, AWS DynamoDB can handle 20 million requests per second, has a latency o
 
 By using Bean Stalk and DynamoDB, it is guaranteed that as long as AWS can handle the load, the website will function correctly and scale forever.
 
+There was also a small edit that I could do to my current design, since every match is independent of each other. If matches are run in a single container then they can also be scaled infinitely as long as a single computer can handle the requests for a single match.
+
 Sadly, I didn't have enough time to implement all of this (especially with the finals).
+
 
 <br/>

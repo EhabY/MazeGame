@@ -3,11 +3,13 @@
 ## Introduction
 This rendition of the World Navigator game is made web-based, online, and between multiple people. 
 In theory, there is no limit to the number of players, since the map is generated on the fly when the match is started.
+This version also includes a website with a MongoDB database that stores the users' login information.
 
 ## Front-End
-When navigating to the game website, you are greeted with a simple input, and a send button. 
-You enter your name and click send, this registers the user with the entered name, assuming it is unique. 
-When the button is clicked again, then the client notifies the server that the player is ready to play. 
+When navigating to the game website, you are greeted with a login/sign-up form.
+After you sign-up and login, you are redirected to the match page. 
+You click `play` to register the user in a match. 
+When the button is clicked again (now displays `ready` instead of `play`), then the client notifies the server that the player is ready to play. 
 When all players are ready, the map is generated, and the match is started.
 
 The JavaScript in the website has several responsibilities:
@@ -17,6 +19,10 @@ The JavaScript in the website has several responsibilities:
 * Requests an updated Player Status when a command that modifies the status is sent.
 * Permits only valid operations to be executed.
 * Listens to all the click events for all buttons and items.
+
+Sign-up and login process:
+
+![](images/website.webp)
 
 Here are a few screenshots in different stages of the game:
 
@@ -319,13 +325,40 @@ Both of these interfaces can be used to implement custom logic, without changing
 
 After a user sends a request to the server (using the WebSocket connection), it is forwarded to MessageHandler.
 There are 4 types of messages supported so far:
-* Username message: registers the user in a game with a certain username
+* Join message: registers the user in a match
 * Ready message: marks the player as ready to play.
 * Map message: sends the map being played in Json format.
 * Command message: executes the requested command in the game.
 
-Since responses can differ based on the request, I defined a Message interface with a single `String getPayload()` method that returns a formatted `String` representation of the payload.
-Then I made 5 different types of messages that can be sent to the user (see [website.message package](#websitemessage))
+These messages can be clearly seen in the `MatchController` class.
+
+```Java
+  @MessageMapping("/secured/match/join")
+  @SendToUser("/queue/match/message")
+  public ResponseMessage joinMatch(Principal user) {
+    ...
+  }
+
+  @MessageMapping("/secured/match/ready")
+  @SendToUser("/queue/match/message")
+  public ResponseMessage readyToPlay(Principal user) {
+    ...
+  }
+
+  @MessageMapping("/secured/match/command")
+  @SendToUser("/queue/match/command")
+  public CommandResponse processCommand(@Payload CommandRequest request, Principal user) {
+    ...
+  }
+
+  @MessageMapping("/secured/match/map")
+  @SendToUser("/queue/match/map")
+  public MapMessage downloadMap(Principal user) {
+    ...
+  }
+```
+
+Since responses can differ based on the request, I made 6 different types of messages that can be sent to the user (see [website.payload.response package](#websitepayloadresponse))
 
 ## Listeners
 There are 2 types of listeners placed on certain events. 
@@ -345,7 +378,7 @@ The GameEvent is used by the `Match` to notify the player of a certain event.
 While the `State` tracks the current state the player is in which can restrict some actions or even end the game.
 Both of these events are then reported to the user by sending either an `EventMessage`, or a `StateChangeMessage`.
 
-See [mazegame.events package](#mazegameevents) and [website.match package](#websitematch) for more information.
+See [mazegame.events package](#mazegameevents) and [website.services.match package](#websiteservicesmatch) for more information.
 
 
 # Project Structure & Packages
@@ -462,18 +495,93 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 <br/>
 
 ## `website`
-* `Main`: the main program that runs the server and the WebSocket.
-* `MatchWebSocketHandler`: contains the WebSocket actions. (`onOpen`, `onMessage`, `onClose`)
-* `MessageHandler`: has a single method `Message getResponseFromMessage(Session user, String messageAsJson)` that returns a `Message` which is then sent to the user by `MatchWebSocketHandler`.
+* `Application`: the main program that runs the server and the WebSocket.
 
 <br/>
 
-## `website.engine`
-* `ThymeleafTemplateEngine` Contains a generic implementation of ThymeLeaf engine for use with SparkJava
+## `website.configuration`
+* `WebConfig`: contains `addResourceHandlers` which configures the location of static data. (image, css, js... etc)
+* `WebSocketConfig`: configures the secured WebSocket.
 
 <br/>
 
-## `website.fighting`
+## `website.controllers`
+* `AppController`: handles HTTP requests (mainly, `/` and `match`). Makes sure the user is logged in.
+* `CsrfTokenController`: generates a CSRF token for the user.
+* `MatchController`: handles all the WebSocket requests.
+
+<br/>
+
+## `website.models`
+* `ERole`: an Enum that contains the different roles a user can have (`ROLE_USER`, `ROLE_MODERATOR`, `ROLE_ADMIN`)
+* `Role`: the model for the `Role` used in MongoDB.
+* `User`: the model for the `User` used in MongoDB.
+
+<br/>
+
+## `website.payload.request`
+* `CommandRequest`: contains a single `String` field `command` used for sending commands.
+* `RequestMessage`: contains a two `String` fields, `type` and `content` used for everything else.
+
+## `website.payload.response`
+* `BasicMessage`: an abstract class that is used as a basic template for response messages.
+* `CommandResponse`: contains the command issued, the message, and any data that was requested.
+* `EventMessage`: contains the name of the event that happened (see GameEvent Enum)
+* `InvalidMessage`: contains the error message for an invalid request
+* `MapMessage`: contains the Json of the generated map
+* `ResponseMessage`: a class that contains the response to a general request.
+* `StateChangeMessage`: contains the new state of the player (see State Enum)
+
+<br/>
+
+## `website.repository`
+Contains two interfaces that extend `MongoRepository`, these methods define the supported operations.
+
+For example:
+```Java
+public interface UserRepository extends MongoRepository<User, String> {
+
+  Optional<User> findByUsernameIgnoreCase(String username);
+
+  Boolean existsByUsernameIgnoreCase(String username);
+}
+```
+
+`RoleRepository` on the other hand only has a `findByName(ERole name)` method.
+
+<br/>
+
+## `website.security`
+* `WebSecurityConfig`: configures the authentication and guarantees that access of users.
+* `WebSocketSecurityConfig`: makes sure that the user is authenticated in all secure WebSocket.
+
+The most important method is the `configure` method:
+```Java
+protected void configure(HttpSecurity http) throws Exception {
+    http.authorizeRequests()
+        .antMatchers("/match", "/csrf", "/secured/**").authenticated()
+        .anyRequest().permitAll()
+        .and()
+        .formLogin()
+        .loginPage("/").permitAll()
+        .usernameParameter("username")
+        .defaultSuccessUrl("/match")
+        .permitAll()
+        .and()
+        .logout().logoutSuccessUrl("/").permitAll();
+  }
+```
+This allows `/` but blocks access to `/match`, `/csrf`, and `/secured/**` unless authorized.
+
+<br/>
+
+## `website.services`
+* `MatchService`: a service between `MatchController` and the other match-related classes.
+* `UserDetailsImpl`: a data structure that contains the user's authentication information.
+* `UserDetailsServiceImpl`: contains a single method `public UserDetails loadUserByUsername(String username)` that returns an instance of `UserDetailsImpl`.
+
+
+## `website.services.fighting`
 * `ConflictResolver`: a class that determines the winner in a conflict between players. This determination is based on the implemented ScoreCalculator and eventually TieBreaker interfaces.
 * `FightManager`: a class that handles the fighting between players in a room.
 * `RockPaperScissors`: a simple implementation of TieBreaker that breaks ties using a game of Rock-Paper-Scissors.
@@ -481,37 +589,33 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 * `SimpleScoreCalculator`: a score calculator that calculates the score by adding the gold, number of flashlights x 2, number of keys x 10.
 * `TieBreaker`: an interface with a single method `PlayerController breakTie(PlayerController playerController1, PlayerController playerController2)` used to break ties and return the winner.
 
-<br/>
 
-## `website.match`
-* `Interpreter`: contains a single public method `Response execute(String command)` that executes one action at a time and return the response.
+## `website.services.match`
 * `Match`: notifies the winners and losers of the game. This class manages the whole match and connects various components together.
 * `MatchCreator`: keep track of everything pre-game, like the players, their usernames, and whether they are ready to play or not. It generates the map and creates a `Match` instance when all players are ready.
-* `MatchCreatorInitializer`: creates MatchCreators when needed, this class effectively makes it possible to play multiple matches at the same time.
-* `MatchStartedListener`: a listener with method `void onMatchStart(Map<Session, PlayerController> playersMap)` that is triggered when all the players are ready and the game starts.
+* `MatchStartListener`: a listener with method `void onMatchStart(Collection<PlayerController> playerControllers)` that is triggered when all the players are ready and the game starts.
 * `MovementManager`: responsible for moving players from room X to room Y.
-* `PlayerConfiguration`: a data structure that contains the Interpreter, and the MatchCreator instance of a player.
 
-<br/>
 
-## `website.message`
-* `BasicMessage`: an abstract class that is used as a basic template for `Message`
-* `EventMessage`: contains the name of the event that happened (see GameEvent Enum)
-* `InvalidMessage`: contains the error message for an invalid request
-* `MapMessage`: contains the Json of the generated map
-* `Message`: an interface with method `String getPayload()` that serves as the template for all types of messages.
-* `ResponseMessage`: contains the response to a request, and the command that was issued to get this response.
-* `StateChangeMessage`: contains the new state of the player (see State Enum)
+## `website.services.player`
+* `Interpreter`: contains a single public method `Response execute(String command)` that executes one action at a time and returns the response.
+* `PlayerConfig`: a data structure that contains the username, and the `MatchCreator` instance of a player.
 
 <br/>
 
 ## Front-End
-### `src/main/resources/public`
-* `matchview.html`: the HTML that is served to the user when they navigate to "/"
+### `src/main/resources/static`
 * `css/button.css`: the stylesheet for the buttons.
-* `css/main.css`: the stylesheet for the whole website.
-* `js/FileSaver.js`: used to download the Json of the map.
-* `js/main.js`: the JavaScript that handles all the events (clicks and typing) and communicates with the server.
+* `css/index.css`: the stylesheet for `index.html`.
+* `css/match.css`: the stylesheet for `match.html`.
 * `favicon/`: contains the favicon of the website in several formats.
+* `js/FileSaver.js`: used to download the Json of the map.
+* `js/match.js`: the JavaScript that handles all the events (clicks and typing) in `match.html` and communicates with the server through WebSockets.
+
+<br/>
+
+### `src/main/resources/template`
+* `index.html`: the HTML that is served to the user when they navigate to `/`, contains the login and sign-up forms.
+* `match.html`: the HTML that is served to the user when they navigate to `/match`. This is the webpage for the actual game.
 
 <br/>
