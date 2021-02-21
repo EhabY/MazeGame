@@ -29,14 +29,14 @@ public class TradeHandler {
   }
 
   public boolean buy(String itemName) {
-    boolean bought = canBuy(itemName);
-    if (bought) {
+    boolean valid = canBuy(itemName);
+    if (valid) {
       long price = seller.getItemPrice(itemName);
       player.removeGoldFromInventory(price);
       Item itemBought = seller.takeItem(itemName);
       player.addItemToInventory(itemBought);
     }
-    return bought;
+    return valid;
   }
 
   private boolean canBuy(String itemName) {
@@ -60,14 +60,14 @@ public class TradeHandler {
   }
 
   public boolean sell(String itemName) {
-    boolean sold = canSell(itemName);
-    if (sold) {
+    boolean valid = canSell(itemName);
+    if (valid) {
       Item itemSold = player.takeItemFromInventory(itemName);
       seller.addItem(itemSold);
       long price = seller.getItemPrice(itemName);
       player.addGoldToInventory(price);
     }
-    return sold;
+    return valid;
   }
 
   private boolean canSell(String itemName) {

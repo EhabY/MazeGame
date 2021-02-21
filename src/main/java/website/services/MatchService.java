@@ -28,6 +28,8 @@ import website.services.player.PlayerConfig;
 @Service
 public class MatchService {
 
+  private static final String EVENT_PATH = "/queue/match/event";
+  private static final String STATE_CHANGE_PATH = "/queue/match/state";
   private final Map<String, PlayerConfig> playerMap = new ConcurrentHashMap<>();
   private final Map<String, Interpreter> playerInterpreterMap = new ConcurrentHashMap<>();
   private final MapConfiguration mapConfiguration;
@@ -105,11 +107,11 @@ public class MatchService {
   }
 
   private void sendEventToUser(String user, Object payload) {
-    simpMessagingTemplate.convertAndSendToUser(user, "/queue/match/event", payload);
+    simpMessagingTemplate.convertAndSendToUser(user, EVENT_PATH, payload);
   }
 
   private void sendStateToUser(String user, Object payload) {
-    simpMessagingTemplate.convertAndSendToUser(user, "/queue/match/state", payload);
+    simpMessagingTemplate.convertAndSendToUser(user, STATE_CHANGE_PATH, payload);
   }
 
   public String makePlayerReady(String username) {

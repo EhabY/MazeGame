@@ -13,7 +13,7 @@ public class MapGenerator {
   private final RoomGenerator roomGenerator;
   private final PositionManager positionManager;
   private final PathGenerator pathGenerator;
-  private final WeightedRandomizer<MapSiteGenerator> mapSiteRandomizer;
+  private final WeightedItemRandomizer<MapSiteGenerator> mapSiteRandomizer;
 
   private MapGenerator(MapConfiguration mapConfiguration) {
     int side = mapConfiguration.getSide();

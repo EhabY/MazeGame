@@ -18,7 +18,7 @@ The JavaScript in the website has several responsibilities:
 * Dynamically loads content to display to user.
 * Requests an updated Player Status when a command that modifies the status is sent.
 * Permits only valid operations to be executed.
-* Listens to all the click events for all buttons and items.
+* Listens to the click events for all buttons and items.
 
 Sign-up and login process:
 
@@ -249,9 +249,9 @@ The generation of the map is not purely random, it has some logic to it.
 The generated map starts with N number of rooms, where N is the number of players. 
 Then a random path is generated, this path is split into levels, and you have to unlock the door at the end of a level to go to the next one.
 The key to unlock a said door, is placed randomly along this generated path.
-At the end of each path, there is a winning door that when opened the player wins.
+At the end of each path at the last level, there is a door that when opened the player wins.
 
-After the paths are generated for each level and each player, a Breadth First Search (BFS) is performed from all the generated rooms at once, then for every empty direction in the room, a randomly generated MapSite is placed.
+After all the paths are generated for each player, a Breadth First Search (BFS) is performed from all the generated rooms at once, then for every empty direction in the room, a randomly generated MapSite is placed.
 If that MapSite is a door, then that opens a path to another room on the other side.
 
 For the game to be fun, there must be many open doors that lead to dead-ends and distract the player.
@@ -302,10 +302,52 @@ private boolean hasLights() {
 This changes the probability of having lights in a room from 100% (at difficulty of 1) to 10% (at difficulty of 10).
 
 
-These configurations can be edited by implementing the `MapConfiguration` interface and passing it to the `MapGenerator`, or when using `DefaultMapConfiguration` the configurations can also be customized with the builder.
+These configurations can be edited by implementing the `MapConfiguration` interface and passing it to the `MapGenerator`, or when using `DefaultMapConfiguration` the configurations can be customized using the builder.
 
 Since the generated map is in Json format, it can be saved, modified, and used later without much effort.
 This is especially convenient if a randomly generated map was particularly fun!
+
+## Game
+When implementing the various game class, I made sure to make it easy to add new stuff (items, commands, functionality, MapSites... etc).
+The different player commands were implemented using the Command Pattern (see the report).
+This means that adding a new command means you only have to create a new class and implement a certain interface `Command` or `ItemCommand`.
+
+The items on the other hand, are stored in the `ItemManager` as `Map<String, Item>` where a unique name is used.
+
+In the `Item` interface:
+```Java
+default String getUniqueName() {
+  return (getName() + " " + getType()).trim();
+}
+```
+This guarantees that all names for all items are unique. When querying an item (to use, buy, or sell), that unique name is also used.
+The alternative does not make sense, for example, "Use Dragon Skull" is ambiguous, but "Use Dragon Skull Key" is clear, especially from the point of view of the player.
+
+Related to the items, is the actual usage of them. Items cannot define how the player uses them, it is not their responsibility, and they don't have access to the player anyway.
+So a `UseItemVisitor` was used to define how the player can use an item.
+
+Since `ItemManager` takes `Item`, the addition of new items requires no modification at all.
+The new item type would need to implement `Item` and its "use" defined in `UseItemVisitor`.
+
+The `MapSite`s follow the same formula. In fact, there are 7 interfaces for the MapSites and when interacting with them, the highest abstraction possible is used.
+For example, in the `look()` method, they are interacted with only as `MapSite`.
+While in the `checkAhead()` method, `Checkable` is used instead. The same logic applies to `Lockable`, `Lootable`, and `Hangable`.
+This is seen clearly in the `Player` class. It literally does not use any concrete `MapSite` class.
+The use of `CheckVisitor` and `UseItemVisitor` made this possible.
+
+
+```Java
+public String look() {
+    ...
+    return mapSite.look();
+  }
+
+  public Response checkAhead() {
+    Checkable checkable = (Checkable) getMapSiteAhead();
+    return checkable.accept(checkVisitor);
+  }
+```
+
 
 ## Back-End
 The game is played normally like the CLI version except for buttons instead of manually writing the commands.
@@ -323,7 +365,8 @@ The `ConflictResolver` class uses the `long calculateScore(PlayerController)` me
 If there is a tie then `PlayerController breakTie(PlayerController, PlayerController)` method in `TieBreaker` interface can be used to implement whatever tie breaking mini-game (Rock-paper-scissors was used here).
 Both of these interfaces can be used to implement custom logic, without changing anything, whether for calculating the score used to determine the winner or the tiebreaker in case of equal scores.
 
-After a user sends a request to the server (using the WebSocket connection), it is forwarded to MessageHandler.
+After a user sends a request to the server (using the WebSocket connection), it is caught by the `MatchController` with it's respective mapping.
+
 There are 4 types of messages supported so far:
 * Join message: registers the user in a match
 * Ready message: marks the player as ready to play.
@@ -359,14 +402,15 @@ These messages can be clearly seen in the `MatchController` class.
 ```
 
 Since responses can differ based on the request, I made 6 different types of messages that can be sent to the user (see [website.payload.response package](#websitepayloadresponse))
+`EventMessage` and `StateChangeMessage` are sent when various events happen (server -> client) instead of the usual (client -> server).
 
 ## Listeners
-There are 2 types of listeners placed on certain events. 
+There are 2 types of listeners placed on certain events:
 `MatchListener` and `StateListener`
 
 ### `MatchListener`
-The Match class which is responsible for coordinating the state of the players and the interaction between them, has no access to the commands being executed.
-* A `onMove` listener was placed in PlayerController so `Forward` and `Backward` commands can then trigger the listener to notify that match that a player moved some room to the other.
+The `Match` class, which is responsible for coordinating the state of the players and the interaction between them, has no access to the commands being executed.
+* An `onMove` listener was placed in PlayerController so `Forward` and `Backward` commands can then trigger the listener to notify the match that a player moved some room to the other.
 * The match also listens to another event, `onQuit` which removes the player from the match and drops their items and gold in the room.
 
 ### `StateListener`
@@ -376,7 +420,10 @@ The second type of listener is the state listener, which also listens to 2 event
 
 The GameEvent is used by the `Match` to notify the player of a certain event.
 While the `State` tracks the current state the player is in which can restrict some actions or even end the game.
-Both of these events are then reported to the user by sending either an `EventMessage`, or a `StateChangeMessage`.
+Both of these events are then reported to the user by sending either an `EventMessage`, or a `StateChangeMessage` using:
+```Java
+simpMessagingTemplate.convertAndSendToUser(user, PATH, payload);
+```
 
 See [mazegame.events package](#mazegameevents) and [website.services.match package](#websiteservicesmatch) for more information.
 
@@ -392,8 +439,8 @@ See [mazegame.events package](#mazegameevents) and [website.services.match packa
 * `PositionManager`: a class responsible for checking the validity of a certain move (such a move is within the limits of the map)
 * `RandomNameGenerator`: a class that returns a random name.
 * `RoomGenerator`: responsible for creating and managing rooms.
-* `WeightedRandom`: given weights, this class returns a random number with the probabilities of given weights.
-* `WeightedRandomizer`: a generic class that returns a random Object <T> with certain weights.
+* `WeightedRandom`: given weights, this class returns a random number with the probability of the given weights.
+* `WeightedItemRandomizer`: a generic class that returns a random Object <T> with certain weights.
 
 <br/>
 
@@ -437,7 +484,7 @@ So adding another command is as simple as creating a new class and implementing 
 * `GameEvent`: Enum with four events `START_MATCH`, `SENDING_PLAYER_LIST`, `TIE_FIGHT`, `REQUESTING_INPUT`.
 * `MatchListener`: interface to listen for Match related events, namely: a move (forward/backward) and quitting.
 * `State`: Enum class for the state of the game. (`EXPLORE`, `TRADE`, `FIGHT`, `WON`, `LOST`)
-* `StateListener`: interface to listen for GameEvents and State changes.
+* `StateListener`: interface to listen for `GameEvent` and `State` changes.
 
 <br/>
 
@@ -475,7 +522,7 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 <br/>
 
 ## `mazegame.trade`
-`TradeHandler` used to handle the communication between the player and the seller and to verify its validity.
+`TradeHandler` used to handle the communication between the player and the seller and to verify the validity of the trade.
 
 <br/>
 
@@ -501,7 +548,7 @@ Includes `LightSwitch`, `NoLightSwitch` (special case), and `Room` classes.
 
 ## `website.configuration`
 * `WebConfig`: contains `addResourceHandlers` which configures the location of static data. (image, css, js... etc)
-* `WebSocketConfig`: configures the secured WebSocket.
+* `WebSocketConfig`: configures the endpoints, message broker, and STOMP to be used over the WebSocket.
 
 <br/>
 

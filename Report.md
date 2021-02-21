@@ -905,6 +905,7 @@ public Message getResponseFromMessage(Session user, String messageAsJson);
 ## Exceptions
 ### *Item 69: Use exceptions only for exceptional conditions*
 The exceptions that I defined in `README.md` are used only as the last line of defense.
+In normal conditions these exceptions would not be thrown, everything is checked before-hand.
 
 
 ### *Item 72: Favor the use of standard exceptions*
@@ -973,7 +974,8 @@ It also made it possible to manually create the maps, or edit the state of a pla
 A lot of the design patterns implemented have been done so unconsciously with some exceptions.
 
 ## Strategy Pattern
-The Strategy pattern in its most essential form is just polymorphism. This was useful in the look method of the *`MapSite`* interface. See [G5 (Duplication)](#G5-Duplication).
+The Strategy pattern in its most essential form is just polymorphism.
+This was useful in the look method of the *`MapSite`* interface. See [G5 (Duplication)](#g5-duplication).
 
 ## Builder Pattern
 See [item 2](Item-2-Consider-a-builder-when-faced-with-many-constructor-parameters).
@@ -1130,10 +1132,10 @@ public String visit(Door door) {
 }
 ```
 
-The third visitor used was the *`Encoder`*/*`Encodable`*. This is useful since the implementation of the serialization can change. In fact, it can also be used for things other than Json like XML.
-In fact, the *`JsonEncoder`* and *`JsonSerializer`* go hand-in-hand. Both use the same format, and they can also be replaced or modified easily.
+The third visitor used was the *`Encoder`*/*`Encodable`*. This is useful since the implementation of the serialization can change. For example, these interfaces can be used for things other than Json like XML.
+The *`JsonEncoder`* and *`JsonSerializer`* go hand-in-hand. Both use the same format, and they can also be replaced or modified easily.
 
-The Encoder interace:
+The Encoder interface:
 ```Java
 public interface Encoder {
   String visit(Flashlight flashlight);
@@ -1191,25 +1193,25 @@ public static TradeHandler startTransaction(Player player, Seller seller) {
 }
 
 public boolean buy(String itemName) {
-  boolean bought = canBuy(itemName);
-  if (bought) {
+  boolean valid = canBuy(itemName);
+  if (valid) {
     long price = seller.getItemPrice(itemName);
     player.removeGoldFromInventory(price);
     Item itemBought = seller.takeItem(itemName);
     player.addItemToInventory(itemBought);
   }
-  return bought;
+  return valid;
 }
 
 public boolean sell(String itemName) {
-  boolean sold = canSell(itemName);
-  if (sold) {
+  boolean valid = canSell(itemName);
+  if (valid) {
     Item itemSold = player.takeItemFromInventory(itemName);
     seller.addItem(itemSold);
     long price = seller.getItemPrice(itemName);
     player.addGoldToInventory(price);
   }
-  return sold;
+  return valid;
 }
 ```
 
